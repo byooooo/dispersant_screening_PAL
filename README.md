@@ -36,13 +36,13 @@ where W(r) is the polymer-polymer potential of mean force in the radial directio
 ### adsorption free energies
 
 <div>
-  <img width = "1000" src="./figures/batch0_ads_PMF.png">
+  <img width = "800" src="./figures/batch0_ads_PMF.png">
 </div>
 
 ### second virials coefficients
 
 <div>
-  <img width = "1000" src="./figures/batch0_vir_PMF.png">
+  <img width = "800" src="./figures/batch0_vir_PMF.png">
 </div>
 
 ### full factorial
