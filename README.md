@@ -16,6 +16,20 @@
 - X_frac_random.csv - Feature data for fractional factorial DOE random copolymers
 - X_full_random.csv - Feature data for full factorial DOE random copolymers
 
+## Theory
+
+The adsorption free energies are estimated by taking the different in the minimum potential of mean force (W) from its bulk value.
+In the NVT ensemble the PMF is the Helmholtz free energy, which we then use to approximate the Gibbs free energy.
+
+<img src="https://render.githubusercontent.com/render/math?math={G_ads \approx W_{min}-W_{bulk}}">
+
+The second virial coefficient is calculated using the following equation:
+
+<img src="https://render.githubusercontent.com/render/math?math={A_2 = 2\pi/N^2 \int_0^\infty r^2[1-exp(-\beta W(r))]dr}">
+
+where W(r) is the polymer-polymer potential of mean force in the radial direction and N is the number of beads in the polymer.
+
+
 ## Adsorption Free Energies
 
 ### fractional factorial
@@ -26,13 +40,14 @@
 ## Second Virials Coefficients
 
 ### fractional factorial
-<img src="https://render.githubusercontent.com/render/math?math={A_2 = 2\pi/N^2 \int_0^\infty r^2[1-exp(-\beta U(r))]dr}">
 
 <div>
   <img width = "1000" src="./figures/batch0_vir_PMF.png">
 </div>
 
 ### full factorial
+
+#### adsorption free energies
 
 <div>
   <img width = "1000" src="./figures/batch1_ads_PMF.png">
@@ -113,6 +128,9 @@
 <div>
   <img width = "1000" src="./figures/batch20_ads_PMF.png">
 </div>
+
+
+#### second virial coefficients
 
 <div>
   <img width = "1000" src="./figures/batch21_ads_PMF.png">
