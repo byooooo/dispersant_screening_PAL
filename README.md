@@ -19,7 +19,7 @@
 ## Theory
 
 The adsorption free energies are estimated by taking the different in the minimum potential of mean force (W) from its bulk value.
-In the NVT ensemble the PMF is equal to the Helmholtz free energy, which we then use to approximate the Gibbs free energy (assume incompressibility).
+In the NVT ensemble the PMF is equal to the Helmholtz free energy, which we then use to approximate the Gibbs free energy (assuming incompressibility).
 
 <img src="https://render.githubusercontent.com/render/math?math={G_{ads} \approx W(z)_{min}-W(z)_{bulk}}">
 
