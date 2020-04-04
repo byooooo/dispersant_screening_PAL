@@ -25,7 +25,7 @@
 
 ## Second Virials Coefficients
 
-<img src="https://render.githubusercontent.com/render/math?math=A_2 = 2\pi/N^2 \int_0^{\infty r^2[1-exp(-\beta U(r))]dr}">
+<img src="https://render.githubusercontent.com/render/math?math={A_2 = 2\pi/N^2 \int_0^\infty r^2[1-exp(-\beta U(r))]dr}">
 
 <div>
   <img width = "400" src="./figures/batch0_vir_PMF.png">
