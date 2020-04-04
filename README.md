@@ -18,18 +18,26 @@
 
 ## Adsorption Free Energies
 
+### fractional factorial
 <div>
-  <img width = "400" src="./figures/batch0_ads_PMF.png">
+  <img width = "800" src="./figures/batch0_ads_PMF.png">
 </div>
-
+### full factorial
+<div>
+  <img width = "800" src="./figures/batch1_ads_PMF.png">
+</div>
 
 ## Second Virials Coefficients
 
+### fractional factorial
 <img src="https://render.githubusercontent.com/render/math?math={A_2 = 2\pi/N^2 \int_0^\infty r^2[1-exp(-\beta U(r))]dr}">
 
 <div>
-  <img width = "400" src="./figures/batch0_vir_PMF.png">
+  <img width = "800" src="./figures/batch0_vir_PMF.png">
 </div>
 
-
+### full factorial
+<div>
+  <img width = "800" src="./figures/batch1_vir_PMF.png">
+</div>
 
