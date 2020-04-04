@@ -21,11 +21,15 @@
 The adsorption free energies are estimated by taking the different in the minimum potential of mean force (W) from its bulk value.
 In the NVT ensemble the PMF is equal to the Helmholtz free energy, which we then use to approximate the Gibbs free energy (assuming incompressibility).
 
+<div><center>
 <img src="https://render.githubusercontent.com/render/math?math={G_{ads} \approx W(z)_{min}-W(z)_{bulk}}">
+</center></div>
 
 The second virial coefficient is calculated using the following equation:
 
+<div><center>
 <img src="https://render.githubusercontent.com/render/math?math={A_2 = \dfrac{2\pi}{N^2} \int_0^\infty r^2[1-exp(-\beta W(r))]dr}">
+</center></div>
 
 where W(r) is the polymer-polymer potential of mean force in the radial direction and N is the number of beads in the polymer.
 
@@ -36,13 +40,13 @@ where W(r) is the polymer-polymer potential of mean force in the radial directio
 ### adsorption free energies
 
 <div>
-  <img width = "800" src="./figures/batch0_ads_PMF.png">
+  <img width = "600" src="./figures/batch0_ads_PMF.png">
 </div>
 
 ### second virials coefficients
 
 <div>
-  <img width = "800" src="./figures/batch0_vir_PMF.png">
+  <img width = "600" src="./figures/batch0_vir_PMF.png">
 </div>
 
 ### full factorial
