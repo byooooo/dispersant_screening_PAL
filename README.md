@@ -19,9 +19,9 @@
 ## Theory
 
 The adsorption free energies are estimated by taking the different in the minimum potential of mean force (W) from its bulk value.
-In the NVT ensemble the PMF is the Helmholtz free energy, which we then use to approximate the Gibbs free energy.
+In the NVT ensemble the PMF is equal to the Helmholtz free energy, which we then use to approximate the Gibbs free energy (assume incompressibility).
 
-<img src="https://render.githubusercontent.com/render/math?math={G_ads \approx W_{min}-W_{bulk}}">
+<img src="https://render.githubusercontent.com/render/math?math={G_{ads} \approx W_{min}-W_{bulk}}">
 
 The second virial coefficient is calculated using the following equation:
 
