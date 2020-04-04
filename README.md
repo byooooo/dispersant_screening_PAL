@@ -1,7 +1,7 @@
 # dispersant_screening_PAL
 
 
-## Files
+## Data
 
 ### Calculated Results
 
@@ -30,16 +30,16 @@ The second virial coefficient is calculated using the following equation:
 where W(r) is the polymer-polymer potential of mean force in the radial direction and N is the number of beads in the polymer.
 
 
-## Adsorption Free Energies
 
-### fractional factorial
+## fractional factorial
+
+### adsorption free energies
+
 <div>
   <img width = "1000" src="./figures/batch0_ads_PMF.png">
 </div>
 
-## Second Virials Coefficients
-
-### fractional factorial
+### second virials coefficients
 
 <div>
   <img width = "1000" src="./figures/batch0_vir_PMF.png">
