@@ -1,20 +1,20 @@
 # dispersant_screening_PAL
 
-
 ## Data
+
+In folder `data`.
 
 ### Calculated Results
 
-- b0_random_deltaG.csv - data containing adsorption free energy (deltaGmin) for fractional factorial DOE random copolymers
-- b0_random_virial.csv - data containing second virial coefficient (A2_normalized) for fractional factorial DOE random copolymers
-- b1-b21_random_deltaG.csv - data containing adsorption free energy (deltaGmin) for full factorial DOE random copolymers (index reset to 0)
-- b1-b21_random_virial.csv - data containing second virial coefficient (A2_normalized) for full factorial DOE random copolymers (index reset to 0)
-
+- `b0_random_deltaG.csv` - data containing adsorption free energy (deltaGmin) for fractional factorial DOE random copolymers
+- `b0_random_virial.csv` - data containing second virial coefficient (A2_normalized) for fractional factorial DOE random copolymers
+- `b1-b21_random_deltaG.csv` - data containing adsorption free energy (deltaGmin) for full factorial DOE random copolymers (index reset to 0)
+- `b1-b21_random_virial.csv` - data containing second virial coefficient (A2_normalized) for full factorial DOE random copolymers (index reset to 0)
 
 ### Feature Data
 
-- X_frac_random.csv - Feature data for fractional factorial DOE random copolymers
-- X_full_random.csv - Feature data for full factorial DOE random copolymers
+- `X_frac_random.csv` - Feature data for fractional factorial DOE random copolymers
+- `X_full_random.csv` - Feature data for full factorial DOE random copolymers
 
 ## Theory
 
@@ -32,8 +32,6 @@ The second virial coefficient is calculated using the following equation:
 </p>
 
 where W(r) is the polymer-polymer potential of mean force in the radial direction and N is the number of beads in the polymer.
-
-
 
 ## fractional factorial
 
@@ -222,4 +220,3 @@ where W(r) is the polymer-polymer potential of mean force in the radial directio
 <div>
   <img width = "1000" src="./figures/batch21_vir_PMF.png">
 </div>
-
