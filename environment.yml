@@ -138,5 +138,7 @@ dependencies:
   - zstd=1.4.4=h4b3e974_3
   - pip:
     - gpy==1.9.9
+    - imagehash==4.1.0
     - paramz==0.9.5
+    - pywavelets==1.1.1
 
