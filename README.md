@@ -8,9 +8,11 @@
 
 -[ ] feature engineering? We could potentially also directly train something like an RNN on the SMILES sequence
 
--[ ] move code from Juptyer notebooks into package
-
 -[ ] drop the constant feature
+
+-[ ] move epsilon PAL to package (maybe even seperate from this repo) and add unit tests
+
+-[ ] feature importance
 
 ## Data
 
