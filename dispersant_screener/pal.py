@@ -9,6 +9,9 @@ PMLR 28(1):462-470, 2013. (http://proceedings.mlr.press/v28/zuluaga13.html)
 Epsilon-PAL was described in Journal of Machine Learning Research, Vol. 17, No. 104, pp. 1-32, 2016
 (http://jmlr.org/papers/v17/15-047.html)
 and introduces some epsilon parameter that allows to tradeoff accuracy and efficiency
+
+
+Many parts in this module are still relatively inefficient and could be vectorized/parallelized.
 """
 
 from __future__ import absolute_import
@@ -176,3 +179,43 @@ def _union(lows: np.array, ups: np.array, new_lows: np.array, new_ups: np.array)
     assert out_lows.shape == out_ups.shape == lows.shape
 
     return out_lows, out_ups
+
+
+def _update_sampled(mus: np.array,
+                    stds: np.array,
+                    sampled: Iterable,
+                    y_input: np.array,
+                    noisy_sample: bool = True) -> Union[np.array, np.array]:
+    """
+    For the points that we sample replace the mu with the actual (evaluated)
+    value.
+
+    The arrays are not modified in place.
+
+    Args:
+        mus (np.array): means
+        stds (np.array): standard deviations
+        sampled (Iterable): boolean lookup table. True if sampled.
+        y_input (np.array): evaluated values
+        noisy_sample (bool): if True, we will keep the standard deviation for the sampled points.
+            This is basically the assumption that we only have access to a noisy sample {default: True}
+
+    Returns:
+        Union[np.array, np.array]: means, standard deviations
+    """
+    mu_ = mus.copy()
+    std_ = stds.copy()
+
+    assert mu_.shape == std_.shape
+
+    # this is kinda inefficient, better use some kind of indexing
+    for i in range(0, len(mus)):
+        if (sampled[i] == 1):
+            mu_[i, :] = y_input[i, :]
+
+            if not noisy_sample:
+                std_[i, :] = 0
+
+    assert mu_.shape == std_.shape
+
+    return mu_, std_
