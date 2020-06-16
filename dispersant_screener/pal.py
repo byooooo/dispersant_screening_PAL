@@ -1,5 +1,15 @@
 # -*- coding: utf-8 -*-
-"""Implement the (epislon)-PAL sampling"""
+"""Implement the (epislon)-PAL sampling,
+If we refer to equations in the paper we refer to mostly to the PAL paper
+
+Marcela Zuluaga, Guillaume Sergent, Andreas Krause, Markus Püschel;
+Proceedings of the 30th International Conference on Machine Learning,
+PMLR 28(1):462-470, 2013. (http://proceedings.mlr.press/v28/zuluaga13.html)
+
+Epsilon-PAL was described in Journal of Machine Learning Research, Vol. 17, No. 104, pp. 1-32, 2016
+(http://jmlr.org/papers/v17/15-047.html)
+and introduces some epsilon parameter that allows to tradeoff accuracy and efficiency
+"""
 
 from __future__ import absolute_import
 
@@ -8,6 +18,7 @@ from typing import Iterable, Union
 
 import numpy as np
 import pygmo as pg
+from six.moves import range
 from tqdm import tqdm
 
 
@@ -50,6 +61,83 @@ def _get_gp_predictions(gps: Iterable, x_train: np.array, y_train: np.array,
     return np.hstack(mus), np.hstack(stds)
 
 
-def _get_uncertainity_region(mu: float, std: float, beta_sqrt: float):  # pylint:disable=invalid-name
+def _get_uncertainity_region(mu: float, std: float, beta_sqrt: float) -> Union[float, float]:  # pylint:disable=invalid-name
+    """
+
+    Args:
+        mu (float): mean
+        std (float): standard deviation
+        beta_sqrt (float): scaling factor
+
+    Returns:
+        Union[float, float]: lower bound, upper bound
+    """
     low_lim, high_lim = mu - beta_sqrt * std, mu + beta_sqrt * std
     return low_lim, high_lim
+
+
+def _get_uncertainity_regions(mus: np.array, stds: np.array, beta_sqrt: float) -> Union[np.array, np.array]:
+    """
+    Compute the lower and upper bound of the uncertainty region for each dimension (=target)
+
+    Args:
+        mus (np.array): means
+        stds (np.array): standard deviations
+        beta_sqrt (float): scaling factors
+
+    Returns:
+        Union[np.array, np.array]: lower bounds, upper bounds
+    """
+    low_lims, high_lims = [], []
+
+    assert mus.shape[1] >= 1
+
+    for i in range(0, mus.shape[1]):  # pylint:disable=consider-using-enumerate (I find this clearer)
+        low_lim, high_lim = _get_uncertainity_region(mus[:, i], stds[:, i], beta_sqrt)
+        low_lims.append(low_lim.reshape(-1, 1))
+        high_lims.append(high_lim.reshape(-1, 1))
+
+    assert len(low_lims) == len(high_lims)
+
+    return np.hstack(low_lims), np.hstack(high_lims)
+
+
+def _union_one_dim(lows: Iterable, ups: Iterable, new_lows: Iterable, new_ups: Iterable) -> Union[np.array, np.array]:
+    """Used to intersect the confidence regions, for eq. 6 of the PAL paper.
+    "The iterative intersection ensures that all uncertainty regions are non-increasing with t."
+
+    We do not check for the ordering in this function.
+    We really assume that the lower limits are the lower limits and the upper limits
+    are the upper limits.
+
+    Args:
+        lows (Iterable): lower bounds from previous iteration
+        ups (Iterable): upper bounds from previous iteration
+        new_lows (Iterable): lower bounds from current iteration
+        new_ups (Iterable): upper bounds from current iteration
+
+    Returns:
+        Union[np.array, np.array]: array of lower limits, array of upper limits
+    """
+
+    # ToDo: can probably be vectorized (?)
+    out_lows = []
+    out_ups = []
+    for i, low in enumerate(lows):
+        # In one dimension we can imagine the following cases where there
+        # is zero intersection
+        # 1) |--old range--|   |--new range--|, i.e., lower new limit above old upper limit
+        # 2) |--new range--|   |--old range--|, i.e., upper new limit below lower old limit
+        # 3) ||||, i.e. no uncertainity at all
+        if (new_lows[i] > ups[i]) or (new_ups[i] < low) or (low + ups[i] == 0):
+            out_lows.append(0)
+            out_ups.append(0)
+
+        # In other cases, we want to intersect the ranges, i.e.
+        # |---old range-|-|--new-range--| --> |-|
+        # i.e. we take the max of the lower limits and the min of the upper limits
+        else:
+            out_lows.append(max(low, new_lows[i]))
+            out_ups.append(min(ups[i], new_ups[i]))
+
+    return np.array(out_lows), np.array(out_ups)

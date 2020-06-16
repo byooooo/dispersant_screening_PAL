@@ -14,6 +14,8 @@
 
 - [ ] feature importance
 
+- [ ] Maybe move logging to Eliot
+
 ## Data
 
 In folder `data`.
