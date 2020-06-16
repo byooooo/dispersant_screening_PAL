@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
+"""Dispersant Screener"""
 from __future__ import absolute_import
 
-from setuptools import setup, find_packages
-import versioneer 
+from setuptools import find_packages, setup
 
+import versioneer
 
-with open("requirements.txt", "r") as fh:
-    requirements = [line.strip() for line in fh]
+with open('requirements.txt', 'r') as fh:
+    requirements = [line.strip() for line in fh]  # pylint:disable=invalid-name
 
 setup(
     name='dispersant_screener',
@@ -20,7 +21,7 @@ setup(
     extras_require={
         'testing': ['pytest', 'pytest-cov<2.6'],
         'docs': ['sphinx-rtd-theme', 'sphinxcontrib-bibtex'],
-        'pre-commit': ['pre-commit', 'yapf', 'prospector', 'pylint', 'versioneer'],
+        'pre-commit': ['pre-commit', 'yapf', 'prospector', 'pylint', 'versioneer', 'isort'],
     },
     author='Kevin M. Jablonka, Brian Yoo, Berend Smit',
     author_email='kevin.jablonka@epfl.ch, brian.yoo@basf.com',

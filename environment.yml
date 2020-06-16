@@ -155,4 +155,3 @@ dependencies:
     - imagehash==4.1.0
     - paramz==0.9.5
     - pywavelets==1.1.1
-
