@@ -20,7 +20,7 @@ setup(
     install_requires=requirements,
     extras_require={
         'testing': ['pytest', 'pytest-cov<2.6'],
-        'docs': ['sphinx-rtd-theme', 'sphinxcontrib-bibtex'],
+        'docs': ['guzzle_sphinx_theme'],
         'pre-commit': ['pre-commit', 'yapf', 'prospector', 'pylint', 'versioneer', 'isort'],
     },
     author='Kevin M. Jablonka, Brian Yoo, Berend Smit',
