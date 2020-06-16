@@ -2,17 +2,17 @@
 
 ## ToDos:
 
--[ ] better stratification
+- [ ] better stratification
 
--[ ] feature dictionary
+- [ ] feature dictionary
 
--[ ] feature engineering? We could potentially also directly train something like an RNN on the SMILES sequence
+- [ ] feature engineering? We could potentially also directly train something like an RNN on the SMILES sequence
 
--[ ] drop the constant feature
+- [ ] drop the constant feature
 
--[ ] move epsilon PAL to package (maybe even seperate from this repo) and add unit tests
+- [ ] move epsilon PAL to package (maybe even seperate from this repo) and add unit tests
 
--[ ] feature importance
+- [ ] feature importance
 
 ## Data
 
