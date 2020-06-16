@@ -56,12 +56,13 @@ repos:
       - id: isort
         name: isort
         language: system
+        exclude: versioneer.py|dispersant_screener/_version.py|^docs/
         types: [python]
         entry: isort
 
       - id: yapf
         name: yapf
-        exclude: versioneer.py|dispersant_screener/_version.py
+        exclude: versioneer.py|dispersant_screener/_version.py|^docs/
         entry: yapf
         language: system
         types: [python]
@@ -70,6 +71,6 @@ repos:
       - id: prospector
         language: system
         types: [file, python]
-        exclude: versioneer.py|dispersant_screener/_version.py
+        exclude: versioneer.py|dispersant_screener/_version.py|^docs/
         name: prospector
         entry: prospector

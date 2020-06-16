@@ -216,6 +216,6 @@ def _update_sampled(mus: np.array,
             if not noisy_sample:
                 std_[i, :] = 0
 
-    assert mu_.shape == std_.shape
+    assert mu_.shape == std_.shape == mus.shape
 
     return mu_, std_
