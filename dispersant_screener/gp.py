@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
 """
-Implementing Gaussian process. 
-Maybe play with Coregionalized kernels.
+Implementing the Gaussian Process Regression models.
 """
