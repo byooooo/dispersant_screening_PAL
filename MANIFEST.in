@@ -1,0 +1,2 @@
+include versioneer.py
+include dispersant_screener/_version.py
