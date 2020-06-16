@@ -107,8 +107,9 @@ def _union_one_dim(lows: Iterable, ups: Iterable, new_lows: Iterable, new_ups: I
     "The iterative intersection ensures that all uncertainty regions are non-increasing with t."
 
     We do not check for the ordering in this function.
-    We really assume that the lower limits are the lower limits and the upper limits
-    are the upper limits.
+    We really assume that the lower limits are the lower limits and the upper limits are the upper limits.
+
+    All arrays must have the same length.
 
     Args:
         lows (Iterable): lower bounds from previous iteration
@@ -123,6 +124,9 @@ def _union_one_dim(lows: Iterable, ups: Iterable, new_lows: Iterable, new_ups: I
     # ToDo: can probably be vectorized (?)
     out_lows = []
     out_ups = []
+
+    assert len(lows) == len(ups) == len(new_lows) == len(new_ups)
+
     for i, low in enumerate(lows):
         # In one dimension we can imagine the following cases where there
         # is zero intersection
@@ -140,4 +144,35 @@ def _union_one_dim(lows: Iterable, ups: Iterable, new_lows: Iterable, new_ups: I
             out_lows.append(max(low, new_lows[i]))
             out_ups.append(min(ups[i], new_ups[i]))
 
+    assert len(out_lows) == len(out_ups) == len(lows)
+
     return np.array(out_lows), np.array(out_ups)
+
+
+def _union(lows: np.array, ups: np.array, new_lows: np.array, new_ups: np.array) -> Union[np.array, np.array]:
+    """Performing iterative intersection (eq. 6 in PAL paper) in all dimensions.
+
+    Args:
+        lows (np.array): lower bounds from previous iteration
+        ups (np.array): upper bounds from previous iteration
+        new_lows (np.array): lower bounds from current iteration
+        new_ups (np.array): upper bounds from current iteration
+
+    Returns:
+        Union[np.array, np.array]: lower bounds, upper bounds
+    """
+    out_lows = []
+    out_ups = []
+
+    assert lows.shape == ups.shape == new_lows.shape == new_ups.shape
+
+    for i in range(0, lows.shape[1]):  # pylint:disable=consider-using-enumerate (I find this clearer)
+        low, up = _union_one_dim(lows[:, i], ups[:, i], new_lows[:, i], new_ups[:, i])  # pylint:disable=invalid-naem
+        out_lows.append(low.reshape(-1, 1))
+        out_ups.append(up.reshape(-1, 1))
+
+    out_lows, out_ups = np.hstack(out_lows), np.hstack(out_ups)
+
+    assert out_lows.shape == out_ups.shape == lows.shape
+
+    return out_lows, out_ups
