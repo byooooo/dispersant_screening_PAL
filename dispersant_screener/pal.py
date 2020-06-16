@@ -50,6 +50,6 @@ def _get_gp_predictions(gps: Iterable, x_train: np.array, y_train: np.array,
     return np.hstack(mus), np.hstack(stds)
 
 
-def _get_uncertainity_region(mu: float, std: float, beta_sqrt: float): # pylint:disable=invalid-name
+def _get_uncertainity_region(mu: float, std: float, beta_sqrt: float):  # pylint:disable=invalid-name
     low_lim, high_lim = mu - beta_sqrt * std, mu + beta_sqrt * std
     return low_lim, high_lim

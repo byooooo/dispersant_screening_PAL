@@ -16,7 +16,7 @@ setup(
     packages=find_packages(),
     url='',
     license='MIT',
-    python_requires='>=3.7',
+    python_requires='==3.7',
     install_requires=requirements,
     extras_require={
         'testing': ['pytest', 'pytest-cov<2.6'],
@@ -27,8 +27,6 @@ setup(
     author_email='kevin.jablonka@epfl.ch, brian.yoo@basf.com',
     classifiers=[
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Development Status :: 1 - Beta',
         'Intended Audience :: Science/Research',
