@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Configuration file for the Sphinx documentation builder.
 #
 # This file only contains a selection of the most common options. For a full
@@ -20,8 +21,8 @@ from dispersant_screener._version import get_versions
 # -- Project information -----------------------------------------------------
 
 project = 'dispersant_screener'
-copyright = '2020, Brian Yoo, Kevin Jablonka'
-author = 'Brian Yoo, Kevin Jablonka'
+copyright = '2020, Brian Yoo, Kevin Jablonka, Berend Smit'
+author = 'Brian Yoo, Kevin Jablonka, Berend Smit'
 
 # The full version, including alpha/beta/rc tags
 release = get_versions()['version']

@@ -10,8 +10,11 @@ Epsilon-PAL was described in Journal of Machine Learning Research, Vol. 17, No. 
 (http://jmlr.org/papers/v17/15-047.html)
 and introduces some epsilon parameter that allows to tradeoff accuracy and efficiency
 
+To make the code simpler, I'll assume that greater is better. If this is not the case, the target needs
+be be transformed (e.g., multiplied with minus one).
 
 Many parts in this module are still relatively inefficient and could be vectorized/parallelized.
+Also, many parts use lookup tables that are not super efficient.
 """
 
 from __future__ import absolute_import
@@ -170,7 +173,7 @@ def _union(lows: np.array, ups: np.array, new_lows: np.array, new_ups: np.array)
     assert lows.shape == ups.shape == new_lows.shape == new_ups.shape
 
     for i in range(0, lows.shape[1]):  # pylint:disable=consider-using-enumerate (I find this clearer)
-        low, up = _union_one_dim(lows[:, i], ups[:, i], new_lows[:, i], new_ups[:, i])  # pylint:disable=invalid-naem
+        low, up = _union_one_dim(lows[:, i], ups[:, i], new_lows[:, i], new_ups[:, i])  # pylint:disable=invalid-name
         out_lows.append(low.reshape(-1, 1))
         out_ups.append(up.reshape(-1, 1))
 
@@ -210,7 +213,7 @@ def _update_sampled(mus: np.array,
 
     # this is kinda inefficient, better use some kind of indexing
     for i in range(0, len(mus)):
-        if (sampled[i] == 1):
+        if sampled[i] == 1:
             mu_[i, :] = y_input[i, :]
 
             if not noisy_sample:
@@ -219,3 +222,118 @@ def _update_sampled(mus: np.array,
     assert mu_.shape == std_.shape == mus.shape
 
     return mu_, std_
+
+
+def _pareto_classify(  # pylint:disable=too-many-arguments
+        pareto_optimal_0: list, not_pareto_optimal_0: list, unclassified_0: list, rectangle_lows: np.array,
+        rectangle_ups: np.array, x_input: np.array, epsilon: float) -> Union[list, list, list]:
+    """Performs the classification part of the algorithm
+    (p. 4 of the PAL paper, see algorithm 1/2 of the epsilon-PAL paper)
+
+    One core concept is that once a point is classified it does no longer change the class.
+
+    Args:
+        pareto_optimal_0 (list): binary encoded list of points classified as Pareto optimal
+        not_pareto_optimal_0 (list): binary encoded list of points classified as non-Pareto optimal
+        unclassified_0 (list): binary encoded list of unclassified points
+        rectangle_lows (np.array): lower uncertainity boundaries
+        rectangle_ups (np.array): upper uncertainity boundaries
+        x_input (np.array): feature matrix
+        epsilon (float): granularity parameter
+
+    Returns:
+        Union[list, list, list]: binary encoded list of Pareto optimal, non-Pareto optimal and unclassified points
+    """
+
+    pareto_optimal_t = pareto_optimal_0.copy()
+    not_pareto_optimal_t = not_pareto_optimal_0.copy()
+    unclassified_t = unclassified_0.copy()
+
+    # loop over samples
+    # this is an ugly nested loop that likely can be optimized, but for not it is better that it is readable and works.
+    # first check the pareto pessimistic front of pareto_optimal_t
+    for i in range(0, len(x_input)):
+        # we only care about points that are unclassified. Once a point is classified, it does not change class.
+        # discard points x in Ut \ ppess(Pt ∪ Ut) that are ε-dominated by some point x′ in ppess(Pt ∪ Ut), i.e.,
+        # where max(Rt(x)) ≼ε min(Rt(x′)). (See Alg. 2 for m = 2)
+        # the paper proposes a more efficient implementation
+        if unclassified_t[i] == 1:
+            for j in range(0, len(x_input)):
+                if (i != j) and ((pareto_optimal_0[j] == 1) or (unclassified_t[j] == 1)):
+                    # epsilon dominated by j
+                    if (rectangle_lows[j] * (1 + epsilon) >= rectangle_ups[i]).all():
+                        not_pareto_optimal_t[i] = 1
+                        unclassified_t[i] = 0
+                        break
+
+    # now, update the pareto set
+    # if there is no other point x' such that max(Rt(x')) >= min(Rt(x))
+    # move x to Pareto
+    for i in range(0, len(x_input)):
+        # again, we only care about unclassified points
+        if unclassified_t[i] == 1:
+            pareto = True
+            for j in range(0, len(x_input)):
+                if (i != j) and ((pareto_optimal_0[j] == 1) or (unclassified_t[j] == 1)):
+                    # i epsilon dominates
+                    if (rectangle_ups[j] >= rectangle_lows[i] * (1 + epsilon)).all():
+                        pareto = False
+                        break
+            if pareto:
+                pareto_optimal_t[i] = 1
+                unclassified_t[i] = 0
+
+    return pareto_optimal_t, not_pareto_optimal_t, unclassified_t
+
+
+def _sample(  # pylint:disable=too-many-arguments
+        rectangle_lows: np.array, rectangle_ups: np.array, pareto_optimal_t: Iterable, unclassified_t: Iterable,
+        sampled: Iterable, x_input: np.array, y_input: np.array, x_train: np.array,
+        y_train: np.array) -> Union[np.array, np.array, Iterable]:
+    """Perform sampling based on maximal diagonal of uncertainty.
+
+    Args:
+        rectangle_lows (np.array): lower limits of uncertainity
+        rectangle_ups (np.array): upper limits of uncertainity
+        pareto_optimal_t (Iterable): binary encoded list of points classified as Pareto optimal
+        unclassified_t (Iterable):  binary encoded list of unclassified points
+        sampled (Iterable):  binary encoded list of points that were sampled
+        x_input (np.array): feature matrix of sampling space
+        y_input (np.array): matrix of labels of sampling space
+        x_train (np.array): feature matrix of training set
+        y_train (np.array): labels of training set
+
+    Returns:
+        Union[np.array, np.array, Iterable]: updated feature matrix of training set,
+            updated label matrix of training set, updated binary encoded list of sampled points
+    """
+
+    max_uncertainity = 0
+    maxid = -1
+
+    # not needed but can be safer if not used as expected
+    x_train_ = sampled.copy()
+    x_train_ = x_train.copy()
+    y_train_ = y_train.copy()
+
+    for i in range(0, len(x_input)):
+        # Among the points x ∈ Pt ∪ Ut, the one with the largest wt(x) is chosen as the next sample xt to be evaluated.
+        # Intuitively, this rule biases the sampling towards exploring,
+        # and thus improving the model for, the points most likely to be Pareto-optimal.
+        if ((unclassified_t[i] == 1) or (pareto_optimal_t[i] == 1)) and not sampled[i] == 1:
+            # weight is the length of the diagonal of the uncertainity region
+            uncertainity = np.linalg.norm(rectangle_ups[i, :] - rectangle_lows[i, :])
+            if maxid == -1:
+                max_uncertainity = uncertainity
+                maxid = i
+            # the point with the largest weight is chosen as the next sample
+            elif uncertainity > max_uncertainity:
+                max_uncertainity = uncertainity
+                maxid = i
+
+    x_train_ = np.insert(x_train_, x_train_.shape[0], x_input[maxid], axis=0)
+    y_train_ = np.insert(y_train_, y_train_.shape[0], y_input[maxid], axis=0)
+
+    x_train_[maxid] = 1
+
+    return x_train_, y_train_, x_train_
