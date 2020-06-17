@@ -1,5 +1,7 @@
 # dispersant_screening_PAL
 
+![Python package](https://github.com/byooooo/dispersant_screening_PAL/workflows/Python%20package/badge.svg)
+
 ## ToDos:
 
 - [ ] better stratification
