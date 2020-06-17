@@ -29,8 +29,19 @@ from tqdm import tqdm
 
 
 def get_hypervolume(pareto_front: np.array, reference_vector: np.array) -> float:
-    """Compute the hypervolume indicator of a Pareto front"""
-    hyp = pg.hypervolume(pareto_front)
+    """Compute the hypervolume indicator of a Pareto front
+    I multiply it with minus one as we assume that we want to maximize all objective and then we calculate the area
+
+    f1
+    |----|
+    |     -|
+    |       -|
+    ------------ f2
+
+    But pygmo assumes that the reference vector is larger than all the points in the Pareto front.
+    For this reason, we then flip all the signs.
+    """
+    hyp = pg.hypervolume(pareto_front * (-1))
     volume = hyp.compute(reference_vector)  # uses 'auto' algorithm
     return volume
 
