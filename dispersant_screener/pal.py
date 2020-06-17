@@ -27,12 +27,19 @@ import pygmo as pg
 from six.moves import range
 from tqdm import tqdm
 
+logger = logging.getLogger()  # pylint:disable=invalid-name
+handler = logging.StreamHandler()  # pylint:disable=invalid-name
+formatter = logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(message)s')  # pylint:disable=invalid-name
+handler.setFormatter(formatter)
+logger.addHandler(handler)
+
 
 def get_hypervolume(pareto_front: np.array, reference_vector: np.array) -> float:
     """Compute the hypervolume indicator of a Pareto front
     I multiply it with minus one as we assume that we want to maximize all objective and then we calculate the area
 
     f1
+    |
     |----|
     |     -|
     |       -|
@@ -150,6 +157,7 @@ def _union_one_dim(lows: Sequence, ups: Sequence, new_lows: Sequence, new_ups: S
         # 1) |--old range--|   |--new range--|, i.e., lower new limit above old upper limit
         # 2) |--new range--|   |--old range--|, i.e., upper new limit below lower old limit
         # 3) ||||, i.e. no uncertainity at all
+        # BUT this can lead to stupid behavior if the model is really wrong.
         if (new_lows[i] > ups[i]) or (new_ups[i] < low) or (low + ups[i] == 0):
             out_lows.append(0)
             out_ups.append(0)
@@ -163,6 +171,7 @@ def _union_one_dim(lows: Sequence, ups: Sequence, new_lows: Sequence, new_ups: S
 
     assert len(out_lows) == len(out_ups) == len(lows)
 
+    logger.debug('first low: {}, first up: {}'.format(out_lows[0], out_ups[0]))
     return np.array(out_lows), np.array(out_ups)
 
 
@@ -291,6 +300,7 @@ def _pareto_classify(  # pylint:disable=too-many-arguments
                         pareto = False
                         break
             if pareto:
+                logger.debug('Upper limit Pareto: {}'.format(rectangle_ups[i]))
                 pareto_optimal_t[i] = 1
                 unclassified_t[i] = 0
 
@@ -372,9 +382,11 @@ def pal(  # pylint: disable=dangerous-default-value, too-many-arguments, too-man
             We require the GPRs to have a sklearn-like API with .fit(X,y)
             and .predict(x, return_std=True) methods
         x_train (np.array): feature matrix for training data
-        y_train (np.array): label matrix for training data
+        y_train (np.array): label matrix for training data (we assume this to be a two-dimensional array,
+            use .reshape(-1,1) if you need to run on one target (for testing))
         x_input (np.array): feature matrix for sample space data
-        y_input (np.array): label matrix for sample space data
+        y_input (np.array): label matrix for sample space data (we assume this to be a two-dimensional array,
+            use .reshape(-1,1) if you need to run on one target (for testing))
         hv_reference (Sequence, optional): Reference vector for calculation of the hypervolume indicator.
             Defaults to [30, 30].
         delta (float, optional): Hyperparameter, equivalent to the confidence level. Defaults to 0.05.
@@ -405,12 +417,6 @@ def pal(  # pylint: disable=dangerous-default-value, too-many-arguments, too-man
     sampled = [0] * len(x_input)
 
     iteration = 0
-
-    logger = logging.getLogger()
-    handler = logging.StreamHandler()
-    formatter = logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(message)s')
-    handler.setFormatter(formatter)
-    logger.addHandler(handler)
 
     if verbosity == 'info':
         logger.setLevel(logging.INFO)
@@ -476,7 +482,7 @@ def pal(  # pylint: disable=dangerous-default-value, too-many-arguments, too-man
 
         optimal_indices = np.where(np.array(pareto_optimal_0) == 1)[0]
 
-        if len(optimal_indices) > 0:
+        if (len(optimal_indices) > 0) and (y_input.shape[1] > 1):
             hypervolume = get_hypervolume(y_input[optimal_indices], hv_reference)
         else:
             hypervolume = np.nan
