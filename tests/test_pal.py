@@ -75,3 +75,14 @@ def test__union_one_dim():
     low, up = _union_one_dim([0, 0, 0], [1, 1, 1], [0.5, 0.5, 0.5], [3, 3, 3])  # pylint:disable=invalid-name
     assert (low == np.array([0.5, 0.5, 0.5])).all()
     assert (up == np.array([1, 1, 1])).all()
+
+
+def test_pal():
+    """
+    It's a bit tricky to test this one but we can do two things easily.
+    (1) If we copy the same target multiple times, we should only find one
+    Pareto-optimal point.
+    (2) We can check how good the hypervolume is.
+    """
+
+    ...
