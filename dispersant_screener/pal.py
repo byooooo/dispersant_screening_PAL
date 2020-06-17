@@ -25,6 +25,7 @@ from typing import List, Sequence, Tuple, Union
 import numpy as np
 import pygmo as pg
 from six.moves import range
+from sklearn.metrics import mean_absolute_error, r2_score
 from tqdm import tqdm
 
 logger = logging.getLogger()  # pylint:disable=invalid-name
@@ -79,6 +80,18 @@ def _get_gp_predictions(gps: Sequence, x_train: np.array, y_train: np.array,
     for i, gp in enumerate(gps):  # pylint:disable=invalid-name
         gp.fit(x_train, y_train[:, i])
         mu, std = gp.predict(x_input, return_std=True)  # pylint:disable=invalid-name
+        gp_train_predict = gp.predict(x_train)
+
+        # ToDo: sometimes, we should also get the crossvalidated error
+        # ToDo: for effiency reasons, we should not start the models from scratch
+        r2 = r2_score(y_train[:, i], gp_train_predict)  # pylint:disable=invalid-name
+        mae = mean_absolute_error(y_train[:, i], gp_train_predict)
+
+        logger.debug('MAE (train): {:.2f}, r2 (train): {:.2f}'.format(mae, r2))
+
+        if r2 < 0.3:
+            logger.warning('Model is not predictive!')
+
         mus.append(mu.reshape(-1, 1))
         stds.append(std.reshape(-1, 1))
 

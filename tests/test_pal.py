@@ -5,7 +5,7 @@ from __future__ import absolute_import, print_function
 import numpy as np
 import pytest
 from sklearn.gaussian_process import GaussianProcessRegressor
-from sklearn.gaussian_process.kernels import RBF, RationalQuadratic
+from sklearn.gaussian_process.kernels import RBF, DotProduct, RationalQuadratic
 from sklearn.model_selection import train_test_split
 
 from dispersant_screener.pal import (_get_gp_predictions, _get_uncertainity_region, _union_one_dim, pal)
@@ -92,8 +92,8 @@ def test_pal(make_one_dim_test):
 
     X, y = make_one_dim_test  # pylint:disable=invalid-name
     y = y.reshape(-1, 1)  # pylint:disable=invalid-name
-    gpr = GaussianProcessRegressor(kernel=RationalQuadratic(), n_restarts_optimizer=10)
-    X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.4)  # pylint:disable=invalid-name
+    gpr = GaussianProcessRegressor(kernel=RationalQuadratic() + DotProduct(), n_restarts_optimizer=10)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.2)  # pylint:disable=invalid-name
     pareto_optimal, _ = pal([gpr], X_train, y_train, X_test, y_test, hv_reference=[10])
 
     optimal = np.where(np.array(pareto_optimal) == 1)[0]
