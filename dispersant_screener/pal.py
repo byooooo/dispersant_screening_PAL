@@ -55,7 +55,7 @@ def get_hypervolume(pareto_front: np.array, reference_vector: np.array) -> float
 
 
 def _get_gp_predictions(gps: Sequence, x_train: np.array, y_train: np.array,
-                        x_input: np.array) -> Union[np.array, np.array]:
+                        x_input: np.array) -> Union[np.array, np.array, List]:
     """Train one GPR per target using x_train and predict on x_input
 
     Args:
@@ -69,11 +69,13 @@ def _get_gp_predictions(gps: Sequence, x_train: np.array, y_train: np.array,
             Shape (number points, number features)
 
     Returns:
-        Union[np.array, np.array]: Means and standard deviations in arrays of shape
-            (len(x_input), number targets)
+        Union[np.array, np.array, list]: Means and standard deviations in arrays of shape
+            (len(x_input), number targets), list of trained  models
     """
     mus = []
     stds = []
+
+    gps_trained = []
 
     # train one GP per target
     # ToDo: one can potentially parallelize this part
@@ -95,7 +97,9 @@ def _get_gp_predictions(gps: Sequence, x_train: np.array, y_train: np.array,
         mus.append(mu.reshape(-1, 1))
         stds.append(std.reshape(-1, 1))
 
-    return np.hstack(mus), np.hstack(stds)
+        gps_trained.append(gp)
+
+    return np.hstack(mus), np.hstack(stds), gps_trained
 
 
 def _get_uncertainity_region(mu: np.array, std: np.array, beta_sqrt: float) -> Tuple[np.array, np.array]:  # pylint:disable=invalid-name
@@ -386,7 +390,7 @@ def pal(  # pylint: disable=dangerous-default-value, too-many-arguments, too-man
     iterations: int = 500,
     verbosity: str = 'debug',
     batch_size: int = 1,
-) -> Tuple[list, list]:
+) -> Tuple[list, list, list]:
     """Orchestrates the PAL algorithm
 
 
@@ -412,8 +416,8 @@ def pal(  # pylint: disable=dangerous-default-value, too-many-arguments, too-man
             in each iteration. The original algorithm does not consider batching. Defaults to 1 (no batching).
 
     Returns:
-        Tuple[list, list]: binary encoded list of Pareto optimal points found in x_input,
-            history of hypervolumes
+        Tuple[list, list, list]: binary encoded list of Pareto optimal points found in x_input,
+            history of hypervolumes, list of trained models
     """
     # x_input is the E set in the PAL paper
     # the models for now assume the sklearn API, i.e., there should be a fit function
@@ -451,7 +455,7 @@ def pal(  # pylint: disable=dangerous-default-value, too-many-arguments, too-man
 
         # STEP 1: modeling (train and predict using GPR, one GP per target)
         logger.debug('Starting modeling step, fitting the GPs')
-        mus, stds = _get_gp_predictions(gps, x_train, y_train, x_input)
+        mus, stds, gps = _get_gp_predictions(gps, x_train, y_train, x_input)
 
         # update scaling parameter β
         # which is achieved by choosing βt = 2 log(n|E|π2t2/(6δ)).
@@ -511,4 +515,4 @@ def pal(  # pylint: disable=dangerous-default-value, too-many-arguments, too-man
 
     pbar.close()
 
-    return pareto_optimal_t, hypervolumes
+    return pareto_optimal_t, hypervolumes, gps
