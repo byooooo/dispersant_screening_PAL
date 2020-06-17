@@ -26,8 +26,9 @@ def test__get_gp_predictions(make_random_dataset):
 
     gprs = [gp0, gp1, gp2]
 
-    mu, std = _get_gp_predictions(gprs, X_train, y_train, X_input)  # # pylint:disable=invalid-name
+    mu, std, gps = _get_gp_predictions(gprs, X_train, y_train, X_input)  # # pylint:disable=invalid-name
 
+    assert len(gps) == len(gprs)
     assert mu.shape == y_input.shape
     assert std.shape == y_input.shape
 
@@ -94,11 +95,12 @@ def test_pal(make_one_dim_test):
     y = y.reshape(-1, 1)  # pylint:disable=invalid-name
     gpr = GaussianProcessRegressor(kernel=RationalQuadratic() + DotProduct(), n_restarts_optimizer=10)
     X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.2)  # pylint:disable=invalid-name
-    pareto_optimal, _ = pal([gpr], X_train, y_train, X_test, y_test, hv_reference=[10])
+    pareto_optimal, _, gps = pal([gpr], X_train, y_train, X_test, y_test, hv_reference=[10])
 
     optimal = np.where(np.array(pareto_optimal) == 1)[0]
 
     # for one target there should be only one Pareto optimal point
+    assert len(gps) == 1
     assert len(optimal) == 1
 
     optimum = np.max(y_test)
