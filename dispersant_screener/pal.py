@@ -20,7 +20,7 @@ Also, many parts use lookup tables that are not super efficient.
 from __future__ import absolute_import
 
 import logging
-from typing import Iterable, Union
+from typing import List, Sequence, Tuple, Union
 
 import numpy as np
 import pygmo as pg
@@ -35,12 +35,12 @@ def get_hypervolume(pareto_front: np.array, reference_vector: np.array) -> float
     return volume
 
 
-def _get_gp_predictions(gps: Iterable, x_train: np.array, y_train: np.array,
+def _get_gp_predictions(gps: Sequence, x_train: np.array, y_train: np.array,
                         x_input: np.array) -> Union[np.array, np.array]:
     """Train one GPR per target using x_train and predict on x_input
 
     Args:
-        gps (Iterable): Contains the GPR models.
+        gps (Sequence): Contains the GPR models.
             We require the GPRs to have a sklearn-like API with .fit(X,y)
             and .predict(x, return_std=True) methods
         x_train (np.array): Feature matrix. Must be already standardized.
@@ -67,7 +67,7 @@ def _get_gp_predictions(gps: Iterable, x_train: np.array, y_train: np.array,
     return np.hstack(mus), np.hstack(stds)
 
 
-def _get_uncertainity_region(mu: float, std: float, beta_sqrt: float) -> Union[float, float]:  # pylint:disable=invalid-name
+def _get_uncertainity_region(mu: np.array, std: np.array, beta_sqrt: float) -> Tuple[np.array, np.array]:  # pylint:disable=invalid-name
     """
 
     Args:
@@ -76,7 +76,7 @@ def _get_uncertainity_region(mu: float, std: float, beta_sqrt: float) -> Union[f
         beta_sqrt (float): scaling factor
 
     Returns:
-        Union[float, float]: lower bound, upper bound
+        Tuple[float, float]: lower bound, upper bound
     """
     low_lim, high_lim = mu - beta_sqrt * std, mu + beta_sqrt * std
     return low_lim, high_lim
@@ -108,7 +108,7 @@ def _get_uncertainity_regions(mus: np.array, stds: np.array, beta_sqrt: float) -
     return np.hstack(low_lims), np.hstack(high_lims)
 
 
-def _union_one_dim(lows: Iterable, ups: Iterable, new_lows: Iterable, new_ups: Iterable) -> Union[np.array, np.array]:
+def _union_one_dim(lows: Sequence, ups: Sequence, new_lows: Sequence, new_ups: Sequence) -> Tuple[np.array, np.array]:
     """Used to intersect the confidence regions, for eq. 6 of the PAL paper.
     "The iterative intersection ensures that all uncertainty regions are non-increasing with t."
 
@@ -118,13 +118,13 @@ def _union_one_dim(lows: Iterable, ups: Iterable, new_lows: Iterable, new_ups: I
     All arrays must have the same length.
 
     Args:
-        lows (Iterable): lower bounds from previous iteration
-        ups (Iterable): upper bounds from previous iteration
-        new_lows (Iterable): lower bounds from current iteration
-        new_ups (Iterable): upper bounds from current iteration
+        lows (Sequence): lower bounds from previous iteration
+        ups (Sequence): upper bounds from previous iteration
+        new_lows (Sequence): lower bounds from current iteration
+        new_ups (Sequence): upper bounds from current iteration
 
     Returns:
-        Union[np.array, np.array]: array of lower limits, array of upper limits
+        Tuple[np.array, np.array]: array of lower limits, array of upper limits
     """
 
     # ToDo: can probably be vectorized (?)
@@ -177,16 +177,16 @@ def _union(lows: np.array, ups: np.array, new_lows: np.array, new_ups: np.array)
         out_lows.append(low.reshape(-1, 1))
         out_ups.append(up.reshape(-1, 1))
 
-    out_lows, out_ups = np.hstack(out_lows), np.hstack(out_ups)
+    out_lows_array, out_ups_array = np.hstack(out_lows), np.hstack(out_ups)
 
-    assert out_lows.shape == out_ups.shape == lows.shape
+    assert out_lows_array.shape == out_ups_array.shape == lows.shape
 
-    return out_lows, out_ups
+    return out_lows_array, out_ups_array
 
 
 def _update_sampled(mus: np.array,
                     stds: np.array,
-                    sampled: Iterable,
+                    sampled: Sequence,
                     y_input: np.array,
                     noisy_sample: bool = True) -> Union[np.array, np.array]:
     """
@@ -198,7 +198,7 @@ def _update_sampled(mus: np.array,
     Args:
         mus (np.array): means
         stds (np.array): standard deviations
-        sampled (Iterable): boolean lookup table. True if sampled.
+        sampled (Sequence): boolean lookup table. True if sampled.
         y_input (np.array): evaluated values
         noisy_sample (bool): if True, we will keep the standard deviation for the sampled points.
             This is basically the assumption that we only have access to a noisy sample {default: True}
@@ -226,7 +226,7 @@ def _update_sampled(mus: np.array,
 
 def _pareto_classify(  # pylint:disable=too-many-arguments
         pareto_optimal_0: list, not_pareto_optimal_0: list, unclassified_0: list, rectangle_lows: np.array,
-        rectangle_ups: np.array, x_input: np.array, epsilon: float) -> Union[list, list, list]:
+        rectangle_ups: np.array, x_input: np.array, epsilon: float) -> Tuple[list, list, list]:
     """Performs the classification part of the algorithm
     (p. 4 of the PAL paper, see algorithm 1/2 of the epsilon-PAL paper)
 
@@ -242,7 +242,7 @@ def _pareto_classify(  # pylint:disable=too-many-arguments
         epsilon (float): granularity parameter
 
     Returns:
-        Union[list, list, list]: binary encoded list of Pareto optimal, non-Pareto optimal and unclassified points
+        Tuple[list, list, list]: binary encoded list of Pareto optimal, non-Pareto optimal and unclassified points
     """
 
     pareto_optimal_t = pareto_optimal_0.copy()
@@ -287,24 +287,24 @@ def _pareto_classify(  # pylint:disable=too-many-arguments
 
 
 def _sample(  # pylint:disable=too-many-arguments
-        rectangle_lows: np.array, rectangle_ups: np.array, pareto_optimal_t: Iterable, unclassified_t: Iterable,
-        sampled: Iterable, x_input: np.array, y_input: np.array, x_train: np.array,
-        y_train: np.array) -> Union[np.array, np.array, Iterable]:
+        rectangle_lows: np.array, rectangle_ups: np.array, pareto_optimal_t: Sequence, unclassified_t: Sequence,
+        sampled: List, x_input: np.array, y_input: np.array, x_train: np.array,
+        y_train: np.array) -> Tuple[np.array, np.array, List]:
     """Perform sampling based on maximal diagonal of uncertainty.
 
     Args:
         rectangle_lows (np.array): lower limits of uncertainity
         rectangle_ups (np.array): upper limits of uncertainity
-        pareto_optimal_t (Iterable): binary encoded list of points classified as Pareto optimal
-        unclassified_t (Iterable):  binary encoded list of unclassified points
-        sampled (Iterable):  binary encoded list of points that were sampled
+        pareto_optimal_t (Sequence): binary encoded list of points classified as Pareto optimal
+        unclassified_t (Sequence):  binary encoded list of unclassified points
+        sampled (List):  binary encoded list of points that were sampled
         x_input (np.array): feature matrix of sampling space
         y_input (np.array): matrix of labels of sampling space
         x_train (np.array): feature matrix of training set
         y_train (np.array): labels of training set
 
     Returns:
-        Union[np.array, np.array, Iterable]: updated feature matrix of training set,
+        Tuple[np.array, np.array, Sequence]: updated feature matrix of training set,
             updated label matrix of training set, updated binary encoded list of sampled points
     """
 
@@ -312,7 +312,7 @@ def _sample(  # pylint:disable=too-many-arguments
     maxid = -1
 
     # not needed but can be safer if not used as expected
-    x_train_ = sampled.copy()
+    sampled_ = sampled.copy()
     x_train_ = x_train.copy()
     y_train_ = y_train.copy()
 
@@ -334,6 +334,151 @@ def _sample(  # pylint:disable=too-many-arguments
     x_train_ = np.insert(x_train_, x_train_.shape[0], x_input[maxid], axis=0)
     y_train_ = np.insert(y_train_, y_train_.shape[0], y_input[maxid], axis=0)
 
-    x_train_[maxid] = 1
+    sampled_[maxid] = 1
 
-    return x_train_, y_train_, x_train_
+    return x_train_, y_train_, sampled_
+
+
+# ToDo: clean up this function, move logic in seperate functions
+def pal(  # pylint: disable=dangerous-default-value, too-many-arguments, too-many-locals, too-many-statements
+    gps: list,
+    x_train: np.array,
+    y_train: np.array,
+    x_input: np.array,
+    y_input: np.array,
+    hv_reference: Sequence = [30, 30],
+    delta: float = 0.05,
+    epsilon: float = 0.05,
+    iterations: int = 500,
+    verbosity: str = 'debug',
+    batch_size: int = 1,
+) -> Tuple[list, list]:
+    """Orchestrates the PAL algorithm
+
+
+    Args:
+        gps (list):  Contains the GPR models.
+            We require the GPRs to have a sklearn-like API with .fit(X,y)
+            and .predict(x, return_std=True) methods
+        x_train (np.array): feature matrix for training data
+        y_train (np.array): label matrix for training data
+        x_input (np.array): feature matrix for sample space data
+        y_input (np.array): label matrix for sample space data
+        hv_reference (Sequence, optional): Reference vector for calculation of the hypervolume indicator.
+            Defaults to [30, 30].
+        delta (float, optional): Hyperparameter, equivalent to the confidence level. Defaults to 0.05.
+        epsilon (float, optional): Percentage tolerance for the Pareto front we find with this algorithm.
+            Defaults to 0.05.
+        iterations (int, optional): Maximum number of iterations. Defaults to 500.
+        verbosity (str, optional): Log levels. Implemented choices 'debug', 'info', 'warning'.
+            Defaults to 'debug'.
+        batch_size (int, optional): Experimental setting for the number of materials that are sampled
+            in each iteration. The original algorithm does not consider batching. Defaults to 1 (no batching).
+
+    Returns:
+        Tuple[list, list]: binary encoded list of Pareto optimal points found in x_input,
+            history of hypervolumes
+    """
+    # x_input is the E set in the PAL paper
+    # the models for now assume the sklearn API, i.e., there should be a fit function
+    assert y_train.shape[1] == len(hv_reference)
+
+    hypervolumes = []
+
+    # initalize binary list to keep track of the different sets
+    # in the beginning, nothing is selected = everything is unclassified
+    # ToDo: move away from these lookup tables
+    pareto_optimal_0 = [0] * len(x_input)
+    not_pareto_optimal_0 = [0] * len(x_input)
+    unclassified_0 = [1] * len(x_input)
+    sampled = [0] * len(x_input)
+
+    iteration = 0
+
+    logger = logging.getLogger()
+    handler = logging.StreamHandler()
+    formatter = logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(message)s')
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+
+    if verbosity == 'info':
+        logger.setLevel(logging.INFO)
+    elif verbosity == 'debug':
+        logger.setLevel(logging.DEBUG)
+    elif verbosity == 'warning':
+        logger.setLevel(logging.WARNING)
+
+    logger.info('Starting now the PAL loop')
+    logger.debug('Will use the following settings')
+    logger.debug('epsilon: {}, delta: {}, iterations: {}'.format(epsilon, delta, iterations))
+    logger.debug('x_train shape: {}, y_train shape: {}'.format(x_train.shape, y_train.shape))
+
+    # stop when all points are classified or we reached the maximum iteration
+    pbar = tqdm(total=iterations)
+    while (np.sum(unclassified_0) > 0) and (iteration <= iterations):
+        iteration += 1
+        logger.debug('Starting iteration {}'.format(iteration))
+
+        # STEP 1: modeling (train and predict using GPR, one GP per target)
+        logger.debug('Starting modeling step, fitting the GPs')
+        mus, stds = _get_gp_predictions(gps, x_train, y_train, x_input)
+
+        # update scaling parameter β
+        # which is achieved by choosing βt = 2 log(n|E|π2t2/(6δ)).
+        # n: number of objectives (y_input.shape[1])
+        beta = 2 * np.log(y_input.shape[1] * len(x_input) * np.square(np.pi) * np.square(iteration) / (6 * delta))
+        logger.debug('Scaling parameter beta at the current iteration is {}'.format(beta))
+
+        logger.debug('mean array shape: {}, std array shape: {}'.format(mus.shape, stds.shape))
+
+        # if point is sampled we know the mu and have no epistemic uncertainity
+        mus, stds = _update_sampled(mus, stds, sampled, y_input)
+
+        logger.debug('mean array shape: {}, std array shape: {}'.format(mus.shape, stds.shape))
+
+        # get the uncertainity rectangles, sqrt only once here for efficiency
+        lows, ups = _get_uncertainity_regions(mus, stds, np.sqrt(beta))
+
+        logger.debug('lows shape {}, ups shape {}'.format(lows.shape, ups.shape))
+
+        if iteration == 1:
+            # initialization
+            rectangle_lows, rectangle_ups = lows, ups
+        else:
+            rectangle_lows, rectangle_ups = _union(rectangle_lows, rectangle_ups, lows, ups)
+
+        logger.debug('rectangle lows shape {}, rectangle ups shape {}'.format(rectangle_lows.shape,
+                                                                              rectangle_ups.shape))
+        # pareto classification
+        # update lists
+        pareto_optimal_t, not_pareto_optimal_t, unclassified_t = _pareto_classify(pareto_optimal_0,
+                                                                                  not_pareto_optimal_0, unclassified_0,
+                                                                                  rectangle_lows, rectangle_ups,
+                                                                                  x_input, epsilon)
+
+        # sampling from x_input
+        for _ in range(batch_size):
+            x_train, y_train, sampled = _sample(rectangle_lows, rectangle_ups, pareto_optimal_t, unclassified_t,
+                                                sampled, x_input, y_input, x_train, y_train)
+
+        pareto_optimal_0, not_pareto_optimal_0, unclassified_0 = pareto_optimal_t, not_pareto_optimal_t, unclassified_t
+
+        optimal_indices = np.where(np.array(pareto_optimal_0) == 1)[0]
+
+        if len(optimal_indices) > 0:
+            hypervolume = get_hypervolume(y_input[optimal_indices], hv_reference)
+        else:
+            hypervolume = np.nan
+
+        logger.info('Iteration {} | Pareto optimal {}, not Pareto optimal {}, unclassified {}, hypervolume: {}'.format(
+            iteration,
+            np.array(pareto_optimal_0).sum(),
+            np.array(not_pareto_optimal_0).sum(),
+            np.array(unclassified_0).sum(), hypervolume))
+
+        hypervolumes.append(hypervolume)
+        pbar.update(1)
+
+    pbar.close()
+
+    return pareto_optimal_t, hypervolumes
