@@ -12,8 +12,6 @@
 
 - [ ] drop the constant feature
 
-- [ ] move epsilon PAL to package (maybe even seperate from this repo) and add unit tests
-
 - [ ] feature importance
 
 - [ ] Maybe move logging to Eliot
