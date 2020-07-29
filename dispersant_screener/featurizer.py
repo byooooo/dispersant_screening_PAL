@@ -5,8 +5,15 @@ import math
 import re
 
 import numpy as np
+import pandas as pd 
 from six.moves import zip
 
+def featurize_many(smiless: list) -> pd.DataFrame:
+    features = []
+    for smiles in smiless: 
+        pmsf = PolymerSmilesFeaturizer(smiles)
+        features.append(pmsf.featurize())
+    return pd.DataFrame(features)
 
 class PolymerSmilesFeaturizer:
 
