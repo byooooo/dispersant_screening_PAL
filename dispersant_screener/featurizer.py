@@ -1,8 +1,12 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
+
 import math
 import re
+
+import numpy as np
 from six.moves import zip
+
 
 class PolymerSmilesFeaturizer:
 
@@ -13,7 +17,7 @@ class PolymerSmilesFeaturizer:
         self.normalized_cluster_stats = normalized_cluster_stats
 
     @staticmethod
-    def get_head_tail_features(string: str, characters: list):
+    def get_head_tail_features(string: str, characters: list) -> dict:
         """0/1/2 encoded feature indicating if the building block is at start/end of the polymer chain"""
         is_head_tail = [0] * len(characters)
 
@@ -27,7 +31,7 @@ class PolymerSmilesFeaturizer:
         return dict(list(zip(new_keys, is_head_tail)))
 
     @staticmethod
-    def get_cluster_stats(s: str, replacement_dict: dict, normalized: bool = True):
+    def get_cluster_stats(s: str, replacement_dict: dict, normalized: bool = True) -> dict:
         clusters = PolymerSmilesFeaturizer.find_clusters(s, replacement_dict)
         cluster_stats = {}
         cluster_stats['total_clusters'] = 0
@@ -37,20 +41,22 @@ class PolymerSmilesFeaturizer:
                 cluster_stats['total_clusters'] += len(value)
                 cluster_stats['max' + '_' + key] = max(value)
                 cluster_stats['min' + '_' + key] = min(value)
+                cluster_stats['mean' + '_' + key] = np.mean(value)
             else:
                 cluster_stats['num' + '_' + key] = 0
                 cluster_stats['max' + '_' + key] = 0
                 cluster_stats['min' + '_' + key] = 0
+                cluster_stats['mean' + '_' + key] = 0
 
         if normalized:
             for key, value in cluster_stats.items():
-                if key != 'total_clusters':
+                if 'num' in key:
                     cluster_stats[key] = value / cluster_stats['total_clusters']
 
         return cluster_stats
 
     @staticmethod
-    def find_clusters(s: str, replacement_dict: dict):
+    def find_clusters(s: str, replacement_dict: dict) -> dict:
         clusters = re.findall(r'((\w)\2{1,})', PolymerSmilesFeaturizer._multiple_replace(s, replacement_dict))
         cluster_dict = dict(list(zip(replacement_dict.keys(), [[] for i in replacement_dict.keys()])))
         inv_replacement_dict = {v: k for k, v in replacement_dict.items()}
@@ -60,18 +66,18 @@ class PolymerSmilesFeaturizer:
         return cluster_dict
 
     @staticmethod
-    def _multiple_replace(s: str, replacement_dict: dict):
+    def _multiple_replace(s: str, replacement_dict: dict) -> str:
         for word in replacement_dict:
             s = s.replace(word, replacement_dict[word])
         return s
 
     @staticmethod
-    def get_counts(smiles: str, characters: list):
+    def get_counts(smiles: str, characters: list) -> dict:
         counts = [smiles.count(char) for char in characters]
         return dict(list(zip(characters, counts)))
 
     @staticmethod
-    def get_relative_shannon(character_count: dict):
+    def get_relative_shannon(character_count: dict) -> float:
         counts = [c for c in character_count.values() if c > 0]
         length = sum(counts)
         probs = [count / length for count in counts]
@@ -81,7 +87,7 @@ class PolymerSmilesFeaturizer:
         return entropy / ideal_entropy
 
     @staticmethod
-    def _entropy_max(length: int):
+    def _entropy_max(length: int) -> float:
         'Calculates the max Shannon entropy of a string with given length'
 
         prob = 1.0 / length
@@ -89,7 +95,7 @@ class PolymerSmilesFeaturizer:
         return -1.0 * length * prob * math.log(prob) / math.log(2.0)
 
     @staticmethod
-    def get_balance(character_count: dict):
+    def get_balance(character_count: dict) -> dict:
         counts = [c for c in character_count.values()]
         length = sum(counts)
         frequencies = [c / length for c in counts]
@@ -109,6 +115,6 @@ class PolymerSmilesFeaturizer:
         self.features['rel_shannon'] = self._relative_shannon
         self.features['length'] = sum(self._character_count.values())
 
-    def featurize(self):
+    def featurize(self) -> dict:
         self._featurize()
         return self.features
