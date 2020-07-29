@@ -125,10 +125,14 @@ class PolymerSmilesFeaturizer:
         self.features.update(self._balance)
         self.features['rel_shannon'] = self._relative_shannon
         self.features['length'] = sum(self._character_count.values())
-        self.features['total_solvent'] = sum(
-            [self.solvent_interactions[char] * count for char, count in self._character_count.items()])
-        self.features['total_surface'] = sum(
-            [self.surface_interactions[char] * count for char, count in self._character_count.items()])
+        solvent_interactions = sum(
+            [[self.solvent_interactions[char]] * count for char, count in self._character_count.items()], [])
+        self.features['total_solvent'] = sum(solvent_interactions)
+        self.features['std_solvent'] = np.std(solvent_interactions)
+        surface_interactions = sum(
+            [[self.surface_interactions[char]] * count for char, count in self._character_count.items()], [])
+        self.features['total_surface'] = sum(surface_interactions)
+        self.features['std_surface'] = np.std(surface_interactions)
 
     def featurize(self) -> dict:
         self._featurize()
