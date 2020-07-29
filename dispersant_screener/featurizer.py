@@ -5,15 +5,17 @@ import math
 import re
 
 import numpy as np
-import pandas as pd 
+import pandas as pd
 from six.moves import zip
+
 
 def featurize_many(smiless: list) -> pd.DataFrame:
     features = []
-    for smiles in smiless: 
+    for smiles in smiless:
         pmsf = PolymerSmilesFeaturizer(smiles)
         features.append(pmsf.featurize())
     return pd.DataFrame(features)
+
 
 class PolymerSmilesFeaturizer:
 
@@ -22,6 +24,8 @@ class PolymerSmilesFeaturizer:
         self.characters = ['[W]', '[Tr]', '[Ta]', '[R]']
         self.replacement_dict = dict(list(zip(self.characters, ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'])))
         self.normalized_cluster_stats = normalized_cluster_stats
+        self.surface_interactions = {'[W]': 30, '[Ta]': 20, '[Tr]': 30, '[R]': 20}
+        self.solvent_interactions = {'[W]': 30, '[Ta]': 25, '[Tr]': 35, '[R]': 30}
 
     @staticmethod
     def get_head_tail_features(string: str, characters: list) -> dict:
@@ -121,6 +125,10 @@ class PolymerSmilesFeaturizer:
         self.features.update(self._balance)
         self.features['rel_shannon'] = self._relative_shannon
         self.features['length'] = sum(self._character_count.values())
+        self.features['total_solvent'] = sum(
+            [self.solvent_interactions[char] * count for char, count in self._character_count.items()])
+        self.features['total_surface'] = sum(
+            [self.surface_interactions[char] * count for char, count in self._character_count.items()])
 
     def featurize(self) -> dict:
         self._featurize()
