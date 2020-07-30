@@ -19,7 +19,7 @@ setup(
     python_requires='==3.7',
     install_requires=requirements,
     extras_require={
-        'testing': ['pytest', 'pytest-cov<2.6'],
+        'testing': ['pytest', 'pytest-cov<2.11'],
         'docs': ['guzzle_sphinx_theme'],
         'pre-commit': ['pre-commit', 'yapf', 'prospector', 'pylint', 'versioneer', 'isort'],
     },
