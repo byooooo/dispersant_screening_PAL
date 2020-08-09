@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Implement the (epislon)-PAL sampling,
+"""Implements the (epislon)-PAL sampling,
 If we refer to equations in the paper we refer to mostly to the PAL paper
 
 Marcela Zuluaga, Guillaume Sergent, Andreas Krause, Markus Püschel;
@@ -10,13 +10,11 @@ Epsilon-PAL was described in Journal of Machine Learning Research, Vol. 17, No. 
 (http://jmlr.org/papers/v17/15-047.html)
 and introduces some epsilon parameter that allows to tradeoff accuracy and efficiency
 
-To make the code simpler, I'll assume that greater is better. If this is not the case, the target needs
-be be transformed (e.g., multiplied with minus one).
+To make the code simpler, I'll assume that greater is better.
 
 Many parts in this module are still relatively inefficient and could be vectorized/parallelized.
 Also, many parts use lookup tables that are not super efficient.
 """
-
 from __future__ import absolute_import
 
 import logging
@@ -28,14 +26,14 @@ from six.moves import range
 from sklearn.metrics import mean_absolute_error, r2_score
 from tqdm import tqdm
 
-logger = logging.getLogger()  # pylint:disable=invalid-name
+logger = logging.getLogger('PALlogger')  # pylint:disable=invalid-name
 handler = logging.StreamHandler()  # pylint:disable=invalid-name
 formatter = logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(message)s')  # pylint:disable=invalid-name
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
 
-def get_hypervolume(pareto_front: np.array, reference_vector: np.array) -> float:
+def get_hypervolume(pareto_front: np.array, reference_vector: np.array, prefactor: -1) -> float:
     """Compute the hypervolume indicator of a Pareto front
     I multiply it with minus one as we assume that we want to maximize all objective and then we calculate the area
 
@@ -47,9 +45,9 @@ def get_hypervolume(pareto_front: np.array, reference_vector: np.array) -> float
     ------------ f2
 
     But pygmo assumes that the reference vector is larger than all the points in the Pareto front.
-    For this reason, we then flip all the signs.
+    For this reason, we then flip all the signs using prefactor.
     """
-    hyp = pg.hypervolume(pareto_front * (-1))
+    hyp = pg.hypervolume(pareto_front * prefactor)
     volume = hyp.compute(reference_vector)  # uses 'auto' algorithm
     return volume
 
@@ -173,11 +171,9 @@ def _union_one_dim(lows: Sequence, ups: Sequence, new_lows: Sequence, new_ups: S
         # is zero intersection
         # 1) |--old range--|   |--new range--|, i.e., lower new limit above old upper limit
         # 2) |--new range--|   |--old range--|, i.e., upper new limit below lower old limit
-        # 3) ||||, i.e. no uncertainity at all
-        # BUT this can lead to stupid behavior if the model is really wrong.
-        if (new_lows[i] > ups[i]) or (new_ups[i] < low) or (low + ups[i] == 0):
-            out_lows.append(0)
-            out_ups.append(0)
+        if (new_lows[i] > ups[i]) or (new_ups[i] < low):
+            out_lows.append(new_lows[i])
+            out_ups.append(new_ups[i])
 
         # In other cases, we want to intersect the ranges, i.e.
         # |---old range-|-|--new-range--| --> |-|
@@ -390,6 +386,7 @@ def pal(  # pylint: disable=dangerous-default-value, too-many-arguments, too-man
     iterations: int = 500,
     verbosity: str = 'debug',
     batch_size: int = 1,
+    beta_scale: float = 1 / 9,
 ) -> Tuple[list, list, list]:
     """Orchestrates the PAL algorithm
 
@@ -414,6 +411,8 @@ def pal(  # pylint: disable=dangerous-default-value, too-many-arguments, too-man
             Defaults to 'debug'.
         batch_size (int, optional): Experimental setting for the number of materials that are sampled
             in each iteration. The original algorithm does not consider batching. Defaults to 1 (no batching).
+        beta_scale (float, optional): Scaling factor for beta_t (because the theoretical estimate is too conservative).
+            Defaults to 1/9.
 
     Returns:
         Tuple[list, list, list]: binary encoded list of Pareto optimal points found in x_input,
@@ -460,7 +459,9 @@ def pal(  # pylint: disable=dangerous-default-value, too-many-arguments, too-man
         # update scaling parameter β
         # which is achieved by choosing βt = 2 log(n|E|π2t2/(6δ)).
         # n: number of objectives (y_input.shape[1])
-        beta = 2 * np.log(y_input.shape[1] * len(x_input) * np.square(np.pi) * np.square(iteration) / (6 * delta))
+        # scaled because the theoretical value is too conservative
+        beta = beta_scale * 2 * np.log(y_input.shape[1] * len(x_input) * np.square(np.pi) * np.square(iteration) /
+                                       (6 * delta))
         logger.debug('Scaling parameter beta at the current iteration is {}'.format(beta))
 
         logger.debug('mean array shape: {}, std array shape: {}'.format(mus.shape, stds.shape))
@@ -469,6 +470,7 @@ def pal(  # pylint: disable=dangerous-default-value, too-many-arguments, too-man
         mus, stds = _update_sampled(mus, stds, sampled, y_input)
 
         logger.debug('mean array shape: {}, std array shape: {}'.format(mus.shape, stds.shape))
+        logger.debug('mean array mean: {}, mean array std: {}'.format(np.mean(mus), np.std(mus)))
 
         # get the uncertainity rectangles, sqrt only once here for efficiency
         lows, ups = _get_uncertainity_regions(mus, stds, np.sqrt(beta))

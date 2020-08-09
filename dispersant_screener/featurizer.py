@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 from __future__ import absolute_import
 
 import math
@@ -10,6 +11,8 @@ from six.moves import zip
 
 
 def featurize_many(smiless: list) -> pd.DataFrame:
+    """Utility function that runs featurizaton on a
+    list of linear polymer smiles and returns a dataframe"""
     features = []
     for smiles in smiless:
         pmsf = PolymerSmilesFeaturizer(smiles)
@@ -17,10 +20,12 @@ def featurize_many(smiless: list) -> pd.DataFrame:
     return pd.DataFrame(features)
 
 
-class PolymerSmilesFeaturizer:
+class LinearPolymerSmilesFeaturizer:
+    """Compute features for linear polymers"""
 
     def __init__(self, smiles: str, normalized_cluster_stats: bool = True):
         self.smiles = smiles
+        assert '(' not in smiles, 'This featurizer does not work for branched polymers'
         self.characters = ['[W]', '[Tr]', '[Ta]', '[R]']
         self.replacement_dict = dict(list(zip(self.characters, ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'])))
         self.normalized_cluster_stats = normalized_cluster_stats
@@ -43,6 +48,7 @@ class PolymerSmilesFeaturizer:
 
     @staticmethod
     def get_cluster_stats(s: str, replacement_dict: dict, normalized: bool = True) -> dict:
+        """Statistics describing clusters such as [Tr][Tr][Tr]"""
         clusters = PolymerSmilesFeaturizer.find_clusters(s, replacement_dict)
         cluster_stats = {}
         cluster_stats['total_clusters'] = 0
@@ -68,6 +74,7 @@ class PolymerSmilesFeaturizer:
 
     @staticmethod
     def find_clusters(s: str, replacement_dict: dict) -> dict:
+        """Use regex to find clusters"""
         clusters = re.findall(r'((\w)\2{1,})', PolymerSmilesFeaturizer._multiple_replace(s, replacement_dict))
         cluster_dict = dict(list(zip(replacement_dict.keys(), [[] for i in replacement_dict.keys()])))
         inv_replacement_dict = {v: k for k, v in replacement_dict.items()}
@@ -84,11 +91,13 @@ class PolymerSmilesFeaturizer:
 
     @staticmethod
     def get_counts(smiles: str, characters: list) -> dict:
+        """Count characters in SMILES string"""
         counts = [smiles.count(char) for char in characters]
         return dict(list(zip(characters, counts)))
 
     @staticmethod
     def get_relative_shannon(character_count: dict) -> float:
+        """Shannon entropy of string relative to maximum entropy of a string of the same length"""
         counts = [c for c in character_count.values() if c > 0]
         length = sum(counts)
         probs = [count / length for count in counts]
@@ -107,12 +116,14 @@ class PolymerSmilesFeaturizer:
 
     @staticmethod
     def get_balance(character_count: dict) -> dict:
+        """Frequencies of characters"""
         counts = [c for c in character_count.values()]
         length = sum(counts)
         frequencies = [c / length for c in counts]
         return dict(list(zip(character_count.keys(), frequencies)))
 
     def _featurize(self):
+        """Run all available featurization methods"""
         self._character_count = PolymerSmilesFeaturizer.get_counts(self.smiles, self.characters)
         self._balance = PolymerSmilesFeaturizer.get_balance(self._character_count)
         self._relative_shannon = PolymerSmilesFeaturizer.get_relative_shannon(self._character_count)
@@ -135,5 +146,6 @@ class PolymerSmilesFeaturizer:
         self.features['std_surface'] = np.std(surface_interactions)
 
     def featurize(self) -> dict:
+        """Run featurization"""
         self._featurize()
         return self.features

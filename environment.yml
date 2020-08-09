@@ -85,7 +85,6 @@ dependencies:
   - nlopt=2.6.1=py37hb69b2a7_2
   - notebook=6.0.3=py37_0
   - numba=0.48.0=py37h4f17bb1_0
-  - numpy=1.18.4=py37h7687784_0
   - olefile=0.46=py_0
   - openssl=1.0.2u=h0b31af3_0
   - packaging=20.1=py_0
@@ -126,7 +125,6 @@ dependencies:
   - readline=7.0=hcfe32e1_1001
   - requests=2.23.0=pyh8c360ce_2
   - scikit-image=0.17.2=py37h94625e5_1
-  - scikit-learn=0.22.2.post1=py37h3dc85bc_0
   - scipy=1.4.1=py37hce1b9e5_3
   - scotch=6.0.8=h703c93e_1
   - seaborn=0.10.1=py_0
@@ -144,7 +142,6 @@ dependencies:
   - tk=8.6.10=hbbe82c9_0
   - toolz=0.10.0=py_0
   - tornado=6.0.4=py37h9bfed18_1
-  - tqdm=4.46.0=pyh9f0ad1d_0
   - traitlets=4.3.3=py37hc8dfbb8_1
   - typing_extensions=3.7.4.2=py_0
   - urllib3=1.25.9=py_0
@@ -166,25 +163,38 @@ dependencies:
     - astroid==2.3.3
     - babel==2.8.0
     - cfgv==3.1.0
+    - click==7.1.2
+    - configparser==5.0.0
     - distlib==0.3.0
+    - docker-pycreds==0.4.0
     - docutils==0.16
     - dodgy==0.2.1
     - filelock==3.0.12
+    - gitdb==4.0.5
+    - gitpython==3.1.7
     - gpy==1.9.9
+    - gql==0.2.0
+    - graphql-core==1.1
     - guzzle-sphinx-theme==0.7.11
     - identify==1.4.19
     - imagehash==4.1.0
     - imagesize==1.2.0
     - isort==4.3.21
+    - iterative-stratification==0.1.6
     - lazy-object-proxy==1.4.3
     - mccabe==0.6.1
     - more-itertools==8.4.0
     - nodeenv==1.4.0
+    - numpy==1.19.1
+    - nvidia-ml-py3==7.352.0
     - paramz==0.9.5
+    - pathtools==0.1.2
     - pep8-naming==0.4.1
     - pluggy==0.13.1
     - pre-commit==2.5.1
+    - promise==2.3
     - prospector==1.2.0
+    - psutil==5.7.2
     - py==1.8.2
     - pycodestyle==2.4.0
     - pydocstyle==5.0.2
@@ -196,7 +206,11 @@ dependencies:
     - pylint-plugin-utils==0.6
     - pytest==5.4.3
     - requirements-detector==0.7
+    - scikit-learn==0.23.2
+    - sentry-sdk==0.16.3
     - setoptconf==0.2.0
+    - shortuuid==1.0.1
+    - smmap==3.0.4
     - snowballstemmer==2.0.0
     - sphinx==3.1.1
     - sphinxcontrib-applehelp==1.0.2
@@ -205,9 +219,15 @@ dependencies:
     - sphinxcontrib-jsmath==1.0.1
     - sphinxcontrib-qthelp==1.0.3
     - sphinxcontrib-serializinghtml==1.1.4
+    - subprocess32==3.5.4
+    - threadpoolctl==2.1.0
     - toml==0.10.1
+    - tqdm==4.48.2
     - typed-ast==1.4.1
     - versioneer==0.18
     - virtualenv==20.0.23
+    - wandb==0.9.4
+    - watchdog==0.10.3
     - wrapt==1.11.2
+    - xgboost==1.0.0
     - yapf==0.30.0

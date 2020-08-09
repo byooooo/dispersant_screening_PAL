@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Global variables used troughout the package"""
+"""Global variables used throughout the package"""
 
 TARGETS = ['deltaGmin', 'A2_normalized']
 
