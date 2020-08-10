@@ -11,6 +11,31 @@ Welcome to dispersant_screener's documentation!
    :caption: Contents:
 
 
+API documentation
+==================
+
+PAL
+----
+
+.. automodule:: dispersant_screener.pal
+   :members:
+
+GP
+---
+.. automodule:: dispersant_screener.gp
+   :members:
+
+Featurizer
+------------
+.. automodule:: dispersant_screener.featurizer
+   :members:
+
+Utils
+------
+.. automodule:: dispersant_screener.utils
+   :members:
+
+
 
 Indices and tables
 ==================
