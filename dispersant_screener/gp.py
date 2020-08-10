@@ -40,7 +40,7 @@ def _get_ratquad_kernel(NFEAT: int, **kwargs) -> GPy.kern.RatQuad:
 # ToDo: Generalize to more than two outputs
 def build_coregionalized_model(X_train: np.array,
                                y_train: np.array,
-                               kernel='matern32') -> GPy.models.GPCoregionalizedRegression:
+                               kernel=None) -> GPy.models.GPCoregionalizedRegression:
     NFEAT = X_train.shape[1]
     if isinstance(kernel, GPy.kern.src.kern.Kern):
         K = kernel
@@ -53,7 +53,7 @@ def build_coregionalized_model(X_train: np.array,
     return m
 
 
-def build_model(X_train: np.array, y_train: np.array, index: int = 0, kernel='matern32') -> GPy.models.GPRegression:
+def build_model(X_train: np.array, y_train: np.array, index: int = 0, kernel=None) -> GPy.models.GPRegression:
     NFEAT = X_train.shape[1]
     if isinstance(kernel, GPy.kern.src.kern.Kern):
         K = kernel

@@ -13,13 +13,16 @@ from sklearn.cluster import KMeans
 from tqdm import tqdm
 
 
-def plot_parity(y_pred0, y_true0, var0, y_pred1, y_true1, var1, outname=None):
-    """Plot a parity plot for two targets"""
+def plot_parity(objective_tuples, outname=None):
+    """Plot a parity plot for n targets"""
     plt.rcParams['font.family'] = 'sans-serif'
-    fig, ax = plt.subplots(1, 2)
 
-    ax[0].scatter(y_true0, y_pred0, c=var0, cmap=plt.cm.coolwarm, s=.3)
-    ax[1].scatter(y_true1, y_pred1, c=var1, cmap=plt.cm.coolwarm, s=.3)
+    fig, ax = plt.subplots(1, len(objective_tuples))
+
+    for i, objective_tuple in enumerate(objective_tuples):
+
+        assert len(objective_tuple[0]) == len(objective_tuple[1]) == len(objective_tuple[2])
+        ax[i].scatter(objective_tuple[0], objective_tuple[1], c=objective_tuple[2], cmap=plt.cm.coolwarm, s=.3)
 
     for a in ax:
         a.spines['left'].set_smart_bounds(True)
@@ -36,8 +39,23 @@ def plot_parity(y_pred0, y_true0, var0, y_pred1, y_true1, var1, outname=None):
 
     if outname is not None:
         fig.savefig(outname, bbox_inches='tight')
+        plt.close(fig)
 
-    plt.close(fig)
+
+def plot_pareto_2d(y, sampled):
+    plt.rcParams['font.family'] = 'sans-serif'
+    fig, ax = plt.subplots(1, 1)
+
+    ax.scatter(y_test[:, 0], y_test[:, 1])
+    ax.scatter(y_test[selected_indices, 0], y_test[selected_indices, 1])
+
+    ax.spines['left'].set_smart_bounds(True)
+    ax.spines['bottom'].set_smart_bounds(True)
+
+    ax.set_xlabel(r'$y_{0}$')
+    ax.set_ylabel(r'$y_{1}$')
+
+    fig.tight_layout()
 
 
 def get_metrics(y_true: np.array, y_pred: np.array) -> dict:

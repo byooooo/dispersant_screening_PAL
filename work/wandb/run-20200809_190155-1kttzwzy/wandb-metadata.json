@@ -14,9 +14,10 @@
     "python": "3.7.0",
     "cpu_count": 8,
     "args": [],
-    "state": "running",
+    "state": "finished",
     "jobType": null,
     "mode": "run",
     "project": "dispersant_screener",
-    "heartbeatAt": "2020-08-09T17:49:40.162401"
+    "heartbeatAt": "2020-08-09T18:32:22.145215",
+    "exitcode": 0
 }

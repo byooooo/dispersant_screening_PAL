@@ -15,14 +15,11 @@ To make the code simpler, I'll assume that greater is better.
 Many parts in this module are still relatively inefficient and could be vectorized/parallelized.
 Also, many parts use lookup tables that are not super efficient.
 """
-from __future__ import absolute_import
-
 import logging
 from typing import List, Sequence, Tuple, Union
 
 import numpy as np
 import pygmo as pg
-from six.moves import range
 from sklearn.metrics import mean_absolute_error, r2_score
 from tqdm import tqdm
 
@@ -33,7 +30,7 @@ handler.setFormatter(formatter)
 logger.addHandler(handler)
 
 
-def get_hypervolume(pareto_front: np.array, reference_vector: np.array, prefactor: -1) -> float:
+def get_hypervolume(pareto_front: np.array, reference_vector: np.array, prefactor: float = -1) -> float:
     """Compute the hypervolume indicator of a Pareto front
     I multiply it with minus one as we assume that we want to maximize all objective and then we calculate the area
 
@@ -57,9 +54,7 @@ def _get_gp_predictions(gps: Sequence, x_train: np.array, y_train: np.array,
     """Train one GPR per target using x_train and predict on x_input
 
     Args:
-        gps (Sequence): Contains the GPR models.
-            We require the GPRs to have a sklearn-like API with .fit(X,y)
-            and .predict(x, return_std=True) methods
+        gps (Sequence): Contains the GPR models. We assume GPy models.
         x_train (np.array): Feature matrix. Must be already standardized.
             Shape (number points, number features)
         y_train (np.array): Target vector. Shape (number points, number targets)
@@ -78,9 +73,10 @@ def _get_gp_predictions(gps: Sequence, x_train: np.array, y_train: np.array,
     # train one GP per target
     # ToDo: one can potentially parallelize this part
     for i, gp in enumerate(gps):  # pylint:disable=invalid-name
-        gp.fit(x_train, y_train[:, i])
-        mu, std = gp.predict(x_input, return_std=True)  # pylint:disable=invalid-name
-        gp_train_predict = gp.predict(x_train)
+        gp.set_XY(x_train, y_train[:, i].reshape(-1, 1))
+        gp.optimize(max_iters=2000)
+        mu, std = gp.predict(x_input)  # pylint:disable=invalid-name
+        gp_train_predict, _ = gp.predict(x_train)
 
         # ToDo: sometimes, we should also get the crossvalidated error
         # ToDo: for effiency reasons, we should not start the models from scratch
@@ -259,7 +255,7 @@ def _update_sampled(mus: np.array,
 
 def _pareto_classify(  # pylint:disable=too-many-arguments
         pareto_optimal_0: list, not_pareto_optimal_0: list, unclassified_0: list, rectangle_lows: np.array,
-        rectangle_ups: np.array, x_input: np.array, epsilon: float) -> Tuple[list, list, list]:
+        rectangle_ups: np.array, x_input: np.array, epsilon: list) -> Tuple[list, list, list]:
     """Performs the classification part of the algorithm
     (p. 4 of the PAL paper, see algorithm 1/2 of the epsilon-PAL paper)
 
@@ -272,7 +268,7 @@ def _pareto_classify(  # pylint:disable=too-many-arguments
         rectangle_lows (np.array): lower uncertainity boundaries
         rectangle_ups (np.array): upper uncertainity boundaries
         x_input (np.array): feature matrix
-        epsilon (float): granularity parameter
+        epsilon (list): granularity parameter (one per dimension)
 
     Returns:
         Tuple[list, list, list]: binary encoded list of Pareto optimal, non-Pareto optimal and unclassified points
@@ -382,19 +378,21 @@ def pal(  # pylint: disable=dangerous-default-value, too-many-arguments, too-man
     y_input: np.array,
     hv_reference: Sequence = [30, 30],
     delta: float = 0.05,
-    epsilon: float = 0.05,
+    epsilon: Union[float, list] = 0.05,
     iterations: int = 500,
-    verbosity: str = 'debug',
+    verbosity: str = 'info',
     batch_size: int = 1,
     beta_scale: float = 1 / 9,
 ) -> Tuple[list, list, list]:
-    """Orchestrates the PAL algorithm
-
+    """Orchestrates the PAL algorithm. 
+    You will see a progress bar appear. The length of this progress bar is equal to iterations, 
+    but the algorithm might stop earlier if all samples already have been classified. 
 
     Args:
         gps (list):  Contains the GPR models.
-            We require the GPRs to have a sklearn-like API with .fit(X,y)
-            and .predict(x, return_std=True) methods
+            We require the GPRs to have a GPy API with .set_XY(X,Y), .optimize() and .predict().
+            You can use the gp module to build such models.
+            The length of this list must equal the number of objectives, i.e, one GPR per objective.
         x_train (np.array): feature matrix for training data
         y_train (np.array): label matrix for training data (we assume this to be a two-dimensional array,
             use .reshape(-1,1) if you need to run on one target (for testing))
@@ -402,17 +400,21 @@ def pal(  # pylint: disable=dangerous-default-value, too-many-arguments, too-man
         y_input (np.array): label matrix for sample space data (we assume this to be a two-dimensional array,
             use .reshape(-1,1) if you need to run on one target (for testing))
         hv_reference (Sequence, optional): Reference vector for calculation of the hypervolume indicator.
+            The length of this sequence must equal the number of objectives.
             Defaults to [30, 30].
         delta (float, optional): Hyperparameter, equivalent to the confidence level. Defaults to 0.05.
-        epsilon (float, optional): Percentage tolerance for the Pareto front we find with this algorithm.
-            Defaults to 0.05.
+        epsilon (float or list, optional): Percentage tolerance for the Pareto front we find with this algorithm.
+            You can provide a list of floats, with one epsilon per dimension or only one float. Defaults to 0.05.
         iterations (int, optional): Maximum number of iterations. Defaults to 500.
-        verbosity (str, optional): Log levels. Implemented choices 'debug', 'info', 'warning'.
-            Defaults to 'debug'.
+        verbosity (str, optional): Log levels. Implemented choices 'debug', 'info', 'warning'. On 'info' it will log
+            the number of Pareto optimal/non-Pareto optimal/unclassified samples and the hypervolume.
+            We can only compute a hypervolume if the number of points that are classified as Pareto optimal is greater
+            or equal to one. Until then the hypervolume will be nan. The hypervolume indicator should increase over the course of the sampling.
+            Defaults to 'info'.
         batch_size (int, optional): Experimental setting for the number of materials that are sampled
             in each iteration. The original algorithm does not consider batching. Defaults to 1 (no batching).
         beta_scale (float, optional): Scaling factor for beta_t (because the theoretical estimate is too conservative).
-            Defaults to 1/9.
+            Defaults to 1/9, as proposed in the e-PAL paper.
 
     Returns:
         Tuple[list, list, list]: binary encoded list of Pareto optimal points found in x_input,
@@ -420,7 +422,16 @@ def pal(  # pylint: disable=dangerous-default-value, too-many-arguments, too-man
     """
     # x_input is the E set in the PAL paper
     # the models for now assume the sklearn API, i.e., there should be a fit function
-    assert y_train.shape[1] == len(hv_reference)
+    assert y_train.shape[1] == len(hv_reference) == len(
+        gps), 'The length of the list of GPRs, the hypervolume reference and the number of objectives must be the same'
+    if isinstance(epsilon, float):
+        epsilon = [epsilon] * len(gps)
+    elif isinstance(epsilon, list):
+        assert len(epsilon) == len(gps)
+        for eps in epsilon:
+            assert isinstance(eps, float)
+
+    epsilon = np.array(epsilon)
 
     hypervolumes = []
 

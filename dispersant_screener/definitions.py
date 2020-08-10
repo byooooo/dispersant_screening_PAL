@@ -4,8 +4,7 @@
 TARGETS = ['deltaGmin', 'A2_normalized']
 
 FEATURES = [
-    '[W]', '[Ta]', '[Tr]', '[R]', 'total_count', 'R_avg_cluster_size', 'Ta_avg_cluster_size', 'Tr_avg_cluster_size',
-    'W_avg_cluster_size', 'num_cluster_types', 'max_cluster_size', 'R_no_of_cluster', 'Ta_no_of_cluster',
-    'Tr_no_of_cluster', 'W_no_of_cluster', 'R_max_cluster_size', 'Ta_max_cluster_size', 'Tr_max_cluster_size',
-    'W_max_cluster_size'
+    'head_tail_[W]', 'head_tail_[Tr]', 'head_tail_[Ta]', 'head_tail_[R]', 'total_clusters', 'num_[W]', 'max_[W]',
+    'num_[Tr]', 'max_[Tr]', 'num_[Ta]', 'max_[Ta]', 'num_[R]', 'max_[R]', '[W]', '[Tr]', '[Ta]', '[R]', 'rel_shannon',
+    'length', 'total_solvent', 'total_surface'
 ]
