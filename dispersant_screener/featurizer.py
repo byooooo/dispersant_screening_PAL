@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
-
-from __future__ import absolute_import
+"""Turn a Polymer SMILES into features"""
 
 import math
 import re
 
 import numpy as np
 import pandas as pd
-from six.moves import zip
 
 
 def featurize_many(smiless: list) -> pd.DataFrame:
@@ -15,7 +13,7 @@ def featurize_many(smiless: list) -> pd.DataFrame:
     list of linear polymer smiles and returns a dataframe"""
     features = []
     for smiles in smiless:
-        pmsf = PolymerSmilesFeaturizer(smiles)
+        pmsf = LinearPolymerSmilesFeaturizer(smiles)
         features.append(pmsf.featurize())
     return pd.DataFrame(features)
 
@@ -31,6 +29,12 @@ class LinearPolymerSmilesFeaturizer:
         self.normalized_cluster_stats = normalized_cluster_stats
         self.surface_interactions = {'[W]': 30, '[Ta]': 20, '[Tr]': 30, '[R]': 20}
         self.solvent_interactions = {'[W]': 30, '[Ta]': 25, '[Tr]': 35, '[R]': 30}
+        self._character_count = None
+        self._balance = None
+        self._relative_shannon = None
+        self._cluster_stats = None
+        self._head_tail_feat = None
+        self.features = None
 
     @staticmethod
     def get_head_tail_features(string: str, characters: list) -> dict:
@@ -47,9 +51,9 @@ class LinearPolymerSmilesFeaturizer:
         return dict(list(zip(new_keys, is_head_tail)))
 
     @staticmethod
-    def get_cluster_stats(s: str, replacement_dict: dict, normalized: bool = True) -> dict:
+    def get_cluster_stats(s: str, replacement_dict: dict, normalized: bool = True) -> dict:  # pylint:disable=invalid-name
         """Statistics describing clusters such as [Tr][Tr][Tr]"""
-        clusters = PolymerSmilesFeaturizer.find_clusters(s, replacement_dict)
+        clusters = LinearPolymerSmilesFeaturizer.find_clusters(s, replacement_dict)
         cluster_stats = {}
         cluster_stats['total_clusters'] = 0
         for key, value in clusters.items():
@@ -73,9 +77,9 @@ class LinearPolymerSmilesFeaturizer:
         return cluster_stats
 
     @staticmethod
-    def find_clusters(s: str, replacement_dict: dict) -> dict:
+    def find_clusters(s: str, replacement_dict: dict) -> dict:  # pylint:disable=invalid-name
         """Use regex to find clusters"""
-        clusters = re.findall(r'((\w)\2{1,})', PolymerSmilesFeaturizer._multiple_replace(s, replacement_dict))
+        clusters = re.findall(r'((\w)\2{1,})', LinearPolymerSmilesFeaturizer._multiple_replace(s, replacement_dict))
         cluster_dict = dict(list(zip(replacement_dict.keys(), [[] for i in replacement_dict.keys()])))
         inv_replacement_dict = {v: k for k, v in replacement_dict.items()}
         for cluster, character in clusters:
@@ -84,7 +88,7 @@ class LinearPolymerSmilesFeaturizer:
         return cluster_dict
 
     @staticmethod
-    def _multiple_replace(s: str, replacement_dict: dict) -> str:
+    def _multiple_replace(s: str, replacement_dict: dict) -> str:  # pylint:disable=invalid-name
         for word in replacement_dict:
             s = s.replace(word, replacement_dict[word])
         return s
@@ -101,7 +105,7 @@ class LinearPolymerSmilesFeaturizer:
         counts = [c for c in character_count.values() if c > 0]
         length = sum(counts)
         probs = [count / length for count in counts]
-        ideal_entropy = PolymerSmilesFeaturizer._entropy_max(length)
+        ideal_entropy = LinearPolymerSmilesFeaturizer._entropy_max(length)
         entropy = -sum([p * math.log(p) / math.log(2.0) for p in probs])
 
         return entropy / ideal_entropy
@@ -117,19 +121,19 @@ class LinearPolymerSmilesFeaturizer:
     @staticmethod
     def get_balance(character_count: dict) -> dict:
         """Frequencies of characters"""
-        counts = [c for c in character_count.values()]
+        counts = list(character_count.values())
         length = sum(counts)
         frequencies = [c / length for c in counts]
         return dict(list(zip(character_count.keys(), frequencies)))
 
     def _featurize(self):
         """Run all available featurization methods"""
-        self._character_count = PolymerSmilesFeaturizer.get_counts(self.smiles, self.characters)
-        self._balance = PolymerSmilesFeaturizer.get_balance(self._character_count)
-        self._relative_shannon = PolymerSmilesFeaturizer.get_relative_shannon(self._character_count)
-        self._cluster_stats = PolymerSmilesFeaturizer.get_cluster_stats(self.smiles, self.replacement_dict,
-                                                                        self.normalized_cluster_stats)
-        self._head_tail_feat = PolymerSmilesFeaturizer.get_head_tail_features(self.smiles, self.characters)
+        self._character_count = LinearPolymerSmilesFeaturizer.get_counts(self.smiles, self.characters)
+        self._balance = LinearPolymerSmilesFeaturizer.get_balance(self._character_count)
+        self._relative_shannon = LinearPolymerSmilesFeaturizer.get_relative_shannon(self._character_count)
+        self._cluster_stats = LinearPolymerSmilesFeaturizer.get_cluster_stats(self.smiles, self.replacement_dict,
+                                                                              self.normalized_cluster_stats)
+        self._head_tail_feat = LinearPolymerSmilesFeaturizer.get_head_tail_features(self.smiles, self.characters)
 
         self.features = self._head_tail_feat
         self.features.update(self._cluster_stats)

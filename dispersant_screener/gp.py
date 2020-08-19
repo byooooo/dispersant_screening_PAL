@@ -17,7 +17,6 @@ https://www.cs.toronto.edu/~duvenaud/cookbook/
 Matérn, RBF and RationalQuadrat are good quick and dirty solutions
 but have their caveats
 """
-from __future__ import absolute_import
 
 from typing import Tuple
 
@@ -25,56 +24,87 @@ import GPy
 import numpy as np
 
 
-def _get_matern_32_kernel(NFEAT: int, **kwargs) -> GPy.kern.Matern32:
-    return GPy.kern.Matern32(NFEAT, ARD=True, **kwargs)
+def _get_matern_32_kernel(NFEAT: int, **kwargs) -> GPy.kern.Matern32:  # pylint: disable=invalid-name
+    """Matern-3/2 kernel without ARD"""
+    return GPy.kern.Matern32(NFEAT, ARD=False, **kwargs)
 
 
-def _get_matern_52_kernel(NFEAT: int, **kwargs) -> GPy.kern.Matern52:
-    return GPy.kern.Matern52(NFEAT, ARD=True, **kwargs)
+def _get_matern_52_kernel(NFEAT: int, **kwargs) -> GPy.kern.Matern52:  # pylint: disable=invalid-name
+    """Matern-5/2 kernel without ARD"""
+    return GPy.kern.Matern52(NFEAT, ARD=False, **kwargs)
 
 
-def _get_ratquad_kernel(NFEAT: int, **kwargs) -> GPy.kern.RatQuad:
-    return GPy.kern.RatQuad(NFEAT, ARD=True, **kwargs)
+def _get_ratquad_kernel(NFEAT: int, **kwargs) -> GPy.kern.RatQuad:  # pylint: disable=invalid-name
+    """Rational quadratic kernel without ARD"""
+    return GPy.kern.RatQuad(NFEAT, ARD=False, **kwargs)
 
 
-# ToDo: Generalize to more than two outputs
-def build_coregionalized_model(X_train: np.array,
-                               y_train: np.array,
-                               kernel=None) -> GPy.models.GPCoregionalizedRegression:
-    NFEAT = X_train.shape[1]
+def build_coregionalized_model(
+        X_train: np.array,  # pylint:disable=invalid-name
+        y_train: np.array,
+        kernel=None,
+        **kwargs) -> GPy.models.GPCoregionalizedRegression:
+    """Wrapper for building a coregionalized GPR, it will have as many
+    outputs as y_train.shape[1].
+    Each output will have its own noise term"""
+    NFEAT = X_train.shape[1]  # pylint:disable=invalid-name
+    num_targets = y_train.shape[1]
     if isinstance(kernel, GPy.kern.src.kern.Kern):
-        K = kernel
+        K = kernel  # pylint:disable=invalid-name
     else:
-        K = _get_ratquad_kernel(NFEAT)
-    icm = GPy.util.multioutput.ICM(input_dim=NFEAT, num_outputs=2, kernel=K)
-    m = GPy.models.GPCoregionalizedRegression([X_train, X_train],
-                                              [y_train[:, 0].reshape(-1, 1), y_train[:, 1].reshape(-1, 1)],
-                                              kernel=icm)
+        K = _get_matern_32_kernel(NFEAT)
+    icm = GPy.util.multioutput.ICM(input_dim=NFEAT, num_outputs=num_targets, kernel=K)
+
+    target_list = [y_train[:, i].reshape(-1, 1) for i in range(num_targets)]
+    m = GPy.models.GPCoregionalizedRegression([X_train] * num_targets, target_list, kernel=icm, **kwargs)  # pylint: disable=invalid-name
+    # We constrain the variance of the RBF/Matern .. as the variance is now encoded in the kappa B of the ICM
+    # Not constraining it would lead to a degeneracy
+    m['.*ICM.*.variance'].constrain_fixed(1.)
     return m
 
 
-def build_model(X_train: np.array, y_train: np.array, index: int = 0, kernel=None) -> GPy.models.GPRegression:
-    NFEAT = X_train.shape[1]
+def build_model(X_train: np.array, y_train: np.array, index: int = 0, kernel=None, **kwargs) -> GPy.models.GPRegression:  # pylint: disable=invalid-name
+    """Build a single-output GPR model"""
+    NFEAT = X_train.shape[1]  # pylint:disable=invalid-name
     if isinstance(kernel, GPy.kern.src.kern.Kern):
-        K = kernel
+        K = kernel  # pylint:disable=invalid-name
     else:
-        K = _get_ratquad_kernel(NFEAT)
-    m = GPy.models.GPRegression(X_train, y_train[:, index].reshape(-1, 1), kernel=K)
+        K = _get_matern_32_kernel(NFEAT)
+    m = GPy.models.GPRegression(X_train, y_train[:, index].reshape(-1, 1), kernel=K, normalizer=True, **kwargs)  # pylint:disable=invalid-name
     return m
 
 
-def predict(model: GPy.models.GPRegression, X: np.array) -> Tuple[np.array, np.array]:
+def predict(model: GPy.models.GPRegression, X: np.array) -> Tuple[np.array, np.array]:  # pylint: disable=invalid-name
+    """Wrapper function for the prediction method of a GPy regression model.
+    It return the standard deviation instead of the variance"""
     assert isinstance(model, GPy.models.GPRegression), 'This wrapper function is written for GPy.models.GPRegression'
-    mu, var = model.predict(X)
-    return mu, var
+    mu, var = model.predict(X)  # pylint:disable=invalid-name
+    return mu, np.sqrt(var)
 
 
-def predict_coregionalized(model: GPy.models.GPCoregionalizedRegression,
-                           X: np.array,
-                           index: int = 0) -> Tuple[np.array, np.array]:
+def predict_coregionalized(
+        model: GPy.models.GPCoregionalizedRegression,
+        X: np.array,  # pylint: disable=invalid-name
+        index: int = 0) -> Tuple[np.array, np.array]:
+    """Wrapper function for the prediction method of a coregionalized GPy regression model.
+    It return the standard deviation instead of the variance"""
     assert isinstance(model, GPy.models.GPCoregionalizedRegression
                      ), 'This wrapper function is written for GPy.models.GPCoregionalizedRegression'
-    newX = np.hstack([X, index * np.ones_like(X)])
+    newX = np.hstack([X, index * np.ones_like(X)])  # pylint:disable=invalid-name
     mu_c0, var_c0 = model.predict(newX, Y_metadata={'output_index': index * np.ones((newX.shape[0], 1)).astype(int)})
 
-    return mu_c0, var_c0
+    return mu_c0, np.sqrt(var_c0)
+
+
+def set_xy_coregionalized(model, X, y):  # pylint: disable=invalid-name
+    """Hacky wrapper to update a coregionalized model with new data"""
+    kern = model.kern
+    model = build_coregionalized_model(X, y, kern)
+    # num_target = y.shape[1]
+    # label_indx_col = np.array([[i] * len(X) for i in range(num_target)])
+    # X_array = np.hstack([np.vstack([X] * num_target), label_indx_col.reshape(-1, 1)])
+    # y_array = np.vstack([y[:, i].reshape(-1, 1) for i in range(num_target)])
+
+    # model.set_XY(X_array, y_array)
+
+    return model

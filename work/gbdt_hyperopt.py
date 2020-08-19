@@ -1,17 +1,23 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import, print_function
-
 import os
+from functools import partial
 
+import click
 import numpy as np
 import pandas as pd
+from lightgbm import LGBMRegressor
 from sklearn.feature_selection import VarianceThreshold
 from sklearn.model_selection import cross_val_score, train_test_split
 from sklearn.multioutput import MultiOutputRegressor
 from sklearn.preprocessing import StandardScaler
 
 import wandb
-from lightgbm import LGBMRegressor
+
+FEATURES = [
+    'head_tail_[W]', 'head_tail_[Tr]', 'head_tail_[Ta]', 'head_tail_[R]', 'total_clusters', 'num_[W]', 'max_[W]',
+    'num_[Tr]', 'max_[Tr]', 'num_[Ta]', 'max_[Ta]', 'num_[R]', 'max_[R]', '[W]', '[Tr]', '[Ta]', '[R]', 'rel_shannon',
+    'length', 'total_solvent', 'total_surface'
+]
 
 DATADIR = '/scratch/kjablonk/dispersant_basf'
 
@@ -58,11 +64,21 @@ config = {
     },
 }
 
-df_full_factorial_feat = pd.read_csv(os.path.join(DATADIR, 'new_features_full_random.csv')).values
-a2 = pd.read_csv(os.path.join(DATADIR, 'b1-b21_random_virial_large.csv'))['A2_normalized'].values
+df_full_factorial_feat = pd.read_csv(os.path.join(DATADIR, 'new_features_full_random.csv'))[FEATURES].values
+a2 = pd.read_csv(os.path.join(DATADIR, 'b1-b21_random_virial_large_new.csv'))['A2_normalized'].values
+deltaGMax = pd.read_csv(os.path.join(DATADIR, 'b1-b21_random_virial_large_new.csv'))['A2_normalized'].values
 gibbs = pd.read_csv(os.path.join(DATADIR, 'b1-b21_random_deltaG.csv'))['deltaGmin'].values
+gibbs_max = pd.read_csv(os.path.join(DATADIR, 'b1-b21_random_virial_large_new.csv'))['deltaGmax'].values
+force_max = pd.read_csv(os.path.join(DATADIR, 'b1-b21_random_virial_large_fit2.csv'))['F_repel_max'].values
 rg = pd.read_csv(os.path.join(DATADIR, 'rg_results.csv'))['Rg'].values
-y = np.hstack([rg.reshape(-1, 1), gibbs.reshape(-1, 1)])
+y = np.hstack([
+    rg.reshape(-1, 1),
+    gibbs.reshape(-1, 1),
+    gibbs_max.reshape(-1, 1),
+    force_max.reshape(-1, 1),
+    deltaGMax.reshape(-1, 1),
+    a2.reshape(-1, 1)
+])
 assert len(df_full_factorial_feat) == len(a2) == len(gibbs) == len(y)
 
 X_train, X_test, y_train, y_test = train_test_split(df_full_factorial_feat, y, train_size=0.8)
@@ -97,7 +113,7 @@ def get_sweep_id(method):
     return sweep_id
 
 
-def train():
+def train(index):
     # Config is a variable that holds and saves hyperparameters and inputs
 
     configs = {
@@ -116,10 +132,9 @@ def train():
 
     config = wandb.config
 
-    regressor = MultiOutputRegressor(LGBMRegressor(**config))
+    regressor = LGBMRegressor(**config)
 
-    cv = cross_val_score(regressor, X_train, y_train, n_jobs=-1)
-    print(cv)
+    cv = cross_val_score(regressor, X_train, y_train[:, index], n_jobs=-1)
 
     mean = np.abs(cv.mean())
     std = np.abs(cv.std())
@@ -130,10 +145,13 @@ def train():
     wandb.run.summary['cv_std'] = std
 
 
-def main():
+@click.command('cli')
+@click.argument('index')
+def main(index):
     sweep_id = get_sweep_id('bayes')
 
-    wandb.agent(sweep_id, function=train)
+    train_func = partial(train, index=int(index))
+    wandb.agent(sweep_id, function=train_func)
 
 
 if __name__ == '__main__':

@@ -12,18 +12,26 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
 import wandb
+from dispersant_screener.definitions import FEATURES
 from dispersant_screener.gp import (build_coregionalized_model, build_model, predict, predict_coregionalized)
 from dispersant_screener.utils import (add_postfix_to_keys, get_metrics, get_variance_descriptors, plot_parity)
 
 DATADIR = '../data'
-TRAIN_SIZES = [0.01, 0.1, 0.3, 0.5, 0.8]
+TRAIN_SIZES = [0.005, 0.01, 0.05, 0.1, 0.5]
 REPEAT = 5
 
-df_full_factorial_feat = pd.read_csv(os.path.join(DATADIR, 'new_features_full_random.csv')).values
-a2 = pd.read_csv(os.path.join(DATADIR, 'b1-b21_random_virial_large.csv'))['A2_normalized'].values
+df_full_factorial_feat = pd.read_csv(os.path.join(DATADIR, 'new_features_full_random.csv'))[FEATURES].values
+a2 = pd.read_csv(os.path.join(DATADIR, 'b1-b21_random_virial_large_new.csv'))['A2_normalized'].values
+deltaGMax = pd.read_csv(os.path.join(DATADIR, 'b1-b21_random_virial_large_new.csv'))['A2_normalized'].values
 gibbs = pd.read_csv(os.path.join(DATADIR, 'b1-b21_random_deltaG.csv'))['deltaGmin'].values
+gibbs_max = pd.read_csv(os.path.join(DATADIR, 'b1-b21_random_virial_large_new.csv'))['deltaGmax'].values
+force_max = pd.read_csv(os.path.join(DATADIR, 'b1-b21_random_virial_large_fit2.csv'))['F_repel_max'].values
 rg = pd.read_csv(os.path.join(DATADIR, 'rg_results.csv'))['Rg'].values
-y = np.hstack([rg.reshape(-1, 1), gibbs.reshape(-1, 1)])
+y = np.hstack([
+    rg.reshape(-1, 1),
+    -1 * gibbs.reshape(-1, 1),
+    gibbs_max.reshape(-1, 1),
+])
 assert len(df_full_factorial_feat) == len(a2) == len(gibbs) == len(y)
 
 METRICS = []
@@ -32,7 +40,7 @@ METRICS = []
 def get_initial_split(df_full_factorial_feat, y):
     X_train, X_test, y_train, y_test = train_test_split(df_full_factorial_feat, y, train_size=0.8)
 
-    vt = VarianceThreshold(0)
+    vt = VarianceThreshold(0.2)
     X_train = vt.fit_transform(X_train)
     X_test = vt.transform(X_test)
 
@@ -57,7 +65,7 @@ def main():
             # Train coregionalized model
             wandb.init(project='dispersant_screener', tags=['coregionalized', 'matern32'], reinit=True)
             m = build_coregionalized_model(X_train, y_train)
-            m.optimize(max_iters=2000, ipython_notebook=True)
+            m.optimize_restarts(20)
             y0, var0 = predict_coregionalized(m, X_test, 0)
             y1, var1 = predict_coregionalized(m, X_test, 1)
             metrics_0 = get_metrics(y0, y_test[:, 0])
@@ -80,7 +88,7 @@ def main():
 
             METRICS.append(overall_metrics)
 
-            plot_parity(y0, y_test[:, 0], var0, y1, y_test[:, 1], var1,
+            plot_parity([(y0, y_test[:, 0], var0), (y1, y_test[:, 1], var1)],
                         'coregionalized_{}_{}.pdf'.format(len(X_train), i))
             wandb.log(overall_metrics)
             wandb.join()
@@ -88,9 +96,9 @@ def main():
             # Train "simple models"
             wandb.init(project='dispersant_screener', tags=['matern32'], reinit=True)
             m0 = build_model(X_train, y_train, 0)
-            m0.optimize(max_iters=2000, ipython_notebook=True)
+            m0.optimize_restarts(20)
             m1 = build_model(X_train, y_train, 1)
-            m1.optimize(max_iters=2000, ipython_notebook=True)
+            m1.optimize_restarts(20)
 
             y0, var0 = predict(m0, X_test)
             y1, var1 = predict(m1, X_test)
@@ -114,7 +122,8 @@ def main():
 
             METRICS.append(overall_metrics)
 
-            plot_parity(y0, y_test[:, 0], var0, y1, y_test[:, 1], var1, 'simple_{}_{}.pdf'.format(len(X_train), i))
+            plot_parity([(y0, y_test[:, 0], var0), (y1, y_test[:, 1], var1)],
+                        'simple_{}_{}.pdf'.format(len(X_train), i))
 
             wandb.log(overall_metrics)
             wandb.join()
