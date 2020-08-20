@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Functions that can be handy when using epsilon-PAL"""
 
+import pickle
 from typing import Tuple
 
 import matplotlib.pyplot as plt
@@ -10,6 +11,11 @@ from scipy.spatial import distance
 from sklearn import metrics
 from sklearn.cluster import KMeans
 from tqdm import tqdm
+
+
+def dump_pickle(file, object):
+    with open(file, 'wb') as fh:
+        pickle.dump(object, fh)
 
 
 def plot_parity(objective_tuples: list, outname: str = None, titles: list = None):

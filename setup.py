@@ -16,7 +16,7 @@ setup(
     packages=find_packages(),
     url='',
     license='MIT',
-    python_requires='==3.7',
+    python_requires='<3.8>=3.7',
     install_requires=requirements,
     extras_require={
         'testing': ['pytest', 'pytest-cov<2.11'],

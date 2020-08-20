@@ -17,8 +17,8 @@ appropriate transformation to your data such that it is a maximization problem i
 Many parts in this module are still relatively inefficient and could be vectorized/parallelized.
 Also, many parts use lookup tables that are not super efficient.
 
-Currently, on the first run, there will still be warnings as the jit compilation is not optimized. 
-I currently mainly use the looplifting although additional speedups are certainly possible. 
+Currently, on the first run, there will still be warnings as the jit compilation is not optimized.
+I currently mainly use the looplifting although additional speedups are certainly possible.
 """
 import logging
 from typing import List, Sequence, Tuple, Union
@@ -29,7 +29,7 @@ from numba import jit
 from tqdm import tqdm
 
 from dispersant_screener.gp import (predict_coregionalized, set_xy_coregionalized)
-from dispersant_screener.utils import (is_pareto_efficient, vectorized_dominance_check)
+from dispersant_screener.utils import (dump_pickle, is_pareto_efficient, vectorized_dominance_check)
 
 logger = logging.getLogger('PALlogger')  # pylint:disable=invalid-name
 handler = logging.StreamHandler()  # pylint:disable=invalid-name
@@ -51,10 +51,10 @@ def get_hypervolume(pareto_front: np.array, reference_vector: np.array, prefacto
 
     But pygmo assumes that the reference vector is larger than all the points in the Pareto front.
     For this reason, we then flip all the signs using prefactor (i.e., you can use it to toggle between maximization
-    and minimization problems). 
+    and minimization problems).
 
     This indicator is not needed for the epsilon-PAL algorithm itself but only to allow tracking a metric
-    that might help the user to see if the algorithm converges. 
+    that might help the user to see if the algorithm converges.
     """
     hyp = pg.hypervolume(pareto_front * prefactor)
     volume = hyp.compute(reference_vector)  # uses 'auto' algorithm
@@ -82,9 +82,9 @@ def _get_gp_predictions(gps: Sequence,
             model relationships between the output and that needs to be trained only
             once using all targets at the same time. We assume that the model was built
             using the build_coregionalized function of the gp module. Default is False.
-        optimize (bool, optional): If True, run hyperparamter optimization. Default is True. 
-        parallel (bool, optional): If True, run the random restarts for hyperparamter optimization 
-            in parallel. 
+        optimize (bool, optional): If True, run hyperparamter optimization. Default is True.
+        parallel (bool, optional): If True, run the random restarts for hyperparamter optimization
+            in parallel.
 
     Returns:
         Union[np.array, np.array, list]: Means and standard deviations in arrays of shape
@@ -425,7 +425,8 @@ def pal(  # pylint: disable=dangerous-default-value, too-many-arguments, too-man
         optimize_delay: int = 20,
         optimize_always: int = 10,
         parallel: bool = True,
-        noisy_sample: bool = False) -> Tuple[list, list, list, list]:
+        noisy_sample: bool = False,
+        history_dump_file: str = None) -> Tuple[list, list, list, list]:
     """Orchestrates the PAL algorithm.
     You will see a progress bar appear. The length of this progress bar is equal to iterations,
     but the algorithm might stop earlier if all samples already have been classified.
@@ -474,17 +475,20 @@ def pal(  # pylint: disable=dangerous-default-value, too-many-arguments, too-man
 
         optimize_delay (int, optional): At multiples of this value (If iteration % optimize_delay = 0)
             we will perform hyperparameter optimization for the GPR models and the pick the one
-            with the largest likelihood. Default is 30. 
+            with the largest likelihood. Default is 30.
 
-        optimize_always (int, optional): Up to this number of iterations, we will always 
-            perform hyperparamter optimization. Indpendent of the value of optimize_delay. 
-            Default is 10. 
+        optimize_always (int, optional): Up to this number of iterations, we will always
+            perform hyperparamter optimization. Indpendent of the value of optimize_delay.
+            Default is 10.
 
-        parallel (bool, optional): If true, it runs random restarts for the hyperparameter optimization 
-            of the Gaussian processes in parallel. 
+        parallel (bool, optional): If true, it runs random restarts for the hyperparameter optimization
+            of the Gaussian processes in parallel.
 
-       noisy_sample (bool, optional): If false, the standard deviation of sampled points is set to 0. 
-            If True, we use the standard deviation predicted by the model. Default is False. 
+       noisy_sample (bool, optional): If false, the standard deviation of sampled points is set to 0.
+            If True, we use the standard deviation predicted by the model. Default is False.
+
+        history_dump_file (str, optional): if this is not None but a filename, we will track the progress in the different sets
+            over the optimization and dump a pickled dictionary with this filename
 
     Returns:
         Tuple[list, list, list, list]: binary encoded list of Pareto optimal points found in x_input,
@@ -510,6 +514,8 @@ def pal(  # pylint: disable=dangerous-default-value, too-many-arguments, too-man
             assert isinstance(eps, float)
 
     epsilon = np.array(epsilon)
+
+    progress_dict = {'sampled': [], 'pareto': [], 'non_pareto': [], 'unclassified': []}
 
     hypervolumes = []
 
@@ -612,8 +618,18 @@ def pal(  # pylint: disable=dangerous-default-value, too-many-arguments, too-man
             np.array(unclassified_0).sum(), hypervolume))
 
         hypervolumes.append(hypervolume)
+
+        if history_dump_file:
+            progress_dict['sampled'].append(sampled)
+            progress_dict['pareto'].append(pareto_optimal_0)
+            progress_dict['non_pareto'].append(not_pareto_optimal_0)
+            progress_dict['unclassified'].append(unclassified_0)
+
         pbar.update(1)
 
     pbar.close()
+
+    if history_dump_file:
+        dump_pickle(history_dump_file, progress_dict)
 
     return pareto_optimal_t, hypervolumes, gps, sampled
