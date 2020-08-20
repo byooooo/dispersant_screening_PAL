@@ -424,7 +424,7 @@ def pal(  # pylint: disable=dangerous-default-value, too-many-arguments, too-man
         coregionalized: bool = False,
         optimize_delay: int = 20,
         optimize_always: int = 10,
-        parallel: bool = True,
+        parallel: bool = False,
         noisy_sample: bool = False,
         history_dump_file: str = None) -> Tuple[list, list, list, list]:
     """Orchestrates the PAL algorithm.
@@ -482,7 +482,7 @@ def pal(  # pylint: disable=dangerous-default-value, too-many-arguments, too-man
             Default is 10.
 
         parallel (bool, optional): If true, it runs random restarts for the hyperparameter optimization
-            of the Gaussian processes in parallel.
+            of the Gaussian processes in parallel. Default is False.
 
        noisy_sample (bool, optional): If false, the standard deviation of sampled points is set to 0.
             If True, we use the standard deviation predicted by the model. Default is False.

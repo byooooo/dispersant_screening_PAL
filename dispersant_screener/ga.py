@@ -162,11 +162,28 @@ def objective(x: np.array, predict, X_data: np.array) -> float:  # pylint: disab
     return -y + regularizer_noverly + regularize_validity + regularize_cluster
 
 
-def run_ga(predict,
-           background_data,
+def run_ga(predict: function,
+           background_data: np.array,
            ga_param: dict = DEFAULT_GA_PARAM,
            features: list = FEATURES,
-           feat_dict: dict = FEAT_DICT):
+           feat_dict: dict = FEAT_DICT) -> ga:
+    """
+
+    Args:
+        predict (function): function that takes a feature vector and 
+            returns a flot
+        background_data (np.array): Data which is used to compute the 
+            novelty penality
+        ga_param (dict, optional): Parameters for the genetic algorithm. 
+            Defaults to DEFAULT_GA_PARAM.
+        features (list, optional): Feature names following the convention from LinearPolymerFeaturizer. 
+            Defaults to FEATURES.
+        feat_dict (dict, optional): Mapping indices in the feaature matrix to feature names. 
+            Defaults to FEAT_DICT.
+
+    Returns:
+        ga: geneticalgorithm object
+    """
     boundaries, types = get_bounds(features)
     objective_partial = partial(objective, predict=predict, X_data=background_data)
     ga_model = ga(function=objective_partial,
@@ -174,3 +191,7 @@ def run_ga(predict,
                   variable_type_mixed=types,
                   variable_boundaries=boundaries,
                   algorithm_parameters=ga_param)
+
+    ga_model.run()
+
+    return ga_model
