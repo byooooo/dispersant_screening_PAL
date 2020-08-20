@@ -38,7 +38,7 @@ METRICS = []
 
 
 def get_initial_split(df_full_factorial_feat, y):
-    X_train, X_test, y_train, y_test = train_test_split(df_full_factorial_feat, y, train_size=0.8)
+    X_train, X_test, y_train, y_test = train_test_split(df_full_factorial_feat, y, train_size=0.6)
 
     vt = VarianceThreshold(0.2)
     X_train = vt.fit_transform(X_train)

@@ -1,0 +1,23 @@
+{
+    "root": "/Users/kevinmaikjablonka/Dropbox (LSMO)/dispersant_screening_PAL",
+    "program": "gp_learning_curves.py",
+    "git": {
+        "remote": "git@github.com:byooooo/dispersant_screening_PAL.git",
+        "commit": "c1f4d00503bb24cb0c7c5c7921598c3b6b80539b"
+    },
+    "email": "kevin.jablonka@epfl.ch",
+    "startedAt": "2020-08-20T11:07:55.311420",
+    "host": "tsf-484-wpa-3-004.epfl.ch",
+    "username": "kevinmaikjablonka",
+    "executable": "/Users/kevinmaikjablonka/opt/miniconda3/envs/dispersant_basf/bin/python",
+    "os": "Darwin-19.6.0-x86_64-i386-64bit",
+    "python": "3.7.0",
+    "cpu_count": 8,
+    "args": [],
+    "state": "finished",
+    "jobType": null,
+    "mode": "run",
+    "project": "dispersant_screener",
+    "heartbeatAt": "2020-08-20T11:10:18.655334",
+    "exitcode": 0
+}

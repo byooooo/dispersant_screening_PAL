@@ -16,6 +16,9 @@ appropriate transformation to your data such that it is a maximization problem i
 
 Many parts in this module are still relatively inefficient and could be vectorized/parallelized.
 Also, many parts use lookup tables that are not super efficient.
+
+Currently, on the first run, there will still be warnings as the jit compilation is not optimized. 
+I currently mainly use the looplifting although additional speedups are certainly possible. 
 """
 import logging
 from typing import List, Sequence, Tuple, Union
@@ -47,21 +50,24 @@ def get_hypervolume(pareto_front: np.array, reference_vector: np.array, prefacto
     ------------ f2
 
     But pygmo assumes that the reference vector is larger than all the points in the Pareto front.
-    For this reason, we then flip all the signs using prefactor.
+    For this reason, we then flip all the signs using prefactor (i.e., you can use it to toggle between maximization
+    and minimization problems). 
+
+    This indicator is not needed for the epsilon-PAL algorithm itself but only to allow tracking a metric
+    that might help the user to see if the algorithm converges. 
     """
     hyp = pg.hypervolume(pareto_front * prefactor)
     volume = hyp.compute(reference_vector)  # uses 'auto' algorithm
     return volume
 
 
-def _get_gp_predictions(
-    gps: Sequence,
-    x_train: np.array,
-    y_train: np.array,
-    x_input: np.array,
-    coregionalized_model: bool = False,
-    optimize: bool = True,
-) -> Union[np.array, np.array, List]:
+def _get_gp_predictions(gps: Sequence,
+                        x_train: np.array,
+                        y_train: np.array,
+                        x_input: np.array,
+                        coregionalized_model: bool = False,
+                        optimize: bool = True,
+                        parallel: bool = True) -> Union[np.array, np.array, List]:
     """Train one GPR per target using x_train and predict on x_input
 
     Args:
@@ -71,11 +77,14 @@ def _get_gp_predictions(
         y_train (np.array): Target vector. Shape (number points, number targets)
         x_input (np.array): Feature matrix for new query points.
             Shape (number points, number features)
-        coregionalized (bool): If True, we assume that there is one model in the gps
+        coregionalized (bool, optional): If True, we assume that there is one model in the gps
             list and that this model is a coregionalized GPy model that wil be able to
             model relationships between the output and that needs to be trained only
             once using all targets at the same time. We assume that the model was built
-            using the build_coregionalized function of the gp module.
+            using the build_coregionalized function of the gp module. Default is False.
+        optimize (bool, optional): If True, run hyperparamter optimization. Default is True. 
+        parallel (bool, optional): If True, run the random restarts for hyperparamter optimization 
+            in parallel. 
 
     Returns:
         Union[np.array, np.array, list]: Means and standard deviations in arrays of shape
@@ -94,7 +103,7 @@ def _get_gp_predictions(
         for i, gp in enumerate(gps):  # pylint:disable=invalid-name
             gp.set_XY(x_train, y_train[:, i].reshape(-1, 1))
             if optimize:
-                gp.optimize_restarts(20)
+                gp.optimize_restarts(20, parallel=parallel)
             mu, std = gp.predict(x_input)  # pylint:disable=invalid-name
 
             mus.append(mu.reshape(-1, 1))
@@ -106,7 +115,7 @@ def _get_gp_predictions(
         gp = gps[0]  # pylint:disable=invalid-name
         gp = set_xy_coregionalized(gp, x_train, y_train)  # pylint:disable=invalid-name
         if optimize:
-            gp.optimize_restarts(20)
+            gp.optimize_restarts(20, parallel=parallel)
 
         for i in range(num_targets):
             mu, std = predict_coregionalized(gp, x_input, i)  # pylint:disable=invalid-name
@@ -415,6 +424,7 @@ def pal(  # pylint: disable=dangerous-default-value, too-many-arguments, too-man
         coregionalized: bool = False,
         optimize_delay: int = 20,
         optimize_always: int = 10,
+        parallel: bool = True,
         noisy_sample: bool = False) -> Tuple[list, list, list, list]:
     """Orchestrates the PAL algorithm.
     You will see a progress bar appear. The length of this progress bar is equal to iterations,
@@ -461,6 +471,20 @@ def pal(  # pylint: disable=dangerous-default-value, too-many-arguments, too-man
             model relationships between the output and that needs to be trained only
             once using all targets at the same time. We assume that the model was built
             using the build_coregionalized function of the gp module.
+
+        optimize_delay (int, optional): At multiples of this value (If iteration % optimize_delay = 0)
+            we will perform hyperparameter optimization for the GPR models and the pick the one
+            with the largest likelihood. Default is 30. 
+
+        optimize_always (int, optional): Up to this number of iterations, we will always 
+            perform hyperparamter optimization. Indpendent of the value of optimize_delay. 
+            Default is 10. 
+
+        parallel (bool, optional): If true, it runs random restarts for the hyperparameter optimization 
+            of the Gaussian processes in parallel. 
+
+       noisy_sample (bool, optional): If false, the standard deviation of sampled points is set to 0. 
+            If True, we use the standard deviation predicted by the model. Default is False. 
 
     Returns:
         Tuple[list, list, list, list]: binary encoded list of Pareto optimal points found in x_input,
@@ -528,7 +552,7 @@ def pal(  # pylint: disable=dangerous-default-value, too-many-arguments, too-man
             optimize = True
         else:
             optimize = False
-        mus, stds, gps = _get_gp_predictions(gps, x_train, y_train, x_input, coregionalized, optimize)
+        mus, stds, gps = _get_gp_predictions(gps, x_train, y_train, x_input, coregionalized, optimize, parallel)
 
         # update scaling parameter β
         # which is achieved by choosing βt = 2 log(n|E|π2t2/(6δ)).
