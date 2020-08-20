@@ -2,7 +2,7 @@
 import os
 import time
 
-import Gpy
+import GPy
 import click
 import joblib
 import numpy as np
@@ -47,6 +47,7 @@ def load_data(label_scaling: bool = False):
     X_test = np.delete(X, greedy_indices, 0)
 
     return X_train, y_train, X_test, y_test
+
 
 @click.command('cli')
 @click.argument('epsilon', type=float, default=0.05, required=False)
