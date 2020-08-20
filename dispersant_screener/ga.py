@@ -4,7 +4,7 @@ from typing import Tuple
 
 import numpy as np
 from geneticalgorithm import geneticalgorithm as ga  # pylint:disable=unused-import
-
+from functools import partial
 from .smiles2feat import get_smiles
 
 DEFAULT_GA_PARAM = {
@@ -128,7 +128,16 @@ def constrain_length(x: np.array, feat_dict: dict) -> float:  # pylint: disable=
     return 0
 
 
-def objective(x: np.array, model, X_data: np.array) -> float:  # pylint: disable=invalid-name
+def predict_gbdt(model, X):
+    return model.predict(X)
+
+
+def predict_gpy(model, X):
+    mu, _ = model.predict(X)
+    return mu
+
+
+def objective(x: np.array, predict, X_data: np.array) -> float:  # pylint: disable=invalid-name
     """An opjective function that an optimizer should attempt to minimize.
     I.e. penalities are positive and if it is getting better, the output is negative/smaller
     This fitness function also includes a "not-novel" penality", i.e. it adds a term that it inversely
@@ -136,7 +145,7 @@ def objective(x: np.array, model, X_data: np.array) -> float:  # pylint: disable
 
     Args:
         x (np.array): feature vector
-        model ([type]): must have a .predict function and return the predictions
+        model (func): a function that takes the feature vector as argument and return the prediction
         X_data (np.array): dataset which is used as reference data for the novelty penality.
             To make this more efficient, one might try using K-means or other summarized forms
             of a dataset
@@ -144,10 +153,24 @@ def objective(x: np.array, model, X_data: np.array) -> float:  # pylint: disable
     Returns:
         float: loss
     """
-    y = model.predict(x.reshape(1, -1))  # pylint: disable=invalid-name
+    y = predict(x.reshape(1, -1))  # pylint: disable=invalid-name
 
     regularize_cluster = constrain_cluster(x, FEAT_DICT)
     regularize_validity = constrain_validity(x, FEATURES)
     regularizer_noverly = 1 / (np.min(np.linalg.norm(x - X_data, axis=1)))**2
 
     return -y + regularizer_noverly + regularize_validity + regularize_cluster
+
+
+def run_ga(predict,
+           background_data,
+           ga_param: dict = DEFAULT_GA_PARAM,
+           features: list = FEATURES,
+           feat_dict: dict = FEAT_DICT):
+    boundaries, types = get_bounds(features)
+    objective_partial = partial(objective, predict=predict, X_data=background_data)
+    ga_model = ga(function=objective_partial,
+                  dimension=len(features),
+                  variable_type_mixed=types,
+                  variable_boundaries=boundaries,
+                  algorithm_parameters=ga_param)

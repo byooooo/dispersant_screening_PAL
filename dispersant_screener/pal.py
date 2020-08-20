@@ -611,11 +611,12 @@ def pal(  # pylint: disable=dangerous-default-value, too-many-arguments, too-man
         else:
             hypervolume = np.nan
 
-        logger.info('Iteration {} | Pareto optimal {}, not Pareto optimal {}, unclassified {}, hypervolume: {}'.format(
-            iteration,
-            np.array(pareto_optimal_0).sum(),
-            np.array(not_pareto_optimal_0).sum(),
-            np.array(unclassified_0).sum(), hypervolume))
+        logger.info(
+            'Iteration {} | Ɛ-accurate Pareto optimal points {}, not Pareto optimal points {}, unclassified points {}, hypervolume: {}'
+            .format(iteration,
+                    np.array(pareto_optimal_0).sum(),
+                    np.array(not_pareto_optimal_0).sum(),
+                    np.array(unclassified_0).sum(), hypervolume))
 
         hypervolumes.append(hypervolume)
 

@@ -76,6 +76,7 @@ def main(epsilon, delta, beta_scale, optimize_always, optimize_delay, hv_referen
         coregionalized=True,
         optimize_always=optimize_always,
         optimize_delay=optimize_delay,
+        parallel=False,  # the implementation somehow does not seem that robust in GPy
         history_dump_file=os.path.join(outdir, TIMESTR + '-history.pkl'))
 
     if not os.path.exists(outdir):
