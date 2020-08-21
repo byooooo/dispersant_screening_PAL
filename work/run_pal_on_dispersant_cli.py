@@ -31,7 +31,7 @@ def load_data(label_scaling: bool = False):
     y = np.hstack([rg.reshape(-1, 1), gibbs.reshape(-1, 1), gibbs_max.reshape(-1, 1)])
     assert len(df_full_factorial_feat) == len(a2) == len(gibbs) == len(y)
 
-    vt = VarianceThreshold(0.2)
+    vt = VarianceThreshold(0)
     X = vt.fit_transform(df_full_factorial_feat)
 
     feat_scaler = StandardScaler()
@@ -41,7 +41,7 @@ def load_data(label_scaling: bool = False):
         label_scaler = StandardScaler()
         y = label_scaler.fit_transform(y)
 
-    X_train, y_train, greedy_indices = get_kmeans_samples(X, y, 30)
+    X_train, y_train, greedy_indices = get_kmeans_samples(X, y, 40)
 
     y_test = np.delete(y, greedy_indices, 0)
     X_test = np.delete(X, greedy_indices, 0)
@@ -52,18 +52,18 @@ def load_data(label_scaling: bool = False):
 @click.command('cli')
 @click.argument('epsilon', type=float, default=0.05, required=False)
 @click.argument('delta', type=float, default=0.05, required=False)
-@click.argument('beta_scale', type=float, default=1 / 20, required=False)
+@click.argument('beta_scale', type=float, default=1/9, required=False)
 @click.argument('optimize_always', type=int, default=1, required=False)
-@click.argument('optimize_delay', type=int, default=60, required=False)
+@click.argument('optimize_delay', type=int, default=10000, required=False)
 @click.argument('hv_reference', type=float, default=5, required=False)
 @click.argument('outdir', type=click.Path(), default='.', required=False)
 def main(epsilon, delta, beta_scale, optimize_always, optimize_delay, hv_reference, outdir):
     X_train, y_train, X_test, y_test = load_data()
 
-    m = build_coregionalized_model(X_train, y_train, kernel=GPy.kern.RBF(X_train.shape[1], ARD=False))
+    m = [build_coregionalized_model(X_train, y_train, kernel=GPy.kern.RBF(X_train.shape[1], ARD=False))]
 
     pareto_optimal, hypervolumes, gps, selected = pal(
-        [m],
+        m,
         X_train,
         y_train,
         X_test,
@@ -71,7 +71,8 @@ def main(epsilon, delta, beta_scale, optimize_always, optimize_delay, hv_referen
         hv_reference=[hv_reference] * y_train.shape[1],
         epsilon=[epsilon] * y_train.shape[1],
         #verbosity='debug',
-        delta=delta,
+        iterations=500,
+		delta=delta,
         beta_scale=beta_scale,
         coregionalized=True,
         optimize_always=optimize_always,

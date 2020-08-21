@@ -17,7 +17,7 @@ from dispersant_screener.gp import (build_coregionalized_model, build_model, pre
 from dispersant_screener.utils import (add_postfix_to_keys, get_metrics, get_variance_descriptors, plot_parity)
 
 DATADIR = '../data'
-TRAIN_SIZES = [0.005, 0.01, 0.05, 0.1, 0.5]
+TRAIN_SIZES = [0.005, 0.01, 0.05, 0.1, 0.2]
 REPEAT = 5
 
 df_full_factorial_feat = pd.read_csv(os.path.join(DATADIR, 'new_features_full_random.csv'))[FEATURES].values
@@ -129,7 +129,7 @@ def main():
             wandb.join()
 
     df = pd.DataFrame(METRICS)
-    df.to_csv('metrics2.csv')
+    df.to_csv('metrics.csv')
 
 
 if __name__ == '__main__':

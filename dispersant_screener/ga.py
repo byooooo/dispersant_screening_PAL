@@ -3,7 +3,7 @@
 from typing import Tuple
 
 import numpy as np
-from geneticalgorithm import geneticalgorithm as ga  # pylint:disable=unused-import
+from geneticalgorithm import GeneticAlgorithm as ga  # using my fork
 from functools import partial
 from .smiles2feat import get_smiles
 
@@ -97,9 +97,12 @@ def constrain_validity(x: np.array, features: list) -> float:  # pylint: disable
     Returns:
         float: penalty
     """
-    smiles = get_smiles(dict(zip(features, x)), 1, 10)
-    if smiles:
-        return -5
+    try:
+        smiles = get_smiles(dict(zip(features, x)), 1, 10)
+        if smiles:
+            return -5
+    except Exception:
+        return 50
     return 50
 
 
@@ -153,7 +156,7 @@ def objective(x: np.array, predict, X_data: np.array) -> float:  # pylint: disab
     Returns:
         float: loss
     """
-    y = predict(x.reshape(1, -1))  # pylint: disable=invalid-name
+    y = predict(X=x.reshape(1, -1))  # pylint: disable=invalid-name
 
     regularize_cluster = constrain_cluster(x, FEAT_DICT)
     regularize_validity = constrain_validity(x, FEATURES)
@@ -162,7 +165,7 @@ def objective(x: np.array, predict, X_data: np.array) -> float:  # pylint: disab
     return -y + regularizer_noverly + regularize_validity + regularize_cluster
 
 
-def run_ga(predict: function,
+def run_ga(predict,
            background_data: np.array,
            ga_param: dict = DEFAULT_GA_PARAM,
            features: list = FEATURES,

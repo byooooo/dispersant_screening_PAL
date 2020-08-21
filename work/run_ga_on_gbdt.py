@@ -3,13 +3,18 @@ import os
 import time
 from functools import partial
 
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+import numpy as np
 import click
 import joblib
+import pandas as pd
 from lightgbm import LGBMRegressor
 
 from dispersant_screener.ga import FEATURES, predict_gbdt, run_ga
 
 TIMESTR = time.strftime('%Y%m%d-%H%M%S')
+DATADIR = '../data'
 
 # Rg
 config_0 = {
@@ -67,25 +72,32 @@ assert len(df_full_factorial_feat) == len(a2) == len(gibbs) == len(y)
 @click.command('cli')
 @click.argument('target', type=int, default=0)
 @click.argument('runs', type=int, default=10)
-@click.argument('outdir', type=click.Path(), default='')
-def main(target, runs, outdir):
-    y_selected = y[:, target]
-    X_train, X_test, y_train, y_test = train_test_split(df_full_factorial_feat, y_selected, train_size=0.8)
-    if target == 0:
-        lgbm = LGBMRegressor(**config_0)
-    elif target == 1:
-        lgbm = LGBMRegressor(**config_1)
-    elif target == 2:
-        lgbm = LGBMRegressor(**config_2)
+@click.argument('outdir', type=click.Path(), default='.')
+@click.option('--all', is_flag=True)
+def main(target, runs, outdir, all):
+    if all:
+        targets = [0, 1, 2]
+    else:
+        targets = [target]
 
-    lgbm.fit(X_train, y_train)
+    for target in targets:
+        y_selected = y[:, target]
+        X_train, X_test, y_train, y_test = train_test_split(df_full_factorial_feat, y_selected, train_size=0.8)
+        if target == 0:
+            lgbm = LGBMRegressor(**config_0)
+        elif target == 1:
+            lgbm = LGBMRegressor(**config_1)
+        elif target == 2:
+            lgbm = LGBMRegressor(**config_2)
 
-    predict_partial = partial(predict_gbdt, model=lgbm)
+        lgbm.fit(X_train, y_train)
 
-    gas = []
+        predict_partial = partial(predict_gbdt, model=lgbm)
 
-    for _ in range(runs):
-        gas.append(run_ga(predict_partial, df_full_factorial_feat))
+        gas = []
+
+        for _ in range(runs):
+            gas.append(run_ga(predict_partial, df_full_factorial_feat))
 
     if not os.path.exists(outdir):
         os.mkdir(outdir)

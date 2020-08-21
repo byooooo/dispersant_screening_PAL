@@ -10,6 +10,9 @@ from dispersant_screener.gp import (build_coregionalized_model, build_model, pre
                                     set_xy_coregionalized)
 from dispersant_screener.pal import pal
 from dispersant_screener.utils import get_kmeans_samples
+import time
+
+TIMESTR = time.strftime('%Y%m%d-%H%M%S')
 
 other_descriptors = ['CellV [A^3]']
 
@@ -116,32 +119,32 @@ X = pmof[feat]
 X = StandardScaler().fit_transform(X)
 X = VarianceThreshold(0.2).fit_transform(X)
 
-X_train, y_train, indices = get_kmeans_samples(X, y, 170)
+X_train, y_train, indices = get_kmeans_samples(X, y, 100)
 X_test = np.delete(X, indices, 0)
 y_test = np.delete(y, indices, 0)
 
-models = [
-    build_model(X_train, y_train, 0, kernel=GPy.kern.RBF(X_train.shape[1], ARD=False)),
-    build_model(X_train, y_train, 1, kernel=GPy.kern.RBF(X_train.shape[1], ARD=False))
-]
+models = [build_coregionalized_model(X_train, y_train, kernel=GPy.kern.RBF(X_train.shape[1]))]
 pareto_optimal, hypervolumes, gps, sampled = pal(models,
                                                  X_train,
                                                  y_train,
                                                  X_test,
                                                  y_test,
                                                  hv_reference=[5, 5],
-                                                 iterations=1000,
+                                                 iterations=200,
                                                  epsilon=[0.01, 0.01],
-                                                 delta=0.02,
-                                                 beta_scale=1 / 3,
-                                                 coregionalized=False)
+                                                 delta=0.05,
+                                                 beta_scale=1 / 9,
+                                                 coregionalized=True,
+                                                 optimize_delay=10000,
+                                                 optimize_always=1,
+                                                 history_dump_file='{}-history.pkl'.format(TIMESTR))
 
-np.save('pareto_optimal.npy', pareto_optimal)
-np.save('hypervolumes.npy', hypervolumes)
-np.save('sampled.npy', sampled)
-np.save('x_test.npy', X_test)
-np.save('x_train.npy', X_train)
-np.save('y_test.npy', y_test)
-np.save('y_train.npy', y_train)
-np.save('sampled.npy', sampled)
+np.save('{}-pareto_optimal.npy'.format(TIMESTR), pareto_optimal)
+np.save('{}-hypervolumes.npy'.format(TIMESTR), hypervolumes)
+np.save('{}-sampled.npy'.format(TIMESTR), sampled)
+np.save('{}-x_test.npy'.format(TIMESTR), X_test)
+np.save('{}-x_train.npy'.format(TIMESTR), X_train)
+np.save('{}-y_test.npy'.format(TIMESTR), y_test)
+np.save('{}-y_train.npy'.format(TIMESTR), y_train)
+np.save('{}-sampled.npy'.format(TIMESTR), sampled)
 joblib.dump(gps, 'gps.joblib')

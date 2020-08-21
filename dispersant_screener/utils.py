@@ -11,6 +11,7 @@ from scipy.spatial import distance
 from sklearn import metrics
 from sklearn.cluster import KMeans
 from tqdm import tqdm
+from numba import jit
 
 
 def dump_pickle(file, object):
@@ -251,12 +252,31 @@ def is_pareto_efficient(costs, return_mask=True):
     return is_efficient
 
 
+@jit(nopython=True)
 def dominance_check(point1, point2):
     """One point dominates another if it is not worse in all objectives
     and strictly better in at least one. This here assumes we want to maximize"""
     if np.all(point1 >= point2) and np.any(point1 > point2):
         return True
 
+    return False
+
+
+@jit(nopython=True)
+def dominance_check_jitted(point, array):
+    arr_sorted = array[array[:, 0].argsort()]
+    for i in range(len(arr_sorted)):
+        if dominance_check(point, arr_sorted[i]):
+            return True
+    return False
+
+
+@jit(nopython=True)
+def dominance_check_jitted_2(array, point):
+    arr_sorted = array[array[:, 0].argsort()[::-1]]
+    for i in range(len(arr_sorted)):
+        if dominance_check(arr_sorted[i], point):
+            return True
     return False
 
 

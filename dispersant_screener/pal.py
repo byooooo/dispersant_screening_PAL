@@ -29,7 +29,8 @@ from numba import jit
 from tqdm import tqdm
 
 from dispersant_screener.gp import (predict_coregionalized, set_xy_coregionalized)
-from dispersant_screener.utils import (dump_pickle, is_pareto_efficient, vectorized_dominance_check)
+from dispersant_screener.utils import (dump_pickle, is_pareto_efficient, vectorized_dominance_check,
+                                       dominance_check_jitted, dominance_check_jitted_2)
 
 logger = logging.getLogger('PALlogger')  # pylint:disable=invalid-name
 handler = logging.StreamHandler()  # pylint:disable=invalid-name
@@ -165,7 +166,7 @@ def _get_uncertainity_regions(mus: np.array, stds: np.array, beta_sqrt: float) -
     return np.hstack(low_lims), np.hstack(high_lims)
 
 
-@jit
+@jit(nopython=True)
 def _union_one_dim(lows: Sequence, ups: Sequence, new_lows: Sequence, new_ups: Sequence) -> Tuple[np.array, np.array]:
     """Used to intersect the confidence regions, for eq. 6 of the PAL paper.
     "The iterative intersection ensures that all uncertainty regions are non-increasing with t."
@@ -233,7 +234,7 @@ def _union(lows: np.array, ups: np.array, new_lows: np.array, new_ups: np.array)
     return out_lows_array, out_ups_array
 
 
-@jit
+@jit(nopython=True)
 def _update_sampled(mus: np.array,
                     stds: np.array,
                     sampled: Sequence,
@@ -301,9 +302,7 @@ def _pareto_classify(  # pylint:disable=too-many-arguments
         pareto_pessimistic_lows = rectangle_lows[pareto_indices]  # p_pess(P)
         for i in range(0, len(x_input)):
             if unclassified_t[i] == 1:
-                if not np.any(
-                        np.all(vectorized_dominance_check(rectangle_ups[i], pareto_pessimistic_lows * (1 + epsilon)),
-                               axis=-1)):
+                if not dominance_check_jitted(rectangle_ups[i], pareto_pessimistic_lows * (1 + epsilon)):
                     not_pareto_optimal_t[i] = 1
                     unclassified_t[i] = 0
 
@@ -319,17 +318,13 @@ def _pareto_classify(  # pylint:disable=too-many-arguments
         # We cannot discard points that are part of p_pess(P \cup U)
         if (unclassified_t[i] == 1) and (i not in pareto_unclassified_indices):
             # If the upper bound of the hyperrectangle is not dominating anywhere the pareto pessimitic set, we can discard
-            if not np.any(
-                    np.all(vectorized_dominance_check(rectangle_ups[i],
-                                                      pareto_unclassified_pessimistic_points * (1 + epsilon)),
-                           axis=-1)):
+            if not dominance_check_jitted(rectangle_ups[i], pareto_unclassified_pessimistic_points * (1 + epsilon)):
                 not_pareto_optimal_t[i] = 1
                 unclassified_t[i] = 0
 
     # now, update the pareto set
     # if there is no other point x' such that max(Rt(x')) >= min(Rt(x))
     # move x to Pareto
-
     unclassified_indices = np.where((unclassified_t == 1) | (pareto_optimal_t == 1))[0]
     unclassified_ups = np.ma.array(rectangle_ups[unclassified_indices])
     # The index map helps us to mask the current point from the unclassified_ups list
@@ -343,8 +338,7 @@ def _pareto_classify(  # pylint:disable=too-many-arguments
             unclassified_ups[index_map[i]] = np.ma.masked
             # If there is no other point which up is epsilon dominating the low of the current point,
             # the current point is epsilon-accurate Pareto optimal
-            if not np.any(
-                    np.all(vectorized_dominance_check(unclassified_ups, rectangle_lows[i] * (1 + epsilon)), axis=1)):
+            if not dominance_check_jitted_2(unclassified_ups, rectangle_lows[i] * (1 + epsilon)):
                 pareto_optimal_t[i] = 1
                 unclassified_t[i] = 0
 
@@ -359,7 +353,30 @@ def _pareto_classify(  # pylint:disable=too-many-arguments
 #     uncertainity = np.linalg.norm(rectangle_ups[i, :] - rectangle_lows[i, :])
 
 
-@jit
+@jit(nopython=True)
+def _get_max_wt(rectangle_lows: np.array, rectangle_ups: np.array, pareto_optimal_t: Sequence, unclassified_t: Sequence,
+                sampled: List, x_input: np.array) -> int:
+    max_uncertainity = 0
+    maxid = -1
+
+    for i in range(0, len(x_input)):
+        # Among the points x ∈ Pt ∪ Ut, the one with the largest wt(x) is chosen as the next sample xt to be evaluated.
+        # Intuitively, this rule biases the sampling towards exploring,
+        # and thus improving the model for, the points most likely to be Pareto-optimal.
+        if ((unclassified_t[i] == 1) or (pareto_optimal_t[i] == 1)) and not sampled[i] == 1:
+            # weight is the length of the diagonal of the uncertainity region
+            uncertainity = np.linalg.norm(rectangle_ups[i, :] - rectangle_lows[i, :])
+            if maxid == -1:
+                max_uncertainity = uncertainity
+                maxid = i
+            # the point with the largest weight is chosen as the next sample
+            elif uncertainity > max_uncertainity:
+                max_uncertainity = uncertainity
+                maxid = i
+
+    return maxid
+
+
 def _sample(  # pylint:disable=too-many-arguments
         rectangle_lows: np.array, rectangle_ups: np.array, pareto_optimal_t: Sequence, unclassified_t: Sequence,
         sampled: List, x_input: np.array, y_input: np.array, x_train: np.array,
@@ -382,24 +399,7 @@ def _sample(  # pylint:disable=too-many-arguments
             updated label matrix of training set, updated binary encoded list of sampled points
     """
 
-    max_uncertainity = 0
-    maxid = -1
-
-    for i in range(0, len(x_input)):
-        # Among the points x ∈ Pt ∪ Ut, the one with the largest wt(x) is chosen as the next sample xt to be evaluated.
-        # Intuitively, this rule biases the sampling towards exploring,
-        # and thus improving the model for, the points most likely to be Pareto-optimal.
-        if ((unclassified_t[i] == 1) or (pareto_optimal_t[i] == 1)) and not sampled[i] == 1:
-            # weight is the length of the diagonal of the uncertainity region
-            uncertainity = np.linalg.norm(rectangle_ups[i, :] - rectangle_lows[i, :])
-            if maxid == -1:
-                max_uncertainity = uncertainity
-                maxid = i
-            # the point with the largest weight is chosen as the next sample
-            elif uncertainity > max_uncertainity:
-                max_uncertainity = uncertainity
-                maxid = i
-
+    maxid = _get_max_wt(rectangle_lows, rectangle_ups, pareto_optimal_t, unclassified_t, sampled, x_input)
     x_train = np.insert(x_train, x_train.shape[0], x_input[maxid], axis=0)
     y_train = np.insert(y_train, y_train.shape[0], y_input[maxid], axis=0)
 
