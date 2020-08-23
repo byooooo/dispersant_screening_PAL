@@ -29,8 +29,8 @@ from numba import jit
 from tqdm import tqdm
 
 from dispersant_screener.gp import (predict_coregionalized, set_xy_coregionalized)
-from dispersant_screener.utils import (dump_pickle, is_pareto_efficient, vectorized_dominance_check,
-                                       dominance_check_jitted, dominance_check_jitted_2)
+from dispersant_screener.utils import (dominance_check_jitted_2, dump_pickle, is_pareto_efficient,
+                                       vectorized_dominance_check)
 
 logger = logging.getLogger('PALlogger')  # pylint:disable=invalid-name
 handler = logging.StreamHandler()  # pylint:disable=invalid-name
@@ -302,23 +302,27 @@ def _pareto_classify(  # pylint:disable=too-many-arguments
         pareto_pessimistic_lows = rectangle_lows[pareto_indices]  # p_pess(P)
         for i in range(0, len(x_input)):
             if unclassified_t[i] == 1:
-                if not dominance_check_jitted(rectangle_ups[i], pareto_pessimistic_lows * (1 + epsilon)):
+                if dominance_check_jitted_2(pareto_pessimistic_lows * (1 + epsilon), rectangle_ups[i]):
                     not_pareto_optimal_t[i] = 1
                     unclassified_t[i] = 0
 
     # ToDo: can be probably cleaned up a bit
     pareto_unclassified_indices = np.where((pareto_optimal_0 == 1) | (unclassified_t == 1))[0]
+
     pareto_unclassified_lows = rectangle_lows[pareto_unclassified_indices]
-    pareto_unclassified_pessimistic_mask = is_pareto_efficient(-pareto_unclassified_lows)  # pylint:disable=invalid-name
+
+    # assuming maximization
+    pareto_unclassified_pessimistic_mask = is_pareto_efficient(-pareto_unclassified_lows)  # disable:pylint:disable=invalid-name
+    original_indices = pareto_unclassified_indices[pareto_unclassified_pessimistic_mask]
     pareto_unclassified_pessimistic_points = pareto_unclassified_lows[pareto_unclassified_pessimistic_mask]  # pylint:disable=invalid-name
 
     logger.debug('Comparing against p_pess(P \cup U)')
     for i in range(0, len(x_input)):
         # We can only discard points that are unclassified so far
         # We cannot discard points that are part of p_pess(P \cup U)
-        if (unclassified_t[i] == 1) and (i not in pareto_unclassified_indices):
+        if (unclassified_t[i] == 1) and (i not in original_indices):
             # If the upper bound of the hyperrectangle is not dominating anywhere the pareto pessimitic set, we can discard
-            if not dominance_check_jitted(rectangle_ups[i], pareto_unclassified_pessimistic_points * (1 + epsilon)):
+            if dominance_check_jitted_2(pareto_unclassified_pessimistic_points * (1 + epsilon), rectangle_ups[i]):
                 not_pareto_optimal_t[i] = 1
                 unclassified_t[i] = 0
 
@@ -327,8 +331,9 @@ def _pareto_classify(  # pylint:disable=too-many-arguments
     # move x to Pareto
     unclassified_indices = np.where((unclassified_t == 1) | (pareto_optimal_t == 1))[0]
     unclassified_ups = np.ma.array(rectangle_ups[unclassified_indices])
+
     # The index map helps us to mask the current point from the unclassified_ups list
-    index_map = dict(zip(unclassified_indices, range(len(unclassified_ups))))
+    index_map = dict(zip(unclassified_indices, range(len(unclassified_ups))))  # ToDo: this seems wrong to me!
 
     logger.debug('Pareto front covering')
     for i in range(0, len(x_input)):
@@ -402,7 +407,6 @@ def _sample(  # pylint:disable=too-many-arguments
     maxid = _get_max_wt(rectangle_lows, rectangle_ups, pareto_optimal_t, unclassified_t, sampled, x_input)
     x_train = np.insert(x_train, x_train.shape[0], x_input[maxid], axis=0)
     y_train = np.insert(y_train, y_train.shape[0], y_input[maxid], axis=0)
-
     sampled[maxid] = 1
 
     return x_train, y_train, sampled
@@ -518,7 +522,7 @@ def pal(  # pylint: disable=dangerous-default-value, too-many-arguments, too-man
     progress_dict = {'sampled': [], 'pareto': [], 'non_pareto': [], 'unclassified': []}
 
     hypervolumes = []
-
+    sampled = np.array([0] * len(x_input) + [1] * len(x_train))
     x_input = np.vstack([x_input, x_train])
     y_input = np.vstack([y_input, y_train])
     # initalize binary list to keep track of the different sets
@@ -527,7 +531,6 @@ def pal(  # pylint: disable=dangerous-default-value, too-many-arguments, too-man
     pareto_optimal_0 = np.array([0] * len(x_input))
     not_pareto_optimal_0 = np.array([0] * len(x_input))
     unclassified_0 = np.array([1] * len(x_input))
-    sampled = np.array([0] * len(x_input))
 
     iteration = 0
 

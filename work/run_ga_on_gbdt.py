@@ -3,13 +3,13 @@ import os
 import time
 from functools import partial
 
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
-import numpy as np
 import click
 import joblib
+import numpy as np
 import pandas as pd
 from lightgbm import LGBMRegressor
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
 
 from dispersant_screener.ga import FEATURES, predict_gbdt, run_ga
 

@@ -1,16 +1,17 @@
 # -*- coding: utf-8 -*-
-import GPy
+import time
+
 import joblib
 import numpy as np
 import pandas as pd
 from sklearn.feature_selection import VarianceThreshold
 from sklearn.preprocessing import StandardScaler
 
+import GPy
 from dispersant_screener.gp import (build_coregionalized_model, build_model, predict_coregionalized,
                                     set_xy_coregionalized)
 from dispersant_screener.pal import pal
-from dispersant_screener.utils import get_kmeans_samples
-import time
+from dispersant_screener.utils import get_kmeans_samples, get_maxmin_samples
 
 TIMESTR = time.strftime('%Y%m%d-%H%M%S')
 
@@ -105,6 +106,9 @@ pmof = pd.concat([pmof_test, pmof_train])
 pmof['CO2_DC'] = pmof['pure_uptake_CO2_298.00_1600000'] - pmof['pure_uptake_CO2_298.00_15000']
 y = pmof[['CO2_DC', 'CH4DC']].values
 
+#label_scaler = StandardScaler()
+#y = label_scaler.fit_transform(y)
+
 feat = set([
     'func-chi-0-all', 'D_func-S-3-all', 'total_SA_volumetric', 'Di', 'Dif', 'mc_CRY-Z-0-all', 'total_POV_volumetric',
     'density [g/cm^3]', 'total_SA_gravimetric', 'D_func-S-1-all', 'Df', 'mc_CRY-S-0-all', 'total_POV_gravimetric',
@@ -117,26 +121,31 @@ feat = set([
 X = pmof[feat]
 
 X = StandardScaler().fit_transform(X)
-X = VarianceThreshold(0.2).fit_transform(X)
+X = VarianceThreshold().fit_transform(X)
 
-X_train, y_train, indices = get_kmeans_samples(X, y, 100)
+X_train, y_train, indices = get_maxmin_samples(X, y, 120, metric='correlation', init='median')
 X_test = np.delete(X, indices, 0)
 y_test = np.delete(y, indices, 0)
 
-models = [build_coregionalized_model(X_train, y_train, kernel=GPy.kern.RBF(X_train.shape[1]))]
+models = [
+    build_coregionalized_model(X_train,
+                               y_train,
+                               kernel=GPy.kern.RBF(X_train.shape[1], ARD=False) +
+                               GPy.kern.Linear(X_train.shape[1], ARD=False))
+]
 pareto_optimal, hypervolumes, gps, sampled = pal(models,
                                                  X_train,
                                                  y_train,
                                                  X_test,
                                                  y_test,
                                                  hv_reference=[5, 5],
-                                                 iterations=200,
-                                                 epsilon=[0.01, 0.01],
+                                                 iterations=300,
+                                                 epsilon=[0.05, 0.05],
                                                  delta=0.05,
                                                  beta_scale=1 / 9,
                                                  coregionalized=True,
-                                                 optimize_delay=10000,
-                                                 optimize_always=1,
+                                                 optimize_delay=30,
+                                                 optimize_always=10,
                                                  history_dump_file='{}-history.pkl'.format(TIMESTR))
 
 np.save('{}-pareto_optimal.npy'.format(TIMESTR), pareto_optimal)

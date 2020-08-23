@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 """Module that implements the genetic algorithm, i.e., mainly the fitness function"""
+from functools import partial
 from typing import Tuple
 
 import numpy as np
+
 from geneticalgorithm import GeneticAlgorithm as ga  # using my fork
-from functools import partial
+
 from .smiles2feat import get_smiles
 
 DEFAULT_GA_PARAM = {
@@ -101,7 +103,7 @@ def constrain_validity(x: np.array, features: list) -> float:  # pylint: disable
         smiles = get_smiles(dict(zip(features, x)), 1, 10)
         if smiles:
             return -5
-    except Exception:
+    except Exception:  # pylint:disable=broad-except
         return 50
     return 50
 
@@ -131,12 +133,12 @@ def constrain_length(x: np.array, feat_dict: dict) -> float:  # pylint: disable=
     return 0
 
 
-def predict_gbdt(model, X):
+def predict_gbdt(model, X):  # pylint:disable=invalid-name
     return model.predict(X)
 
 
-def predict_gpy(model, X):
-    mu, _ = model.predict(X)
+def predict_gpy(model, X):  # pylint:disable=invalid-name
+    mu, _ = model.predict(X)  # pylint:disable=invalid-name
     return mu
 
 
@@ -160,28 +162,29 @@ def objective(x: np.array, predict, X_data: np.array) -> float:  # pylint: disab
 
     regularize_cluster = constrain_cluster(x, FEAT_DICT)
     regularize_validity = constrain_validity(x, FEATURES)
-    regularizer_noverly = 1 / (np.min(np.linalg.norm(x - X_data, axis=1)))**2
+    regularizer_noverly = (1 / np.min(np.linalg.norm(x - X_data, axis=1)))**2
 
     return -y + regularizer_noverly + regularize_validity + regularize_cluster
 
 
-def run_ga(predict,
-           background_data: np.array,
-           ga_param: dict = DEFAULT_GA_PARAM,
-           features: list = FEATURES,
-           feat_dict: dict = FEAT_DICT) -> ga:
+def run_ga(
+        predict,  # pylint:disable=dangerous-default-value
+        background_data: np.array,
+        ga_param: dict = DEFAULT_GA_PARAM,
+        features: list = FEATURES,
+        feat_dict: dict = FEAT_DICT) -> ga:
     """
 
     Args:
-        predict (function): function that takes a feature vector and 
+        predict (function): function that takes a feature vector and
             returns a flot
-        background_data (np.array): Data which is used to compute the 
+        background_data (np.array): Data which is used to compute the
             novelty penality
-        ga_param (dict, optional): Parameters for the genetic algorithm. 
+        ga_param (dict, optional): Parameters for the genetic algorithm.
             Defaults to DEFAULT_GA_PARAM.
-        features (list, optional): Feature names following the convention from LinearPolymerFeaturizer. 
+        features (list, optional): Feature names following the convention from LinearPolymerFeaturizer.
             Defaults to FEATURES.
-        feat_dict (dict, optional): Mapping indices in the feaature matrix to feature names. 
+        feat_dict (dict, optional): Mapping indices in the feaature matrix to feature names.
             Defaults to FEAT_DICT.
 
     Returns:

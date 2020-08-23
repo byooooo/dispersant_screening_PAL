@@ -6,17 +6,77 @@ from typing import Tuple
 
 import matplotlib.pyplot as plt
 import numpy as np
+from numba import jit
 from numpy import vectorize
 from scipy.spatial import distance
 from sklearn import metrics
 from sklearn.cluster import KMeans
 from tqdm import tqdm
-from numba import jit
 
 
 def dump_pickle(file, object):
     with open(file, 'wb') as fh:
         pickle.dump(object, fh)
+
+
+def read_pickle(file):
+    with open(file, 'rb') as fh:
+        res = pickle.load(fh)
+    return res
+
+
+def get_summary_stats_time(history: dict):
+    """The PAL function gives the function to persist a pickle with the history
+    (which samples were classified to which set in which iteration).
+
+    This function loops over the items in this dict to make plotting easier"""
+
+    pareto = []
+    non_pareto = []
+    sampled = []
+
+    pareto_indices = []
+    non_pareto_indices = []
+    sampled_indices = []
+
+    for array in history['pareto']:
+        pareto.append(sum(array))
+        pareto_indices.append(np.where(array == 1)[0])
+
+    for array in history['non_pareto']:
+        non_pareto.append(sum(array))
+        non_pareto_indices.append(np.where(array == 1)[0])
+
+    for array in history['sampled']:
+        sampled.append(sum(array))
+        sampled_indices.append(np.where(array == 1)[0])
+
+    history_ = {}
+
+    return pareto, non_pareto, sampled, pareto_indices, non_pareto_indices, sampled_indices
+
+
+def animate_2d(i, ax, y, pareto_indices, non_pareto_indices, sampled_indices):
+    """Use with FuncAnimate to see which points were assigned to which set in which iteration
+    Example:
+        from functools import partial
+        from matplotlib import animation, rc
+
+        pareto, non_pareto, sampled, pareto_indices, non_pareto_indices, sampled_indices = get_summary_stats_time(history)
+        animate = partial(animate_2d, ax=ax, y=y, pareto_indices=pareto_indices, non_pareto_indices=non_pareto_indices, sampled_indices=sampled_indices)
+        ani = animation.FuncAnimation(fig, animate,frames=range(301))
+
+        # In Jupyter notebook
+        from IPython.display import HTML
+        rc('animation', html='jshtml')
+        rc
+
+        HTML(ani.to_jshtml())
+    """
+    ax.scatter(y[:, 0], y[:, 1], c='gray', s=1)
+    ax.scatter(y[non_pareto_indices[i], 0], y[non_pareto_indices[i], 1], c='red', label='discarded', s=1)
+    ax.scatter(y[sampled_indices[i], 0], y[sampled_indices[i], 1], c='blue', label='sampled', s=3)
+    ax.scatter(y[pareto_indices[i], 0], y[pareto_indices[i], 1], c='green', label='Pareto', s=3)
 
 
 def plot_parity(objective_tuples: list, outname: str = None, titles: list = None):
@@ -202,9 +262,9 @@ def get_maxmin_samples(
     if init == 'random':
         index = np.random.randint(0, len(X) - 1)
     elif init == 'mean':
-        index = np.argmin(np.abs(X - np.mean(X, axis=0)))
+        index = np.argmin(np.linalg.norm(X - np.mean(X, axis=0), axis=1))
     else:
-        index = np.argmin(np.abs(X - np.median(X, axis=0)))
+        index = np.argmin(np.linalg.norm(X - np.median(X, axis=0), axis=1))
     greedy_data.append(X[index])
     remaining = np.delete(X, index, 0)
     pbar = tqdm(total=n_samples)
