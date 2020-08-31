@@ -24,12 +24,11 @@ import logging
 from typing import List, Sequence, Tuple, Union
 
 import numpy as np
-import pygmo as pg
 from numba import jit
 from tqdm import tqdm
 
 from dispersant_screener.gp import (predict_coregionalized, set_xy_coregionalized)
-from dispersant_screener.utils import (dominance_check_jitted_2, dump_pickle, is_pareto_efficient,
+from dispersant_screener.utils import (dominance_check_jitted_2, dump_pickle, get_hypervolume, is_pareto_efficient,
                                        vectorized_dominance_check)
 
 logger = logging.getLogger('PALlogger')  # pylint:disable=invalid-name
@@ -37,29 +36,6 @@ handler = logging.StreamHandler()  # pylint:disable=invalid-name
 formatter = logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(message)s')  # pylint:disable=invalid-name
 handler.setFormatter(formatter)
 logger.addHandler(handler)
-
-
-def get_hypervolume(pareto_front: np.array, reference_vector: np.array, prefactor: float = -1) -> float:
-    """Compute the hypervolume indicator of a Pareto front
-    I multiply it with minus one as we assume that we want to maximize all objective and then we calculate the area
-
-    f1
-    |
-    |----|
-    |     -|
-    |       -|
-    ------------ f2
-
-    But pygmo assumes that the reference vector is larger than all the points in the Pareto front.
-    For this reason, we then flip all the signs using prefactor (i.e., you can use it to toggle between maximization
-    and minimization problems).
-
-    This indicator is not needed for the epsilon-PAL algorithm itself but only to allow tracking a metric
-    that might help the user to see if the algorithm converges.
-    """
-    hyp = pg.hypervolume(pareto_front * prefactor)
-    volume = hyp.compute(reference_vector)  # uses 'auto' algorithm
-    return volume
 
 
 def _get_gp_predictions(gps: Sequence,
@@ -412,7 +388,12 @@ def _sample(  # pylint:disable=too-many-arguments
     return x_train, y_train, sampled
 
 
-def pal(  # pylint: disable=dangerous-default-value, too-many-arguments, too-many-locals, too-many-statements
+def pal_iteration():
+    """This function runs one iteration of the PAL algorithm. In this way, you can integrate it with your own evaluation function and run it as long as you wish"""
+    ...
+
+
+def pal_evaluate(  # pylint: disable=dangerous-default-value, too-many-arguments, too-many-locals, too-many-statements
         gps: list,
         x_train: np.array,
         y_train: np.array,
@@ -431,7 +412,8 @@ def pal(  # pylint: disable=dangerous-default-value, too-many-arguments, too-man
         parallel: bool = False,
         noisy_sample: bool = False,
         history_dump_file: str = None) -> Tuple[list, list, list, list]:
-    """Orchestrates the PAL algorithm.
+    """Orchestrates the PAL algorithm. This function can be used to test the algorithm, i.e., when all
+    designs already have been evaluated and y_input is available.
     You will see a progress bar appear. The length of this progress bar is equal to iterations,
     but the algorithm might stop earlier if all samples already have been classified.
 

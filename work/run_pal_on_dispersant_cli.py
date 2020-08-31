@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# pylint:disable=invalid-name
 import os
 import time
 
@@ -11,9 +12,9 @@ from sklearn.preprocessing import StandardScaler
 
 import GPy
 from dispersant_screener.definitions import FEATURES
-from dispersant_screener.gp import build_coregionalized_model, build_model
-from dispersant_screener.pal import pal
-from dispersant_screener.utils import get_kmeans_samples, get_maxmin_samples
+from dispersant_screener.gp import build_coregionalized_model
+from dispersant_screener.pal import pal_evaluate as pal
+from dispersant_screener.utils import get_maxmin_samples
 
 TIMESTR = time.strftime('%Y%m%d-%H%M%S')
 
@@ -21,6 +22,7 @@ DATADIR = '../data'
 
 
 def load_data(label_scaling: bool = False):
+    """Take in Brian's data and spit out some numpy arrays for the PAL"""
     df_full_factorial_feat = pd.read_csv(os.path.join(DATADIR, 'new_features_full_random.csv'))[FEATURES].values
     a2 = pd.read_csv(os.path.join(DATADIR, 'b1-b21_random_virial_large_new.csv'))['A2_normalized'].values
     deltaGMax = pd.read_csv(os.path.join(DATADIR, 'b1-b21_random_virial_large_new.csv'))['A2_normalized'].values
@@ -31,7 +33,7 @@ def load_data(label_scaling: bool = False):
     y = np.hstack([rg.reshape(-1, 1), gibbs.reshape(-1, 1), gibbs_max.reshape(-1, 1)])
     assert len(df_full_factorial_feat) == len(a2) == len(gibbs) == len(y)
 
-    vt = VarianceThreshold(0.1)
+    vt = VarianceThreshold()
     X = vt.fit_transform(df_full_factorial_feat)
 
     feat_scaler = StandardScaler()
@@ -41,7 +43,7 @@ def load_data(label_scaling: bool = False):
         label_scaler = StandardScaler()
         y = label_scaler.fit_transform(y)
 
-    X_train, y_train, greedy_indices = get_maxmin_samples(X, y, 90)
+    X_train, y_train, greedy_indices = get_maxmin_samples(X, y, 40)
 
     y_test = np.delete(y, greedy_indices, 0)
     X_test = np.delete(X, greedy_indices, 0)
@@ -52,9 +54,9 @@ def load_data(label_scaling: bool = False):
 @click.command('cli')
 @click.argument('epsilon', type=float, default=0.05, required=False)
 @click.argument('delta', type=float, default=0.05, required=False)
-@click.argument('beta_scale', type=float, default=1 / 9, required=False)
+@click.argument('beta_scale', type=float, default=1 / 20, required=False)
 @click.argument('optimize_always', type=int, default=10, required=False)
-@click.argument('optimize_delay', type=int, default=50, required=False)
+@click.argument('optimize_delay', type=int, default=10, required=False)
 @click.argument('hv_reference', type=float, default=5, required=False)
 @click.argument('outdir', type=click.Path(), default='.', required=False)
 def main(epsilon, delta, beta_scale, optimize_always, optimize_delay, hv_reference, outdir):
@@ -89,10 +91,10 @@ def main(epsilon, delta, beta_scale, optimize_always, optimize_delay, hv_referen
     np.save(os.path.join(outdir, TIMESTR + '-y_train'), y_train)
     np.save(os.path.join(outdir, TIMESTR + '-y_test'), y_test)
     np.save(os.path.join(outdir, TIMESTR + '-pareto_optimal_indices'), pareto_optimal)
-    np.save(os.path.join(outdir, TIMESTR + '-hypervolumes'), pareto_optimal)
+    np.save(os.path.join(outdir, TIMESTR + '-hypervolumes'), hypervolumes)
     np.save(os.path.join(outdir, TIMESTR + '-selected'), selected)
     joblib.dump(gps, os.path.join(outdir, TIMESTR + 'models.joblib'))
 
 
 if __name__ == '__main__':
-    main()
+    main()  # pylint:disable=no-value-for-parameter

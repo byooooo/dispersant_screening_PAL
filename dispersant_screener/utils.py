@@ -1,17 +1,121 @@
 # -*- coding: utf-8 -*-
+# pylint:disable=invalid-name
 """Functions that can be handy when using epsilon-PAL"""
 
 import pickle
+from functools import lru_cache, wraps
 from typing import Tuple
 
 import matplotlib.pyplot as plt
 import numpy as np
+import pygmo as pg
 from numba import jit
 from numpy import vectorize
 from scipy.spatial import distance
 from sklearn import metrics
 from sklearn.cluster import KMeans
 from tqdm import tqdm
+
+
+def np_cache(*args, **kwargs):
+    """LRU cache implementation for functions whose FIRST parameter is a numpy array
+    >>> array = np.array([[1, 2, 3], [4, 5, 6]])
+    >>> @np_cache(maxsize=256)
+    ... def multiply(array, factor):
+    ...     print("Calculating...")
+    ...     return factor*array
+    >>> multiply(array, 2)
+    Calculating...
+    array([[ 2,  4,  6],
+           [ 8, 10, 12]])
+    >>> multiply(array, 2)
+    array([[ 2,  4,  6],
+           [ 8, 10, 12]])
+    >>> multiply.cache_info()
+    CacheInfo(hits=1, misses=1, maxsize=256, currsize=1)
+
+    """
+
+    def decorator(function):
+
+        @wraps(function)
+        def wrapper(np_array, *args, **kwargs):
+            hashable_array = array_to_tuple(np_array)
+            return cached_wrapper(hashable_array, *args, **kwargs)
+
+        @lru_cache(*args, **kwargs)
+        def cached_wrapper(hashable_array, *args, **kwargs):
+            array = np.array(hashable_array)
+            return function(array, *args, **kwargs)
+
+        def array_to_tuple(np_array):
+            """Iterates recursivelly."""
+            try:
+                return tuple(array_to_tuple(_) for _ in np_array)
+            except TypeError:
+                return np_array
+
+        # copy lru_cache attributes over too
+        wrapper.cache_info = cached_wrapper.cache_info
+        wrapper.cache_clear = cached_wrapper.cache_clear
+
+        return wrapper
+
+    return decorator
+
+
+def get_hypervolume(pareto_front: np.array, reference_vector: np.array, prefactor: float = -1) -> float:
+    """Compute the hypervolume indicator of a Pareto front
+    I multiply it with minus one as we assume that we want to maximize all objective and then we calculate the area
+
+    f1
+    |
+    |----|
+    |     -|
+    |       -|
+    ------------ f2
+
+    But pygmo assumes that the reference vector is larger than all the points in the Pareto front.
+    For this reason, we then flip all the signs using prefactor (i.e., you can use it to toggle between maximization
+    and minimization problems).
+
+    This indicator is not needed for the epsilon-PAL algorithm itself but only to allow tracking a metric
+    that might help the user to see if the algorithm converges.
+    """
+    hyp = pg.hypervolume(pareto_front * prefactor)
+    volume = hyp.compute(reference_vector)  # uses 'auto' algorithm
+    return volume
+
+
+def poprow(my_array, pr):
+    """ row popping in numpy arrays
+    Input: my_array - NumPy array, pr: row index to pop out
+    Output: [new_array,popped_row]
+    https://stackoverflow.com/questions/39945410/numpy-equivalent-of-list-popF
+    """
+    i = pr
+    pop = my_array[i]
+    new_array = np.vstack((my_array[:i], my_array[i + 1:]))
+    return [new_array, pop]
+
+
+def get_random_exploration_bl(y, reference_vector=[5, 5, 5]):  # pylint:disable=dangerous-default-value
+    """Get a baseline for random exploration of the design space"""
+    hv_random = []
+    chosen_points = []
+    y_ = y.copy()
+
+    for i in range(len(y)):
+        index = np.random.randint(0, len(y_))
+
+        array, pop = poprow(y_, index)
+
+        chosen_points.append(pop)
+
+        hv = get_hypervolume(np.array(chosen_points), reference_vector=reference_vector)
+        hv_random.append(hv)
+
+    return hv_random
 
 
 def dump_pickle(file, object):
@@ -77,6 +181,30 @@ def animate_2d(i, ax, y, pareto_indices, non_pareto_indices, sampled_indices):
     ax.scatter(y[non_pareto_indices[i], 0], y[non_pareto_indices[i], 1], c='red', label='discarded', s=1)
     ax.scatter(y[sampled_indices[i], 0], y[sampled_indices[i], 1], c='blue', label='sampled', s=3)
     ax.scatter(y[pareto_indices[i], 0], y[pareto_indices[i], 1], c='green', label='Pareto', s=3)
+
+
+def get_3d_fig_ax(y):
+
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    ax.scatter(y[:, 0], y[:, 1], y[:, 2], c='gray', s=1)
+    ax.xaxis.pane.fill = False
+    ax.yaxis.pane.fill = False
+    ax.zaxis.pane.fill = False
+
+    ax.xaxis.pane.set_edgecolor('w')
+    ax.yaxis.pane.set_edgecolor('w')
+    ax.zaxis.pane.set_edgecolor('w')
+
+    ax.grid(False)
+
+    return fig, ax
+
+
+def animate_3d(i, graph_discarded, graph_sampled, graph_pareto, y, pareto_indices, non_pareto_indices, sampled_indices):
+    graph_discarded._offsets3d = (y[non_pareto_indices[i], 0], y[non_pareto_indices[i], 1], y[non_pareto_indices[i], 2])
+    graph_sampled._offsets3d = (y[sampled_indices[i], 0], y[sampled_indices[i], 1], y[sampled_indices[i], 2])
+    graph_pareto._offsets3d = (y[pareto_indices[i], 0], y[pareto_indices[i], 1], y[pareto_indices[i], 2])
 
 
 def plot_parity(objective_tuples: list, outname: str = None, titles: list = None):

@@ -10,7 +10,7 @@ from sklearn.preprocessing import StandardScaler
 import GPy
 from dispersant_screener.gp import (build_coregionalized_model, build_model, predict_coregionalized,
                                     set_xy_coregionalized)
-from dispersant_screener.pal import pal
+from dispersant_screener.pal import pal_evaluate as pal
 from dispersant_screener.utils import get_kmeans_samples, get_maxmin_samples
 
 TIMESTR = time.strftime('%Y%m%d-%H%M%S')

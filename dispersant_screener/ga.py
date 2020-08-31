@@ -4,14 +4,17 @@ from functools import partial
 from typing import Tuple
 
 import numpy as np
+from scipy.spatial.distance import cdist
 
 from geneticalgorithm import GeneticAlgorithm as ga  # using my fork
 
+from .gp import predict_coregionalized
 from .smiles2feat import get_smiles
+from .utils import np_cache
 
 DEFAULT_GA_PARAM = {
-    'max_num_iteration': 5000,
-    'elit_ratio': 0.02,
+    'max_num_iteration': 6000,
+    'elit_ratio': 0.05,
     'population_size': 100,
     'mutation_probability': 0.1,
     'crossover_probability': 0.5,
@@ -76,13 +79,13 @@ def constrain_cluster(x: np.array, feat_dict: dict) -> float:  # pylint: disable
     """
     pentalty = 0
     if x[feat_dict['max_[W]']] > x[feat_dict['[W]']] * x[feat_dict['length']]:
-        pentalty += 30
+        pentalty += 100
     if x[feat_dict['max_[Ta]']] > x[feat_dict['[Ta]']] * x[feat_dict['length']]:
-        pentalty += 30
+        pentalty += 100
     if x[feat_dict['max_[Tr]']] > x[feat_dict['[Tr]']] * x[feat_dict['length']]:
-        pentalty += 30
+        pentalty += 100
     if x[feat_dict['max_[R]']] > x[feat_dict['[R]']] * x[feat_dict['length']]:
-        pentalty += 30
+        pentalty += 100
 
     return pentalty
 
@@ -100,9 +103,9 @@ def constrain_validity(x: np.array, features: list) -> float:  # pylint: disable
         float: penalty
     """
     try:
-        smiles = get_smiles(dict(zip(features, x)), 1, 10)
+        smiles = get_smiles(dict(zip(features, x)), 1, 100)
         if smiles:
-            return -5
+            return 0
     except Exception:  # pylint:disable=broad-except
         return 50
     return 50
@@ -142,7 +145,24 @@ def predict_gpy(model, X):  # pylint:disable=invalid-name
     return mu
 
 
-def objective(x: np.array, predict, X_data: np.array) -> float:  # pylint: disable=invalid-name
+def predict_gpy_coregionalized(model, X, i=0):
+    mu, _ = predict_coregionalized(model, X, i)
+    return mu
+
+
+@np_cache()
+def _get_average_dist(X):
+    dist_mat = cdist(X, X)
+    np.fill_diagonal(dist_mat, np.inf)
+    return dist_mat.min(axis=1).mean()
+
+
+def regularizer_novelty(x, y, X_data, average_dist):
+    distance = np.min(np.linalg.norm(x - X_data, axis=1))
+    return max((average_dist - distance) * y.mean(), -y.mean())
+
+
+def objective(x: np.array, predict, novelty_regularizer, novelty_pentaly_ratio: float = 0.2) -> float:  # pylint: disable=invalid-name
     """An opjective function that an optimizer should attempt to minimize.
     I.e. penalities are positive and if it is getting better, the output is negative/smaller
     This fitness function also includes a "not-novel" penality", i.e. it adds a term that it inversely
@@ -162,14 +182,15 @@ def objective(x: np.array, predict, X_data: np.array) -> float:  # pylint: disab
 
     regularize_cluster = constrain_cluster(x, FEAT_DICT)
     regularize_validity = constrain_validity(x, FEATURES)
-    regularizer_noverly = (1 / np.min(np.linalg.norm(x - X_data, axis=1)))**2
+    regularizer_novelty = novelty_regularizer(x)
 
-    return -y + regularizer_noverly + regularize_validity + regularize_cluster
+    return -y + novelty_pentaly_ratio * regularizer_novelty + regularize_validity + regularize_cluster
 
 
 def run_ga(
         predict,  # pylint:disable=dangerous-default-value
-        background_data: np.array,
+        novelty_regularizer,
+        novelty_pentaly_ratio: float = 0.2,
         ga_param: dict = DEFAULT_GA_PARAM,
         features: list = FEATURES,
         feat_dict: dict = FEAT_DICT) -> ga:
@@ -178,8 +199,7 @@ def run_ga(
     Args:
         predict (function): function that takes a feature vector and
             returns a flot
-        background_data (np.array): Data which is used to compute the
-            novelty penality
+        novelty_regularizer (function):
         ga_param (dict, optional): Parameters for the genetic algorithm.
             Defaults to DEFAULT_GA_PARAM.
         features (list, optional): Feature names following the convention from LinearPolymerFeaturizer.
@@ -191,7 +211,10 @@ def run_ga(
         ga: geneticalgorithm object
     """
     boundaries, types = get_bounds(features)
-    objective_partial = partial(objective, predict=predict, X_data=background_data)
+    objective_partial = partial(objective,
+                                predict=predict,
+                                novelty_regularizer=novelty_regularizer,
+                                novelty_pentaly_ratio=novelty_pentaly_ratio)
     ga_model = ga(function=objective_partial,
                   dimension=len(features),
                   variable_type_mixed=types,
