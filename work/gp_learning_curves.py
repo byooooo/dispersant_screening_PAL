@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
+# pylint:disable=invalid-name
+"""
+Learning curves for GPR models
+"""
 
 import os
 
-import joblib
 import numpy as np
 import pandas as pd
-from six.moves import range
 from sklearn.feature_selection import VarianceThreshold
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
@@ -37,8 +38,9 @@ assert len(df_full_factorial_feat) == len(a2) == len(gibbs) == len(y)
 METRICS = []
 
 
-def get_initial_split(df_full_factorial_feat, y):
-    X_train, X_test, y_train, y_test = train_test_split(df_full_factorial_feat, y, train_size=0.6)
+def get_initial_split(df, yvec):
+    """Get a train/test split"""
+    X_train, X_test, y_train, y_test = train_test_split(df, yvec, train_size=0.6)
 
     vt = VarianceThreshold(0.2)
     X_train = vt.fit_transform(X_train)
@@ -51,11 +53,12 @@ def get_initial_split(df_full_factorial_feat, y):
     return X_train, y_train, X_test, y_test
 
 
-def make_new_split(X, y, train_size):
-    return train_test_split(X, y, train_size=train_size)
+def make_new_split(X, yvec, train_size):
+    return train_test_split(X, yvec, train_size=train_size)
 
 
-def main():
+def main():  # pylint:disable=too-many-locals, too-many-statements
+    """Runs everything"""
     X_train_, y_train_, X_test, y_test = get_initial_split(df_full_factorial_feat, y)
 
     for train_size in TRAIN_SIZES:

@@ -105,10 +105,10 @@ def get_random_exploration_bl(y, reference_vector=[5, 5, 5]):  # pylint:disable=
     chosen_points = []
     y_ = y.copy()
 
-    for i in range(len(y)):
+    for _ in range(len(y)):
         index = np.random.randint(0, len(y_))
 
-        array, pop = poprow(y_, index)
+        _, pop = poprow(y_, index)
 
         chosen_points.append(pop)
 
@@ -118,9 +118,9 @@ def get_random_exploration_bl(y, reference_vector=[5, 5, 5]):  # pylint:disable=
     return hv_random
 
 
-def dump_pickle(file, object):
+def dump_pickle(file, obj):
     with open(file, 'wb') as fh:
-        pickle.dump(object, fh)
+        pickle.dump(obj, fh)
 
 
 def read_pickle(file):
@@ -155,8 +155,6 @@ def get_summary_stats_time(history: dict):
         sampled.append(sum(array))
         sampled_indices.append(np.where(array == 1)[0])
 
-    history_ = {}
-
     return pareto, non_pareto, sampled, pareto_indices, non_pareto_indices, sampled_indices
 
 
@@ -166,8 +164,10 @@ def animate_2d(i, ax, y, pareto_indices, non_pareto_indices, sampled_indices):
         from functools import partial
         from matplotlib import animation, rc
 
-        pareto, non_pareto, sampled, pareto_indices, non_pareto_indices, sampled_indices = get_summary_stats_time(history)
-        animate = partial(animate_2d, ax=ax, y=y, pareto_indices=pareto_indices, non_pareto_indices=non_pareto_indices, sampled_indices=sampled_indices)
+        pareto, non_pareto, sampled, pareto_indices, non_pareto_indices, sampled_indices \
+            = get_summary_stats_time(history)
+        animate = partial(animate_2d, ax=ax, y=y, pareto_indices=pareto_indices, non_pareto_indices\
+            =non_pareto_indices, sampled_indices=sampled_indices)
         ani = animation.FuncAnimation(fig, animate,frames=range(301))
 
         # In Jupyter notebook
@@ -184,7 +184,7 @@ def animate_2d(i, ax, y, pareto_indices, non_pareto_indices, sampled_indices):
 
 
 def get_3d_fig_ax(y):
-
+    """Return fig, ax for a 3D plot without grid and axis"""
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
     ax.scatter(y[:, 0], y[:, 1], y[:, 2], c='gray', s=1)
@@ -201,10 +201,12 @@ def get_3d_fig_ax(y):
     return fig, ax
 
 
-def animate_3d(i, graph_discarded, graph_sampled, graph_pareto, y, pareto_indices, non_pareto_indices, sampled_indices):
-    graph_discarded._offsets3d = (y[non_pareto_indices[i], 0], y[non_pareto_indices[i], 1], y[non_pareto_indices[i], 2])
-    graph_sampled._offsets3d = (y[sampled_indices[i], 0], y[sampled_indices[i], 1], y[sampled_indices[i], 2])
-    graph_pareto._offsets3d = (y[pareto_indices[i], 0], y[pareto_indices[i], 1], y[pareto_indices[i], 2])
+def animate_3d(i, graph_discarded, graph_sampled, graph_pareto, y, pareto_indices, non_pareto_indices, sampled_indices):  # pylint:disable=too-many-arguments
+    """Efficient update functions for the points in a 3D scatter animation"""
+    graph_discarded._offsets3d = (  # pylint:disable=protected-access
+        y[non_pareto_indices[i], 0], y[non_pareto_indices[i], 1], y[non_pareto_indices[i], 2])
+    graph_sampled._offsets3d = (y[sampled_indices[i], 0], y[sampled_indices[i], 1], y[sampled_indices[i], 2])  # pylint:disable=protected-access
+    graph_pareto._offsets3d = (y[pareto_indices[i], 0], y[pareto_indices[i], 1], y[pareto_indices[i], 2])  # pylint:disable=protected-access
 
 
 def plot_parity(objective_tuples: list, outname: str = None, titles: list = None):
@@ -452,8 +454,9 @@ def dominance_check(point1, point2):
 
 @jit(nopython=True)
 def dominance_check_jitted(point, array):
+    """Check if poin dominates any point in array"""
     arr_sorted = array[array[:, 0].argsort()]
-    for i in range(len(arr_sorted)):
+    for i in range(len(arr_sorted)):  # pylint:disable=consider-using-enumerate
         if dominance_check(point, arr_sorted[i]):
             return True
     return False
@@ -461,8 +464,9 @@ def dominance_check_jitted(point, array):
 
 @jit(nopython=True)
 def dominance_check_jitted_2(array, point):
+    """Check if any point in array dominates point"""
     arr_sorted = array[array[:, 0].argsort()[::-1]]
-    for i in range(len(arr_sorted)):
+    for i in range(len(arr_sorted)):  # pylint:disable=consider-using-enumerate
         if dominance_check(arr_sorted[i], point):
             return True
     return False
