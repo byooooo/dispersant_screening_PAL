@@ -99,7 +99,6 @@ def main(target, runs, outdir, all):
                     run_ga(predict_partial,
                            regularizer_novelty_partial,
                            features=FEATURES,
-                           feat_dict=FEAT_DICT,
                            novelty_pentaly_ratio=novelty_penalty_ratio))
 
     if not os.path.exists(outdir):

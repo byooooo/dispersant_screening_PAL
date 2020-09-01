@@ -103,7 +103,7 @@ def constrain_validity(x: np.array, features: list) -> float:  # pylint: disable
         float: penalty
     """
     try:
-        smiles = get_smiles(dict(zip(features, x)), 1, 100)
+        smiles = get_smiles(dict(zip(features, x)), 1, 50)
         if smiles:
             return 0
     except Exception:  # pylint:disable=broad-except
@@ -145,19 +145,19 @@ def predict_gpy(model, X):  # pylint:disable=invalid-name
     return mu
 
 
-def predict_gpy_coregionalized(model, X, i=0):
-    mu, _ = predict_coregionalized(model, X, i)
+def predict_gpy_coregionalized(model, X, i=0):  # pylint:disable=invalid-name
+    mu, _ = predict_coregionalized(model, X, i)  # pylint:disable=invalid-name
     return mu
 
 
 @np_cache()
-def _get_average_dist(X):
+def _get_average_dist(X):  # pylint:disable=invalid-name
     dist_mat = cdist(X, X)
     np.fill_diagonal(dist_mat, np.inf)
     return dist_mat.min(axis=1).mean()
 
 
-def regularizer_novelty(x, y, X_data, average_dist):
+def regularizer_novelty(x, y, X_data, average_dist):  # pylint:disable=invalid-name
     distance = np.min(np.linalg.norm(x - X_data, axis=1))
     return max((average_dist - distance) * y.mean(), -y.mean())
 
@@ -182,18 +182,17 @@ def objective(x: np.array, predict, novelty_regularizer, novelty_pentaly_ratio: 
 
     regularize_cluster = constrain_cluster(x, FEAT_DICT)
     regularize_validity = constrain_validity(x, FEATURES)
-    regularizer_novelty = novelty_regularizer(x)
+    regularize_novelty = novelty_regularizer(x)
 
-    return -y + novelty_pentaly_ratio * regularizer_novelty + regularize_validity + regularize_cluster
+    return -y + novelty_pentaly_ratio * regularize_novelty + regularize_validity + regularize_cluster
 
 
-def run_ga(
-        predict,  # pylint:disable=dangerous-default-value
+def run_ga(  # pylint:disable=dangerous-default-value
+        predict,
         novelty_regularizer,
         novelty_pentaly_ratio: float = 0.2,
         ga_param: dict = DEFAULT_GA_PARAM,
-        features: list = FEATURES,
-        feat_dict: dict = FEAT_DICT) -> ga:
+        features: list = FEATURES) -> ga:
     """
 
     Args:
@@ -204,8 +203,6 @@ def run_ga(
             Defaults to DEFAULT_GA_PARAM.
         features (list, optional): Feature names following the convention from LinearPolymerFeaturizer.
             Defaults to FEATURES.
-        feat_dict (dict, optional): Mapping indices in the feaature matrix to feature names.
-            Defaults to FEAT_DICT.
 
     Returns:
         ga: geneticalgorithm object
