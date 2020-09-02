@@ -25,6 +25,8 @@ import numpy as np
 
 import GPy
 
+from .coregionalized import GPCoregionalizedRegression
+
 
 def _get_matern_32_kernel(NFEAT: int, **kwargs) -> GPy.kern.Matern32:
     """Matern-3/2 kernel without ARD"""
@@ -57,11 +59,7 @@ def build_coregionalized_model(X_train: np.array,
     icm = GPy.util.multioutput.ICM(input_dim=NFEAT, num_outputs=num_targets, kernel=K)
 
     target_list = [y_train[:, i].reshape(-1, 1) for i in range(num_targets)]
-    m = GPy.models.GPCoregionalizedRegression([X_train] * num_targets,
-                                              target_list,
-                                              kernel=icm,
-                                              normalizer=True,
-                                              **kwargs)
+    m = GPCoregionalizedRegression([X_train] * num_targets, target_list, kernel=icm, normalizer=True, **kwargs)
     # We constrain the variance of the RBF/Matern .. as the variance is now encoded in the kappa B of the ICM
     # Not constraining it would lead to a degeneracy
     m['.*ICM.*.variance'].constrain_fixed(1.)
