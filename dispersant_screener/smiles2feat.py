@@ -6,11 +6,115 @@ a solution even though there is one.
 So far (2020/08/19) we consider only length, the bead fractions and the maximum cluster size
 """
 
+import math
 import random
+from functools import partial
 
 import numpy as np
 
 from .featurizer import LinearPolymerSmilesFeaturizer
+
+
+def solve(chars: list, safe_up_to: callable):
+    """Finds a solution to a backtracking problem. Based on  https://www.geeksforgeeks.org/backtracking-algorithms/
+
+    Args:
+        chars (list): a sequence of values to try, in order]
+        safe_up_to (callable): returns whether the values assigned to slots 0..pos in
+                  the solution list, satisfy the problem constraints.
+
+    Returns:
+        list:  Return the solution as a list of values.
+    """
+    values = chars.copy()
+    size = len(values)
+    solution = [None] * size
+
+    def extend_solution(position):
+        if values:
+            for i, value in enumerate(values):
+                solution[position] = value
+                if safe_up_to(solution, position):
+                    _ = values.pop(i)
+                    if position >= size - 1 or extend_solution(position + 1):
+                        return solution
+        return solution
+
+    return extend_solution(0)
+
+
+def _cluster_not_too_large(found_features, expected_features, beads=['[W]', '[Ta]', '[R]', '[Tr]']):  # pylint:disable=dangerous-default-value
+    for bead in beads:
+        max_feat = 'max_' + bead
+        if found_features[max_feat] > expected_features[max_feat]:
+            return False
+    return True
+
+
+def _get_available_counts(counter, found_counter):
+    available = {}
+    for k, v in counter.items():
+        available[k] = v - found_counter[k]
+
+    return available
+
+
+def _cluster_still_possible(available, found_features, expected_features):
+    beads = list(available.keys())
+
+    for bead in beads:
+        max_feat = 'max_' + bead
+        if (available[bead] < expected_features[max_feat]) & (found_features[max_feat] < expected_features[max_feat]):
+            return False
+
+    return True
+
+
+def _no_unallowed_clusters_form(available, expected_features):
+    beads = list(available.keys())
+    total_available = sum(available.values())
+    for bead in beads:
+        others = total_available - available[bead]
+        max_feat = 'max_' + bead
+        if expected_features[max_feat] > 0:
+            max_n = math.floor(available[bead] / expected_features[max_feat])
+        else:
+            max_n = available[bead]
+        if available[bead] > max_n * expected_features[max_feat] - (max_n - 1) * others:
+            return False
+
+    return True
+
+
+def safe_up_to_full(characters, position, expected_features, chars):
+    c = characters[:position + 1]
+    smiles = ''.join(c)
+
+    alls = ''.join(chars)
+    lp = LinearPolymerSmilesFeaturizer(alls)
+    counter = lp.get_counts(alls, lp.characters)
+
+    lp = LinearPolymerSmilesFeaturizer(smiles)
+
+    try:
+        found_features = lp.get_cluster_stats(smiles, lp.replacement_dict)
+        found_counts = lp.get_counts(smiles, lp.characters)
+
+        available = _get_available_counts(counter, found_counts)
+
+        if not _cluster_not_too_large(found_features, expected_features):
+            return False
+
+        if not _cluster_still_possible(available, found_features, expected_features):
+            return False
+
+        if not _no_unallowed_clusters_form(available, expected_features):
+            return False
+
+    except ZeroDivisionError as e:
+        return True
+
+    return True
 
 
 def get_cap(pool: list, exclude: str):
@@ -81,7 +185,7 @@ def bundle_indv(pool: list) -> list:
     return pool
 
 
-def get_building_blocks(feat_dict: dict, bundle: bool = True) -> list:  # pylint:disable=too-many-locals, too-many-statements, too-many-branches
+def get_building_blocks(feat_dict: dict, bundle: bool = True, cap: bool = True) -> list:  # pylint:disable=too-many-locals, too-many-statements, too-many-branches
     """Given a feature dictionary (input for supervised ML or output of the GA)
     construct the building blocks that can be used to assemble a polymer that would give
     those features. This mapping is not unique and we apply some heuristics like
@@ -92,6 +196,8 @@ def get_building_blocks(feat_dict: dict, bundle: bool = True) -> list:  # pylint
             It assummes the feature names from the LinearPolymer featurizer class
         bundle (bool, optional): If true, it tries to bundle up monomers to maximally disordered fragmetns.
             Defaults to True.
+        cap (bool, optional): If true, if will use random characters from the pool for possible characters
+            to cap the clusters. Defaults to True.
 
     Raises:
         ValueError: Will be raised if the features are not consistent. E.g., if the length feature does
@@ -136,33 +242,45 @@ def get_building_blocks(feat_dict: dict, bundle: bool = True) -> list:  # pylint
             indv_pool.extend(['[Ta]'] * ta_indv)
 
         if w_cluster:
-            try:
-                indv_pool, cap_a = get_cap(indv_pool, '[W]')
-                indv_pool, cap_b = get_cap(indv_pool, '[W]')
-            except Exception:  # pylint:disable=broad-except
-                cap_a, cap_b = '', ''
-            building_blocks.append(cap_a + '[W]' * w_cluster + cap_b)
+            if cap:
+                try:
+                    indv_pool, cap_a = get_cap(indv_pool, '[W]')
+                    indv_pool, cap_b = get_cap(indv_pool, '[W]')
+                except Exception:  # pylint:disable=broad-except
+                    cap_a, cap_b = '', ''
+                building_blocks.append(cap_a + '[W]' * w_cluster + cap_b)
+            else:
+                building_blocks.append('[W]' * w_cluster)
         if tr_cluster:
-            try:
-                indv_pool, cap_a = get_cap(indv_pool, '[Tr]')
-                indv_pool, cap_b = get_cap(indv_pool, '[Tr]')
-            except Exception:  # pylint:disable=broad-except
-                cap_a, cap_b = '', ''
-            building_blocks.append(cap_a + '[Tr]' * tr_cluster + cap_b)
+            if cap:
+                try:
+                    indv_pool, cap_a = get_cap(indv_pool, '[Tr]')
+                    indv_pool, cap_b = get_cap(indv_pool, '[Tr]')
+                except Exception:  # pylint:disable=broad-except
+                    cap_a, cap_b = '', ''
+                building_blocks.append(cap_a + '[Tr]' * tr_cluster + cap_b)
+            else:
+                building_blocks.append('[Tr]' * tr_cluster)
         if r_cluster:
-            try:
-                indv_pool, cap_a = get_cap(indv_pool, '[R]')
-                indv_pool, cap_b = get_cap(indv_pool, '[R]')
-            except Exception:  # pylint:disable=broad-except
-                cap_a, cap_b = '', ''
-            building_blocks.append(cap_a + '[R]' * r_cluster + cap_b)
+            if cap:
+                try:
+                    indv_pool, cap_a = get_cap(indv_pool, '[R]')
+                    indv_pool, cap_b = get_cap(indv_pool, '[R]')
+                except Exception:  # pylint:disable=broad-except
+                    cap_a, cap_b = '', ''
+                building_blocks.append(cap_a + '[R]' * r_cluster + cap_b)
+            else:
+                building_blocks.append('[R]' * r_cluster)
         if ta_cluster:
-            try:
-                indv_pool, cap_a = get_cap(indv_pool, '[Ta]')
-                indv_pool, cap_b = get_cap(indv_pool, '[Ta]')
-            except Exception:  # pylint:disable=broad-except
-                cap_a, cap_b = '', ''
-            building_blocks.append(cap_a + '[Ta]' * ta_cluster + cap_b)
+            if cap:
+                try:
+                    indv_pool, cap_a = get_cap(indv_pool, '[Ta]')
+                    indv_pool, cap_b = get_cap(indv_pool, '[Ta]')
+                except Exception:  # pylint:disable=broad-except
+                    cap_a, cap_b = '', ''
+                building_blocks.append(cap_a + '[Ta]' * ta_cluster + cap_b)
+            else:
+                building_blocks.append('[Ta]' * ta_cluster)
 
         if bundle:
             indv_pool = bundle_indv(indv_pool)
@@ -190,10 +308,10 @@ def check_validity(smiles: str, feat_dict: dict) -> bool:
     lp = LinearPolymerSmilesFeaturizer(smiles)  # pylint:disable=invalid-name
     feat = lp.featurize()
     # check length
-    if feat['length'] % 2 != 0:
-        return False
+    # if feat['length'] % 2 != 0:
+    #     return False
 
-    if feat['max_[Ta]'] != feat_dict['max_[W]']:
+    if feat['max_[Ta]'] != feat_dict['max_[Ta]']:
         return False
 
     if feat['max_[Tr]'] != feat_dict['max_[Tr]']:
@@ -208,7 +326,22 @@ def check_validity(smiles: str, feat_dict: dict) -> bool:
     return True
 
 
-def get_smiles(feat_dict: dict, max_smiles: int = 5, max_trials: int = 100) -> list:
+def get_smiles(feat_dict, max_smiles: int = 5, max_trials: int = 100) -> list:
+
+    solutions = []
+    trials = 0
+    while len(solutions) < max_smiles and (trials < max_trials):
+        chars = get_building_blocks(feat_dict=feat_dict, cap=False, bundle=False)
+        safe_up_to = partial(safe_up_to_full, expected_features=feat_dict, chars=chars)
+        solution = solve(chars, safe_up_to)
+        if not None in solution:
+            solutions.append(solution)
+        trials += 1
+
+    return solutions
+
+
+def get_smiles_legacy(feat_dict: dict, max_smiles: int = 5, max_trials: int = 100) -> list:
     """Try to generate polymer smiles based on a feature dictionary
 
     Args:

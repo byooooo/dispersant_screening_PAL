@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+# pylint:disable=invalid-name
+"""Use a wandb sweep to optimize hyperparameters for the GBDT models"""
 import os
 from functools import partial
 
@@ -8,16 +10,10 @@ import pandas as pd
 from lightgbm import LGBMRegressor
 from sklearn.feature_selection import VarianceThreshold
 from sklearn.model_selection import cross_val_score, train_test_split
-from sklearn.multioutput import MultiOutputRegressor
 from sklearn.preprocessing import StandardScaler
 
 import wandb
-
-FEATURES = [
-    'head_tail_[W]', 'head_tail_[Tr]', 'head_tail_[Ta]', 'head_tail_[R]', 'total_clusters', 'num_[W]', 'max_[W]',
-    'num_[Tr]', 'max_[Tr]', 'num_[Ta]', 'max_[Ta]', 'num_[R]', 'max_[R]', '[W]', '[Tr]', '[Ta]', '[R]', 'rel_shannon',
-    'length', 'total_solvent', 'total_surface'
-]
+from dispersant_screener.definitions import FEATURES
 
 DATADIR = '/scratch/kjablonk/dispersant_basf'
 
@@ -92,8 +88,8 @@ X_train = feat_scaler.fit_transform(X_train)
 X_test = feat_scaler.transform(X_test)
 
 
-# return us a sweep id (required for running the sweep)
 def get_sweep_id(method):
+    """return us a sweep id (required for running the sweep)"""
     sweep_config = {
         'method': method,
         'metric': {

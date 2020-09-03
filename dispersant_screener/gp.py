@@ -92,8 +92,9 @@ def predict_coregionalized(model: GPy.models.GPCoregionalizedRegression,
                            index: int = 0) -> Tuple[np.array, np.array]:
     """Wrapper function for the prediction method of a coregionalized GPy regression model.
     It return the standard deviation instead of the variance"""
-    assert isinstance(model, GPy.models.GPCoregionalizedRegression
-                     ), 'This wrapper function is written for GPy.models.GPCoregionalizedRegression'
+    assert isinstance(
+        model, GPy.models.GPCoregionalizedRegression,
+        GPCoregionalizedRegression), 'This wrapper function is written for GPy.models.GPCoregionalizedRegression'
     newX = np.hstack([X, index * np.ones_like(X)])
     mu_c0, var_c0 = model.predict(newX, Y_metadata={'output_index': index * np.ones((newX.shape[0], 1)).astype(int)})
 

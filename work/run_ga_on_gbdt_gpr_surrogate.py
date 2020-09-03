@@ -95,11 +95,12 @@ def main(target, runs, outdir, all):
 
         for novelty_penalty_ratio in [0, 0.2, 0.5, 0.8, 1.0]:
             for _ in range(runs):
-                gas.append(
-                    run_ga(predict_partial,
+                
+                ga = run_ga(predict_partial,
                            regularizer_novelty_partial,
                            features=FEATURES,
-                           novelty_pentaly_ratio=novelty_penalty_ratio))
+                           novelty_pentaly_ratio=novelty_penalty_ratio)
+                gas.append(ga)
 
     if not os.path.exists(outdir):
         os.mkdir(outdir)

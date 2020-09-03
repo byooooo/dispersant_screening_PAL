@@ -14,7 +14,7 @@ from .utils import np_cache
 
 DEFAULT_GA_PARAM = {
     'max_num_iteration': 6000,
-    'elit_ratio': 0.05,
+    'elit_ratio': 0.01,
     'population_size': 100,
     'mutation_probability': 0.1,
     'crossover_probability': 0.5,
@@ -55,7 +55,7 @@ def get_bounds(features: list) -> Tuple[np.array, np.array]:
             vartype.append(['int'])
         elif 'max' in feat:
             lower_bound.append(0)
-            upper_bound.append(32)
+            upper_bound.append(36)
             vartype.append(['int'])
         else:
             lower_bound.append(0)
@@ -103,7 +103,7 @@ def constrain_validity(x: np.array, features: list) -> float:  # pylint: disable
         float: penalty
     """
     try:
-        smiles = get_smiles(dict(zip(features, x)), 1, 50)
+        smiles = get_smiles(dict(zip(features, x)), 1, 1)
         if smiles:
             return 0
     except Exception:  # pylint:disable=broad-except
@@ -184,7 +184,7 @@ def objective(x: np.array, predict, novelty_regularizer, novelty_pentaly_ratio: 
     regularize_validity = constrain_validity(x, FEATURES)
     regularize_novelty = novelty_regularizer(x)
 
-    return -y + novelty_pentaly_ratio * regularize_novelty + regularize_validity + regularize_cluster
+    return -2 * y + novelty_pentaly_ratio * regularize_novelty + regularize_validity + regularize_cluster
 
 
 def run_ga(  # pylint:disable=dangerous-default-value
