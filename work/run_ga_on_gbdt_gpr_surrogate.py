@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""running the GA on the GBDT models that are trained to the predictions of the GPR models of the epislon-PAL loop"""
 import os
 import time
 from functools import partial
@@ -6,10 +7,7 @@ from functools import partial
 import click
 import joblib
 import numpy as np
-import pandas as pd
 from lightgbm import LGBMRegressor
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
 
 from dispersant_screener.ga import (FEATURES, _get_average_dist, predict_gbdt, regularizer_novelty, run_ga)
 
@@ -17,7 +15,7 @@ TIMESTR = time.strftime('%Y%m%d-%H%M%S')
 DATADIR = '../data'
 
 # Rg
-config_0 = {
+config_0 = {  # pylint:disable=invalid-name
     'max_depth': 81,
     'reg_alpha': 1.0059223601214005,
     'subsample': 0.4323683292622177,
@@ -30,7 +28,7 @@ config_0 = {
 
 # Delta G
 # https://app.wandb.ai/kjappelbaum/dispersant_screener/runs/wog4qfb2/overview?workspace=user-kjappelbaum
-config_1 = {
+config_1 = {  # pylint:disable=invalid-name
     'max_depth': 73,
     'reg_alpha': 1.392732983015451,
     'subsample': 0.5009306968568509,
@@ -43,7 +41,7 @@ config_1 = {
 
 # repulsion
 # https://app.wandb.ai/kjappelbaum/dispersant_screener/runs/ljzi9uad/overview?workspace=user-kjappelbaum
-config_2 = {
+config_2 = {  # pylint:disable=invalid-name
     'max_depth': 22,
     'reg_alpha': 1.4445428983500173,
     'subsample': 0.37540621157955995,
@@ -59,19 +57,20 @@ FEATURES = ['max_[W]', 'max_[Tr]', 'max_[Ta]', 'max_[R]', '[W]', '[Tr]', '[Ta]',
 
 @click.command('cli')
 @click.argument('target', type=int, default=0)
-@click.argument('runs', type=int, default=5)
+@click.argument('runs', type=int, default=2)
 @click.argument('outdir', type=click.Path(), default='.')
 @click.option('--all', is_flag=True)
 def main(target, runs, outdir, all):
+    """CLI"""
     if all:
         targets = [0, 1, 2]
     else:
         targets = [target]
 
-    X_train = np.load('X_train_GBDT.npy')
-    y = np.load('y_train_GBDT.npy')
+    X_train = np.load('X_train_GBDT.npy')  # pylint:disable=invalid-name
+    y = np.load('y_train_GBDT.npy')  # pylint:disable=invalid-name
 
-    FEAT_DICT = dict(zip(FEATURES, range(len(FEATURES))))
+    # FEAT_DICT = dict(zip(FEATURES, range(len(FEATURES))))
 
     for target in targets:
         y_train = y[:, target]
@@ -93,13 +92,15 @@ def main(target, runs, outdir, all):
 
         gas = []
 
-        for novelty_penalty_ratio in [0, 0.2, 0.5, 0.8, 1.0]:
+        for novelty_penalty_ratio in [0, 0.1, 0.2, 0.5, 0.8, 1.0, 2.0]:
             for _ in range(runs):
-                
-                ga = run_ga(predict_partial,
-                           regularizer_novelty_partial,
-                           features=FEATURES,
-                           novelty_pentaly_ratio=novelty_penalty_ratio)
+
+                ga = run_ga(  # pylint:disable=invalid-name
+                    predict_partial,
+                    regularizer_novelty_partial,
+                    features=FEATURES,
+                    y_mean=y_train.mean(),
+                    novelty_pentaly_ratio=novelty_penalty_ratio)
                 gas.append(ga)
 
     if not os.path.exists(outdir):
@@ -109,4 +110,4 @@ def main(target, runs, outdir, all):
 
 
 if __name__ == '__main__':
-    main()
+    main()  # pylint:disable=no-value-for-parameter

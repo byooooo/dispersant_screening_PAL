@@ -1,28 +1,27 @@
 # -*- coding: utf-8 -*-
+"""Running epsilon-PAL on a MOF dataset"""
 import time
 
 import joblib
 import numpy as np
 import pandas as pd
-from sklearn.feature_selection import VarianceThreshold
 from sklearn.preprocessing import StandardScaler
 
 import GPy
-from dispersant_screener.gp import (build_coregionalized_model, build_model, predict_coregionalized,
-                                    set_xy_coregionalized)
+from dispersant_screener.gp import build_coregionalized_model
 from dispersant_screener.pal import pal_evaluate as pal
-from dispersant_screener.utils import get_kmeans_samples, get_maxmin_samples
+from dispersant_screener.utils import get_maxmin_samples
 
 TIMESTR = time.strftime('%Y%m%d-%H%M%S')
 
-other_descriptors = ['CellV [A^3]']
+other_descriptors = ['CellV [A^3]']  # pylint:disable=invalid-name
 
-geometric_descirptors = [
+geometric_descirptors = [  # pylint:disable=invalid-name
     'Di', 'Df', 'Dif', 'density [g/cm^3]', 'total_SA_volumetric', 'total_SA_gravimetric', 'total_POV_volumetric',
     'total_POV_gravimetric'
 ]
 
-linker_descriptors = [
+linker_descriptors = [  # pylint:disable=invalid-name
     'f-lig-chi-0', 'f-lig-chi-1', 'f-lig-chi-2', 'f-lig-chi-3', 'f-lig-Z-0', 'f-lig-Z-1', 'f-lig-Z-2', 'f-lig-Z-3',
     'f-lig-I-0', 'f-lig-I-1', 'f-lig-I-2', 'f-lig-I-3', 'f-lig-T-0', 'f-lig-T-1', 'f-lig-T-2', 'f-lig-T-3', 'f-lig-S-0',
     'f-lig-S-1', 'f-lig-S-2', 'f-lig-S-3', 'lc-chi-0-all', 'lc-chi-1-all', 'lc-chi-2-all', 'lc-chi-3-all', 'lc-Z-0-all',
@@ -35,7 +34,7 @@ linker_descriptors = [
     'D_lc-alpha-3-all'
 ]
 
-metalcenter_descriptors = [
+metalcenter_descriptors = [  # pylint:disable=invalid-name
     'mc_CRY-chi-0-all', 'mc_CRY-chi-1-all', 'mc_CRY-chi-2-all', 'mc_CRY-chi-3-all', 'mc_CRY-Z-0-all', 'mc_CRY-Z-1-all',
     'mc_CRY-Z-2-all', 'mc_CRY-Z-3-all', 'mc_CRY-I-0-all', 'mc_CRY-I-1-all', 'mc_CRY-I-2-all', 'mc_CRY-I-3-all',
     'mc_CRY-T-0-all', 'mc_CRY-T-1-all', 'mc_CRY-T-2-all', 'mc_CRY-T-3-all', 'mc_CRY-S-0-all', 'mc_CRY-S-1-all',
@@ -46,7 +45,7 @@ metalcenter_descriptors = [
     'D_mc_CRY-S-2-all', 'D_mc_CRY-S-3-all'
 ]
 
-functionalgroup_descriptors = [
+functionalgroup_descriptors = [  # pylint:disable=invalid-name
     'func-chi-0-all', 'func-chi-1-all', 'func-chi-2-all', 'func-chi-3-all', 'func-Z-0-all', 'func-Z-1-all',
     'func-Z-2-all', 'func-Z-3-all', 'func-I-0-all', 'func-I-1-all', 'func-I-2-all', 'func-I-3-all', 'func-T-0-all',
     'func-T-1-all', 'func-T-2-all', 'func-T-3-all', 'func-S-0-all', 'func-S-1-all', 'func-S-2-all', 'func-S-3-all',
@@ -57,7 +56,7 @@ functionalgroup_descriptors = [
     'D_func-S-3-all', 'D_func-alpha-0-all', 'D_func-alpha-1-all', 'D_func-alpha-2-all', 'D_func-alpha-3-all'
 ]
 
-summed_linker_descriptors = [
+summed_linker_descriptors = [  # pylint:disable=invalid-name
     'sum-f-lig-chi-0', 'sum-f-lig-chi-1', 'sum-f-lig-chi-2', 'sum-f-lig-chi-3', 'sum-f-lig-Z-0', 'sum-f-lig-Z-1',
     'sum-f-lig-Z-2', 'sum-f-lig-Z-3', 'sum-f-lig-I-0', 'sum-f-lig-I-1', 'sum-f-lig-I-2', 'sum-f-lig-I-3',
     'sum-f-lig-T-0', 'sum-f-lig-T-1', 'sum-f-lig-T-2', 'sum-f-lig-T-3', 'sum-f-lig-S-0', 'sum-f-lig-S-1',
@@ -73,7 +72,7 @@ summed_linker_descriptors = [
     'sum-D_lc-alpha-3-all'
 ]
 
-summed_metalcenter_descriptors = [
+summed_metalcenter_descriptors = [  # pylint:disable=invalid-name
     'sum-mc_CRY-chi-0-all', 'sum-mc_CRY-chi-1-all', 'sum-mc_CRY-chi-2-all', 'sum-mc_CRY-chi-3-all',
     'sum-mc_CRY-Z-0-all', 'sum-mc_CRY-Z-1-all', 'sum-mc_CRY-Z-2-all', 'sum-mc_CRY-Z-3-all', 'sum-mc_CRY-I-0-all',
     'sum-mc_CRY-I-1-all', 'sum-mc_CRY-I-2-all', 'sum-mc_CRY-I-3-all', 'sum-mc_CRY-T-0-all', 'sum-mc_CRY-T-1-all',
@@ -86,7 +85,7 @@ summed_metalcenter_descriptors = [
     'sum-D_mc_CRY-S-3-all'
 ]
 
-summed_functionalgroup_descriptors = [
+summed_functionalgroup_descriptors = [  # pylint:disable=invalid-name
     'sum-func-chi-0-all', 'sum-func-chi-1-all', 'sum-func-chi-2-all', 'sum-func-chi-3-all', 'sum-func-Z-0-all',
     'sum-func-Z-1-all', 'sum-func-Z-2-all', 'sum-func-Z-3-all', 'sum-func-I-0-all', 'sum-func-I-1-all',
     'sum-func-I-2-all', 'sum-func-I-3-all', 'sum-func-T-0-all', 'sum-func-T-1-all', 'sum-func-T-2-all',
@@ -100,16 +99,16 @@ summed_functionalgroup_descriptors = [
     'sum-D_func-alpha-3-all'
 ]
 
-pmof_test = pd.read_csv('PMOF20K_traindata_7000_test.csv')
-pmof_train = pd.read_csv('PMOF20K_traindata_7000_train.csv')
-pmof = pd.concat([pmof_test, pmof_train])
+pmof_test = pd.read_csv('PMOF20K_traindata_7000_test.csv')  # pylint:disable=invalid-name
+pmof_train = pd.read_csv('PMOF20K_traindata_7000_train.csv')  # pylint:disable=invalid-name
+pmof = pd.concat([pmof_test, pmof_train])  # pylint:disable=invalid-name
 pmof['CO2_DC'] = pmof['pure_uptake_CO2_298.00_1600000'] - pmof['pure_uptake_CO2_298.00_15000']
-y = pmof[['CO2_DC', 'CH4DC']].values
+y = pmof[['CO2_DC', 'CH4DC']].values  # pylint:disable=invalid-name
 
 #label_scaler = StandardScaler()
 #y = label_scaler.fit_transform(y)
 
-feat = set([
+feat = set([  # pylint:disable=invalid-name
     'func-chi-0-all', 'D_func-S-3-all', 'total_SA_volumetric', 'Di', 'Dif', 'mc_CRY-Z-0-all', 'total_POV_volumetric',
     'density [g/cm^3]', 'total_SA_gravimetric', 'D_func-S-1-all', 'Df', 'mc_CRY-S-0-all', 'total_POV_gravimetric',
     'D_func-alpha-1-all', 'func-S-0-all', 'D_mc_CRY-chi-3-all', 'D_mc_CRY-chi-1-all', 'func-alpha-0-all',
@@ -121,32 +120,27 @@ feat = set([
 X = pmof[feat]
 
 X = StandardScaler().fit_transform(X)
-X = VarianceThreshold().fit_transform(X)
 
-X_train, y_train, indices = get_maxmin_samples(X, y, 120, metric='correlation', init='median')
-X_test = np.delete(X, indices, 0)
-y_test = np.delete(y, indices, 0)
+X_train, y_train, indices = get_maxmin_samples(X, y, 300)  # pylint:disable=invalid-name
+X_test = np.delete(X, indices, 0)  # pylint:disable=invalid-name
+y_test = np.delete(y, indices, 0)  # pylint:disable=invalid-name
 
-models = [
-    build_coregionalized_model(X_train,
-                               y_train,
-                               kernel=GPy.kern.RBF(X_train.shape[1], ARD=False) +
-                               GPy.kern.Linear(X_train.shape[1], ARD=False))
-]
-pareto_optimal, hypervolumes, gps, sampled = pal(models,
-                                                 X_train,
-                                                 y_train,
-                                                 X_test,
-                                                 y_test,
-                                                 hv_reference=[5, 5],
-                                                 iterations=300,
-                                                 epsilon=[0.05, 0.05],
-                                                 delta=0.05,
-                                                 beta_scale=1 / 9,
-                                                 coregionalized=True,
-                                                 optimize_delay=30,
-                                                 optimize_always=10,
-                                                 history_dump_file='{}-history.pkl'.format(TIMESTR))
+models = [build_coregionalized_model(X_train, y_train, kernel=GPy.kern.RBF(X_train.shape[1], ARD=True))]  # pylint:disable=invalid-name
+pareto_optimal, hypervolumes, gps, sampled = pal(  # pylint:disable=invalid-name 
+    models,
+    X_train,
+    y_train,
+    X_test,
+    y_test,
+    hv_reference=[5, 5],
+    iterations=1000,
+    epsilon=[0.01, 0.01],
+    delta=0.05,
+    beta_scale=1 / 16,
+    coregionalized=True,
+    optimize_delay=30,
+    optimize_always=10,
+    history_dump_file='{}-history.pkl'.format(TIMESTR))
 
 np.save('{}-pareto_optimal.npy'.format(TIMESTR), pareto_optimal)
 np.save('{}-hypervolumes.npy'.format(TIMESTR), hypervolumes)

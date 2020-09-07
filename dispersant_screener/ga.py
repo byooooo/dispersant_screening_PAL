@@ -13,10 +13,10 @@ from .smiles2feat import get_smiles
 from .utils import np_cache
 
 DEFAULT_GA_PARAM = {
-    'max_num_iteration': 6000,
-    'elit_ratio': 0.01,
-    'population_size': 100,
-    'mutation_probability': 0.1,
+    'max_num_iteration': 4000,
+    'elit_ratio': 0.05,
+    'population_size': 200,
+    'mutation_probability': 0.2,
     'crossover_probability': 0.5,
     'parents_portion': 0.3,
     'crossover_type': 'uniform',
@@ -162,7 +162,7 @@ def regularizer_novelty(x, y, X_data, average_dist):  # pylint:disable=invalid-n
     return max((average_dist - distance) * y.mean(), -y.mean())
 
 
-def objective(x: np.array, predict, novelty_regularizer, novelty_pentaly_ratio: float = 0.2) -> float:  # pylint: disable=invalid-name
+def objective(x: np.array, predict, novelty_regularizer, y_mean, novelty_pentaly_ratio: float = 0.2) -> float:  # pylint: disable=invalid-name
     """An opjective function that an optimizer should attempt to minimize.
     I.e. penalities are positive and if it is getting better, the output is negative/smaller
     This fitness function also includes a "not-novel" penality", i.e. it adds a term that it inversely
@@ -184,12 +184,13 @@ def objective(x: np.array, predict, novelty_regularizer, novelty_pentaly_ratio: 
     regularize_validity = constrain_validity(x, FEATURES)
     regularize_novelty = novelty_regularizer(x)
 
-    return -2 * y + novelty_pentaly_ratio * regularize_novelty + regularize_validity + regularize_cluster
+    return -10 * y / y_mean + novelty_pentaly_ratio * regularize_novelty + regularize_validity + regularize_cluster
 
 
 def run_ga(  # pylint:disable=dangerous-default-value
         predict,
         novelty_regularizer,
+        y_mean,
         novelty_pentaly_ratio: float = 0.2,
         ga_param: dict = DEFAULT_GA_PARAM,
         features: list = FEATURES) -> ga:
@@ -211,6 +212,7 @@ def run_ga(  # pylint:disable=dangerous-default-value
     objective_partial = partial(objective,
                                 predict=predict,
                                 novelty_regularizer=novelty_regularizer,
+                                y_mean=y_mean,
                                 novelty_pentaly_ratio=novelty_pentaly_ratio)
     ga_model = ga(function=objective_partial,
                   dimension=len(features),
