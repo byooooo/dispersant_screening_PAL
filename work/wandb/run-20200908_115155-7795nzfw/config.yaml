@@ -1,0 +1,34 @@
+wandb_version: 1
+
+_wandb:
+  desc: null
+  value:
+    cli_version: 0.9.4
+    framework: lightgbm
+    is_jupyter_run: false
+    is_kaggle_kernel: false
+    python_version: 3.7.0
+colsample_bytree:
+  desc: null
+  value: 0.9615322237218308
+max_depth:
+  desc: null
+  value: 73
+min_child_weight:
+  desc: null
+  value: 0.09413203111338607
+n_estimators:
+  desc: null
+  value: 4974
+num_leaves:
+  desc: null
+  value: 398
+reg_alpha:
+  desc: null
+  value: 1.266496355966064
+reg_lambda:
+  desc: null
+  value: 1.2206812435459657
+subsample:
+  desc: null
+  value: 0.9824154901520564

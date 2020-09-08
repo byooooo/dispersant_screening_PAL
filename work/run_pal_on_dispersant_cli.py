@@ -43,7 +43,7 @@ def load_data(label_scaling: bool = False):
         label_scaler = StandardScaler()
         y = label_scaler.fit_transform(y)
 
-    X_train, y_train, greedy_indices = get_maxmin_samples(X, y, 40)
+    X_train, y_train, greedy_indices = get_maxmin_samples(X, y, 100)
 
     y_test = np.delete(y, greedy_indices, 0)
     X_test = np.delete(X, greedy_indices, 0)

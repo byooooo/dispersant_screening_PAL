@@ -126,7 +126,7 @@ X_test = np.delete(X, indices, 0)  # pylint:disable=invalid-name
 y_test = np.delete(y, indices, 0)  # pylint:disable=invalid-name
 
 models = [build_coregionalized_model(X_train, y_train, kernel=GPy.kern.RBF(X_train.shape[1], ARD=True))]  # pylint:disable=invalid-name
-pareto_optimal, hypervolumes, gps, sampled = pal(  # pylint:disable=invalid-name 
+pareto_optimal, hypervolumes, gps, sampled = pal(  # pylint:disable=invalid-name
     models,
     X_train,
     y_train,
@@ -134,9 +134,9 @@ pareto_optimal, hypervolumes, gps, sampled = pal(  # pylint:disable=invalid-name
     y_test,
     hv_reference=[5, 5],
     iterations=1000,
-    epsilon=[0.01, 0.01],
+    epsilon=[0.05, 0.05],
     delta=0.05,
-    beta_scale=1 / 16,
+    beta_scale=1 / 9,
     coregionalized=True,
     optimize_delay=30,
     optimize_always=10,

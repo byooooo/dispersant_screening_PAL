@@ -1,0 +1,25 @@
+{
+    "root": "/Users/kevinmaikjablonka/Dropbox (LSMO)/dispersant_screening_PAL",
+    "program": "run_hyperopt_on_gbdt_gpr_surrogate.py",
+    "git": {
+        "remote": "git@github.com:byooooo/dispersant_screening_PAL.git",
+        "commit": "cf19fbb9a9f12a1ea8d613a09a2495f48a888503"
+    },
+    "email": "kevin.jablonka@epfl.ch",
+    "startedAt": "2020-09-08T08:50:53.771309",
+    "host": "Kevins-MacBook-Pro.local",
+    "username": "kevinmaikjablonka",
+    "executable": "/Users/kevinmaikjablonka/opt/miniconda3/envs/dispersant_basf/bin/python",
+    "os": "Darwin-19.6.0-x86_64-i386-64bit",
+    "python": "3.7.0",
+    "cpu_count": 8,
+    "args": [
+        "0"
+    ],
+    "state": "finished",
+    "jobType": null,
+    "mode": "run",
+    "project": "dispersant_screener",
+    "heartbeatAt": "2020-09-08T08:59:29.154641",
+    "exitcode": 0
+}

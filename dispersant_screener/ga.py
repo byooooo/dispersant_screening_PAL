@@ -16,9 +16,9 @@ DEFAULT_GA_PARAM = {
     'max_num_iteration': 4000,
     'elit_ratio': 0.05,
     'population_size': 200,
-    'mutation_probability': 0.2,
-    'crossover_probability': 0.5,
-    'parents_portion': 0.3,
+    'mutation_probability': 0.1,
+    'crossover_probability': 0.8,
+    'parents_portion': 0.1,
     'crossover_type': 'uniform',
     'max_iteration_without_improv': None
 }
@@ -184,7 +184,13 @@ def objective(x: np.array, predict, novelty_regularizer, y_mean, novelty_pentaly
     regularize_validity = constrain_validity(x, FEATURES)
     regularize_novelty = novelty_regularizer(x)
 
-    return -10 * y / y_mean + novelty_pentaly_ratio * regularize_novelty + regularize_validity + regularize_cluster
+    prediction_loss = 0
+    # if y < y_mean:
+    #     prediction_loss += 10
+    # else:
+    prediction_loss = -5 * y / y_mean
+
+    return prediction_loss + novelty_pentaly_ratio * regularize_novelty + regularize_validity + regularize_cluster
 
 
 def run_ga(  # pylint:disable=dangerous-default-value
@@ -218,6 +224,7 @@ def run_ga(  # pylint:disable=dangerous-default-value
                   dimension=len(features),
                   variable_type_mixed=types,
                   variable_boundaries=boundaries,
+                  function_timeout=30,
                   algorithm_parameters=ga_param)
 
     ga_model.run()
