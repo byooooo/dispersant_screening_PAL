@@ -190,7 +190,7 @@ def objective(x: np.array, predict, novelty_regularizer, y_mean, novelty_pentaly
     # else:
     prediction_loss = -5 * y / y_mean
 
-    return prediction_loss + novelty_pentaly_ratio * regularize_novelty + regularize_validity + regularize_cluster
+    return prediction_loss + regularize_validity + regularize_cluster
 
 
 def run_ga(  # pylint:disable=dangerous-default-value

@@ -58,7 +58,7 @@ FEATURES = ['max_[W]', 'max_[Tr]', 'max_[Ta]', 'max_[R]', '[W]', '[Tr]', '[Ta]',
 
 @click.command('cli')
 @click.argument('target', type=int, default=0)
-@click.argument('runs', type=int, default=10)
+@click.argument('runs', type=int, default=5)
 @click.argument('outdir', type=click.Path(), default='.')
 @click.option('--all', is_flag=True)
 def main(target, runs, outdir, all):
@@ -92,7 +92,7 @@ def main(target, runs, outdir, all):
 
         gas = []
 
-        for novelty_penalty_ratio in [0, 0.1, 0.2, 0.5, 0.8, 1.0, 2.0]:
+        for novelty_penalty_ratio in [0, 0.1, 0.2, 0.5, 0.8, 2]:
             for _ in range(runs):
 
                 ga = run_ga(  # pylint:disable=invalid-name
