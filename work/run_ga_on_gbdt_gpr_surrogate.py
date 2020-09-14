@@ -92,7 +92,7 @@ def main(target, runs, outdir, all):
 
         gas = []
 
-        for novelty_penalty_ratio in [0, 0.1, 0.2, 0.5, 0.8, 2]:
+        for novelty_penalty_ratio in [0, 0.1, 0.2, 0.5, 1, 2]:
             for _ in range(runs):
 
                 ga = run_ga(  # pylint:disable=invalid-name

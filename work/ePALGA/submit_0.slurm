@@ -9,4 +9,4 @@
 source /home/kjablonk/anaconda3/bin/activate
 conda activate dispersant_screener
 
-python run_ga_on_gbdt_gpr_surrogate.py  0 
+python run_ga_on_gbdt_gpr_surrogate.py  0
