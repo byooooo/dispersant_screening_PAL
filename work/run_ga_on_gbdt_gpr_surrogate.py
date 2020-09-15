@@ -99,7 +99,7 @@ def main(target, runs, outdir, all):
                     predict_partial,
                     regularizer_novelty_partial,
                     features=FEATURES,
-                    y_mean=y_train.mean(),
+                    y_mean=np.median(y_train),
                     novelty_pentaly_ratio=novelty_penalty_ratio)
                 gas.append(ga)
 

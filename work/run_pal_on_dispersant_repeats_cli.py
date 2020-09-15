@@ -53,15 +53,15 @@ def load_data(n_samples, label_scaling: bool = False):
 
 
 @click.command('cli')
-@click.argument('epsilon', type=float, default=0.05, required=False)
+@click.argument('epsilon', type=float, default=0.02, required=False)
 @click.argument('delta', type=float, default=0.05, required=False)
-@click.argument('beta_scale', type=float, default=1 / 20, required=False)
+@click.argument('beta_scale', type=float, default=1 / 16, required=False)
 @click.argument('optimize_always', type=int, default=10, required=False)
 @click.argument('optimize_delay', type=int, default=10, required=False)
 @click.argument('repeats', type=int, default=1, required=False)
 @click.argument('hv_reference', type=float, default=5, required=False)
 @click.argument('outdir', type=click.Path(), default='.', required=False)
-@click.argument('n_samples', type=int, default=40, required=False)
+@click.argument('n_samples', type=int, default=120, required=False)
 def main(  # pylint:disable=invalid-name, too-many-arguments, too-many-locals
         epsilon, delta, beta_scale, optimize_always, optimize_delay, repeats, hv_reference, outdir, n_samples):
     """Main CLI"""

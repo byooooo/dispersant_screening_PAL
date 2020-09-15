@@ -13,7 +13,7 @@ from .smiles2feat import get_smiles
 from .utils import np_cache
 
 DEFAULT_GA_PARAM = {
-    'max_num_iteration': 4000,
+    'max_num_iteration': 3000,
     'elit_ratio': 0.05,
     'population_size': 200,
     'mutation_probability': 0.1,
@@ -55,7 +55,7 @@ def get_bounds(features: list) -> Tuple[np.array, np.array]:
             vartype.append(['int'])
         elif 'max' in feat:
             lower_bound.append(0)
-            upper_bound.append(12)
+            upper_bound.append(28)
             vartype.append(['int'])
         else:
             lower_bound.append(0)
@@ -188,9 +188,9 @@ def objective(x: np.array, predict, novelty_regularizer, y_mean, novelty_pentaly
     # if y < y_mean:
     #     prediction_loss += 10
     # else:
-    prediction_loss = - y / y_mean
+    prediction_loss = -y / y_mean
 
-    return prediction_loss + regularize_novelty + regularize_validity + regularize_cluster
+    return prediction_loss + novelty_pentaly_ratio * regularize_novelty + regularize_validity + regularize_cluster
 
 
 def run_ga(  # pylint:disable=dangerous-default-value

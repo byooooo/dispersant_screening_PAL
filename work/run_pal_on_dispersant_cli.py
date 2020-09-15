@@ -43,7 +43,7 @@ def load_data(label_scaling: bool = False):
         label_scaler = StandardScaler()
         y = label_scaler.fit_transform(y)
 
-    X_train, y_train, greedy_indices = get_maxmin_samples(X, y, 100)
+    X_train, y_train, greedy_indices = get_maxmin_samples(X, y, 100, init='median')
 
     y_test = np.delete(y, greedy_indices, 0)
     X_test = np.delete(X, greedy_indices, 0)
@@ -54,7 +54,7 @@ def load_data(label_scaling: bool = False):
 @click.command('cli')
 @click.argument('epsilon', type=float, default=0.05, required=False)
 @click.argument('delta', type=float, default=0.05, required=False)
-@click.argument('beta_scale', type=float, default=1 / 20, required=False)
+@click.argument('beta_scale', type=float, default=1 / 9, required=False)
 @click.argument('optimize_always', type=int, default=10, required=False)
 @click.argument('optimize_delay', type=int, default=10, required=False)
 @click.argument('hv_reference', type=float, default=5, required=False)
