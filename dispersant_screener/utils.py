@@ -472,4 +472,18 @@ def dominance_check_jitted_2(array, point):
     return False
 
 
+@jit(nopython=True)
+def dominance_check_jitted_3(array: np.array, point: np.array, ignore_me: int) -> bool:
+    """Check if any point in array dominates point. ignore_me
+    since numba does not understand masked arrays"""
+    sorted_idx = array[:, 0].argsort()[::-1]
+    ignore_idx = np.where(sorted_idx == ignore_me)[0][0]
+    arr_sorted = array[sorted_idx]
+    for i in range(len(arr_sorted)):  # pylint:disable=consider-using-enumerate
+        if i != ignore_idx:
+            if dominance_check(arr_sorted[i], point):
+                return True
+    return False
+
+
 vectorized_dominance_check = vectorize(dominance_check)  # pylint:disable=invalid-name

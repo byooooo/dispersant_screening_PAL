@@ -2,6 +2,7 @@
 # pylint:disable=invalid-name
 """Run PAL multiple times with the same settings"""
 import os
+from os import X_OK
 import time
 
 import click
@@ -13,9 +14,9 @@ from sklearn.preprocessing import StandardScaler
 
 import GPy
 from dispersant_screener.definitions import FEATURES
-from dispersant_screener.gp import build_coregionalized_model
-from dispersant_screener.pal import pal_evaluate as pal
-from dispersant_screener.utils import get_maxmin_samples
+from pypal.models.gpr import build_coregionalized_model
+from pypal import PALCoregionalized
+from pypal.pal.utils import get_maxmin_samples, get_kmeans_samples, get_hypervolume
 
 TIMESTR = time.strftime('%Y%m%d-%H%M%S')
 
@@ -44,59 +45,41 @@ def load_data(n_samples, label_scaling: bool = False):
         label_scaler = StandardScaler()
         y = label_scaler.fit_transform(y)
 
-    X_train, y_train, greedy_indices = get_maxmin_samples(X, y, n_samples)
+    _, _, greedy_indices = get_maxmin_samples(X, y, n_samples)
 
-    y_test = np.delete(y, greedy_indices, 0)
-    X_test = np.delete(X, greedy_indices, 0)
-
-    return X_train, y_train, X_test, y_test
+    return X, y, greedy_indices
 
 
 @click.command('cli')
-@click.argument('epsilon', type=float, default=0.02, required=False)
+@click.argument('epsilon', type=float, default=0.05, required=False)
 @click.argument('delta', type=float, default=0.05, required=False)
-@click.argument('beta_scale', type=float, default=1 / 16, required=False)
-@click.argument('optimize_always', type=int, default=10, required=False)
-@click.argument('optimize_delay', type=int, default=10, required=False)
+@click.argument('beta_scale', type=float, default=1 / 9, required=False)
 @click.argument('repeats', type=int, default=1, required=False)
-@click.argument('hv_reference', type=float, default=5, required=False)
 @click.argument('outdir', type=click.Path(), default='.', required=False)
-@click.argument('n_samples', type=int, default=120, required=False)
+@click.argument('n_samples', type=int, default=100, required=False)
 def main(  # pylint:disable=invalid-name, too-many-arguments, too-many-locals
         epsilon, delta, beta_scale, optimize_always, optimize_delay, repeats, hv_reference, outdir, n_samples):
     """Main CLI"""
     pareto_optimals = []
     hypervolumess = []
-    gpss = []
     selecteds = []
 
     for _ in range(repeats):
-        X_train, y_train, X_test, y_test = load_data(n_samples)
+        X, y, greedy_indices = load_data(n_samples)
 
-        m = [build_coregionalized_model(X_train, y_train, kernel=GPy.kern.Matern32(X_train.shape[1], ARD=False))]
+        m = [build_coregionalized_model(X, y, kernel=GPy.kern.Matern52(X.shape[1], ARD=False))]
+        palinstance = PALCoregionalized(X, m, 3, epsilon=np.array([epsilon] * 3), beta_scale=beta_scale, delta=delta)
+        palinstance.update_train_set(greedy_indices, y[greedy_indices])
 
-        pareto_optimal, hypervolumes, gps, selected = pal(
-            m,
-            X_train,
-            y_train,
-            X_test,
-            y_test,
-            hv_reference=[hv_reference] * y_train.shape[1],
-            epsilon=[epsilon] * y_train.shape[1],
-            #verbosity='debug',
-            iterations=4000,
-            delta=delta,
-            beta_scale=beta_scale,
-            coregionalized=True,
-            optimize_always=optimize_always,
-            optimize_delay=optimize_delay,
-            parallel=False,  # the implementation somehow does not seem that robust in GPy
-            history_dump_file=os.path.join(outdir, TIMESTR + '-history.pkl'))
-
-        pareto_optimals.append(pareto_optimal)
-        hypervolumess.append(hypervolumes)
-        gpss.append(gps)
-        selecteds.append(selected)
+        while sum(palinstance.unclassified):
+            idx = palinstance.run_one_step()
+            pareto_optimals.append(palinstance.pareto_optimal_indices)
+            selecteds.append(palinstance.sampled_indices)
+            hv = get_hypervolume(y[palinstance.pareto_optimal_indices], [5, 5, 5])
+            print(palinstance)
+            print(f'Hypervolume {hv}')
+            if idx is not None:
+                palinstance.update_train_set(np.array([idx]), y[idx:idx + 1, :])
 
     if not os.path.exists(outdir):
         os.mkdir(outdir)
@@ -104,13 +87,8 @@ def main(  # pylint:disable=invalid-name, too-many-arguments, too-many-locals
     epsilon = str(epsilon)
     delta = str(delta)
     beta_scale = str(beta_scale)
-    np.save(os.path.join(outdir, TIMESTR + '{}_{}_{}_{}-X_train'.format(epsilon, delta, beta_scale, n_samples)),
-            X_train)
-    np.save(os.path.join(outdir, TIMESTR + '{}_{}_{}_{}-X_test'.format(epsilon, delta, beta_scale, n_samples)), X_test)
-    np.save(os.path.join(outdir, TIMESTR + '{}_{}_{}_{}-y_train'.format(epsilon, delta, beta_scale, n_samples)),
-            y_train)
-    np.save(os.path.join(outdir, TIMESTR + '{}_{}_{}_{}-y_test'.format(epsilon, delta, beta_scale, n_samples)), y_test)
-
+    np.save(os.path.join(outdir, TIMESTR + '{}_{}_{}_{}-greedy_indices'.format(epsilon, delta, beta_scale, n_samples)),
+            greedy_indices)
     np.save(
         os.path.join(outdir,
                      TIMESTR + '{}_{}_{}_{}-pareto_optimal_indices'.format(epsilon, delta, beta_scale, n_samples)),
@@ -119,8 +97,6 @@ def main(  # pylint:disable=invalid-name, too-many-arguments, too-many-locals
             hypervolumess)
     np.save(os.path.join(outdir, TIMESTR + '{}_{}_{}_{}-selected'.format(epsilon, delta, beta_scale, n_samples)),
             selecteds)
-    joblib.dump(
-        gpss, os.path.join(outdir, TIMESTR + '{}_{}_{}_{}-models.joblib'.format(epsilon, delta, beta_scale, n_samples)))
 
 
 if __name__ == '__main__':
