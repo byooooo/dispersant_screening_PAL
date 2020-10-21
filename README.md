@@ -1,6 +1,7 @@
-# dispersant_screening_PAL
+# De novo polymer design with multi objective active learning and molecular simulations
 
 ![Python package](https://github.com/byooooo/dispersant_screening_PAL/workflows/Python%20package/badge.svg)
+
 
 ## Scripts for reproducing the results discussed in the paper
 
@@ -14,7 +15,7 @@ conda env conda env create --file=environment_mac.yml
 
 ### Missing data (Supplementary Information)
 
-All `PyPAL` classes support missing data. For this work, we used coregionalized models that leverage correlations
+All [`PyPAL`](https://github.com/kjappelbaum/pypal) classes support missing data. For this work, we used coregionalized models that leverage correlations
 between the different objectives. To reproduce the results, make sure that `data/new_features_full_random.csv`, `data/b1-b21_random_virial_large_new.csv`, and `data/rg_results.csv` are in your working directory. Those relative paths are hardcoded in the command line interface.
 Then use
 
