@@ -1,0 +1,93 @@
+ /home/kjablonk/anaconda3/envs/dispersant_screener/lib/python3.7/site-packages/sklearn/utils/deprecation.py:143: FutureWarning:The sklearn.preprocessing.data module is  deprecated in version 0.22 and will be removed in version 0.24. The corresponding classes / functions should instead be imported from sklearn.preprocessing. Anything that cannot be imported from sklearn.preprocessing is now part of the private API.
+ /home/kjablonk/programs/pypal/pypal/pal/validate_inputs.py:146: UserWarning:No goals provided,                 will assume that every dimension should be maximized
+ /home/kjablonk/anaconda3/envs/dispersant_screener/lib/python3.7/site-packages/GPy/kern/src/stationary.py:166: RuntimeWarning:overflow encountered in true_divide
+ /home/kjablonk/anaconda3/envs/dispersant_screener/lib/python3.7/site-packages/GPy/kern/src/stationary.py:137: RuntimeWarning:overflow encountered in square
+ /home/kjablonk/anaconda3/envs/dispersant_screener/lib/python3.7/site-packages/GPy/kern/src/stationary.py:138: RuntimeWarning:invalid value encountered in add
+ /home/kjablonk/anaconda3/envs/dispersant_screener/lib/python3.7/site-packages/GPy/kern/src/stationary.py:565: RuntimeWarning:invalid value encountered in multiply
+ /home/kjablonk/anaconda3/envs/dispersant_screener/lib/python3.7/site-packages/GPy/kern/src/stationary.py:568: RuntimeWarning:invalid value encountered in subtract
+ /home/kjablonk/anaconda3/envs/dispersant_screener/lib/python3.7/site-packages/paramz/transformations.py:111: RuntimeWarning:overflow encountered in expm1
+ /home/kjablonk/anaconda3/envs/dispersant_screener/lib/python3.7/site-packages/GPy/kern/src/stationary.py:166: RuntimeWarning:overflow encountered in true_divide
+ /home/kjablonk/anaconda3/envs/dispersant_screener/lib/python3.7/site-packages/GPy/kern/src/stationary.py:137: RuntimeWarning:overflow encountered in square
+ /home/kjablonk/anaconda3/envs/dispersant_screener/lib/python3.7/site-packages/GPy/kern/src/stationary.py:138: RuntimeWarning:invalid value encountered in add
+ /home/kjablonk/anaconda3/envs/dispersant_screener/lib/python3.7/site-packages/GPy/kern/src/stationary.py:565: RuntimeWarning:invalid value encountered in multiply
+ /home/kjablonk/anaconda3/envs/dispersant_screener/lib/python3.7/site-packages/GPy/kern/src/stationary.py:568: RuntimeWarning:invalid value encountered in subtract
+ /home/kjablonk/anaconda3/envs/dispersant_screener/lib/python3.7/site-packages/numpy/core/_asarray.py:136: VisibleDeprecationWarning:Creating an ndarray from ragged nested sequences (which is a list-or-tuple of lists-or-tuples-or ndarrays with different lengths or shapes) is deprecated. If you meant to do this, you must specify 'dtype=object' when creating the ndarray
+Maximum hypervolume 1536.0438526567837
+STARTING PAL
+Optimization restart 1/20, f = -36.119812891823926
+Optimization restart 2/20, f = -30.89106109108734
+Optimization restart 3/20, f = -36.12040102840575
+Optimization restart 4/20, f = -29.082551931040367
+Optimization restart 5/20, f = -36.04885935449399
+Optimization restart 6/20, f = -36.120909410371475
+Optimization restart 7/20, f = -18.735505004476863
+Optimization restart 8/20, f = -28.27685127743398
+Optimization restart 9/20, f = -28.1375658983404
+Optimization restart 10/20, f = -35.96066051079873
+Optimization restart 11/20, f = -21.40785698232895
+Optimization restart 12/20, f = 11.635404177348754
+Optimization restart 13/20, f = -28.194110045240784
+Optimization restart 14/20, f = -36.11079608661797
+Optimization restart 15/20, f = -29.05631726316457
+Optimization restart 16/20, f = -27.609466074214545
+Optimization restart 17/20, f = -28.087523277183298
+Optimization restart 18/20, f = -36.110961032816945
+Optimization restart 19/20, f = -22.47702882623028
+Optimization restart 20/20, f = -36.09957490157893
+pypal at iteration 1.         0 Pareto optimal points,         54 discarded points,         3071 unclassified points.
+Hypervolume 0
+pypal at iteration 2.         1 Pareto optimal points,         1139 discarded points,         1985 unclassified points.
+Hypervolume 1204.6929879669724
+pypal at iteration 3.         5 Pareto optimal points,         1350 discarded points,         1770 unclassified points.
+Hypervolume 1224.9914266872668
+pypal at iteration 4.         15 Pareto optimal points,         1489 discarded points,         1621 unclassified points.
+Hypervolume 1265.2535553258563
+pypal at iteration 5.         15 Pareto optimal points,         2006 discarded points,         1104 unclassified points.
+Hypervolume 1265.2535553258563
+pypal at iteration 6.         15 Pareto optimal points,         2234 discarded points,         876 unclassified points.
+Hypervolume 1265.2535553258563
+pypal at iteration 7.         15 Pareto optimal points,         2323 discarded points,         787 unclassified points.
+Hypervolume 1265.2535553258563
+pypal at iteration 8.         15 Pareto optimal points,         2490 discarded points,         620 unclassified points.
+Hypervolume 1265.2535553258563
+pypal at iteration 9.         15 Pareto optimal points,         2490 discarded points,         620 unclassified points.
+Hypervolume 1265.2535553258563
+pypal at iteration 10.         15 Pareto optimal points,         2490 discarded points,         620 unclassified points.
+Hypervolume 1265.2535553258563
+Optimization restart 1/20, f = -75.42705085637213
+Optimization restart 2/20, f = -84.61594084396427
+Optimization restart 3/20, f = -62.508691659795964
+Optimization restart 4/20, f = -85.02715740442294
+Optimization restart 5/20, f = -85.66837199369606
+Optimization restart 6/20, f = -84.97698994453769
+Optimization restart 7/20, f = -83.75630199199693
+Optimization restart 8/20, f = -83.98276932368742
+Optimization restart 9/20, f = -81.13723865274964
+Optimization restart 10/20, f = -86.1484037772236
+Optimization restart 11/20, f = -84.65988465665829
+Optimization restart 12/20, f = -85.32528710763934
+Optimization restart 13/20, f = -41.84542490309995
+Optimization restart 14/20, f = -84.99594184811119
+Optimization restart 15/20, f = -85.52039527657402
+Optimization restart 16/20, f = -84.54100679394803
+Optimization restart 17/20, f = -85.19716720404321
+Optimization restart 18/20, f = -84.63018168597014
+Optimization restart 19/20, f = -85.49869632589198
+Optimization restart 20/20, f = -85.50682558224285
+pypal at iteration 11.         47 Pareto optimal points,         3049 discarded points,         29 unclassified points.
+Hypervolume 1357.4617948862572
+pypal at iteration 12.         47 Pareto optimal points,         3062 discarded points,         16 unclassified points.
+Hypervolume 1357.4617948862572
+pypal at iteration 13.         58 Pareto optimal points,         3063 discarded points,         4 unclassified points.
+Hypervolume 1358.9839951766094
+pypal at iteration 14.         58 Pareto optimal points,         3063 discarded points,         4 unclassified points.
+Hypervolume 1358.9839951766094
+pypal at iteration 15.         58 Pareto optimal points,         3065 discarded points,         2 unclassified points.
+Hypervolume 1358.9839951766094
+pypal at iteration 16.         58 Pareto optimal points,         3065 discarded points,         2 unclassified points.
+Hypervolume 1358.9839951766094
+pypal at iteration 17.         58 Pareto optimal points,         3066 discarded points,         1 unclassified points.
+Hypervolume 1358.9839951766094
+Done. No unclassified point left
+pypal at iteration 17.         58 Pareto optimal points,         3067 discarded points,         0 unclassified points.
+Hypervolume 1358.9839951766094

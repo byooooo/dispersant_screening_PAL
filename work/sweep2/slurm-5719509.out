@@ -1,0 +1,1093 @@
+ /home/kjablonk/anaconda3/envs/dispersant_screener/lib/python3.7/site-packages/sklearn/utils/deprecation.py:143: FutureWarning:The sklearn.preprocessing.data module is  deprecated in version 0.22 and will be removed in version 0.24. The corresponding classes / functions should instead be imported from sklearn.preprocessing. Anything that cannot be imported from sklearn.preprocessing is now part of the private API.
+ /home/kjablonk/programs/pypal/pypal/pal/validate_inputs.py:146: UserWarning:No goals provided,                 will assume that every dimension should be maximized
+ /home/kjablonk/anaconda3/envs/dispersant_screener/lib/python3.7/site-packages/GPy/kern/src/stationary.py:137: RuntimeWarning:overflow encountered in square
+ /home/kjablonk/anaconda3/envs/dispersant_screener/lib/python3.7/site-packages/GPy/kern/src/stationary.py:138: RuntimeWarning:invalid value encountered in add
+ /home/kjablonk/anaconda3/envs/dispersant_screener/lib/python3.7/site-packages/GPy/kern/src/stationary.py:565: RuntimeWarning:invalid value encountered in multiply
+ /home/kjablonk/anaconda3/envs/dispersant_screener/lib/python3.7/site-packages/GPy/kern/src/stationary.py:568: RuntimeWarning:invalid value encountered in subtract
+ /home/kjablonk/anaconda3/envs/dispersant_screener/lib/python3.7/site-packages/GPy/kern/src/stationary.py:166: RuntimeWarning:overflow encountered in true_divide
+ /home/kjablonk/anaconda3/envs/dispersant_screener/lib/python3.7/site-packages/paramz/transformations.py:111: RuntimeWarning:overflow encountered in expm1
+ /home/kjablonk/anaconda3/envs/dispersant_screener/lib/python3.7/site-packages/GPy/kern/src/stationary.py:166: RuntimeWarning:overflow encountered in true_divide
+ /home/kjablonk/anaconda3/envs/dispersant_screener/lib/python3.7/site-packages/GPy/kern/src/stationary.py:137: RuntimeWarning:overflow encountered in square
+ /home/kjablonk/anaconda3/envs/dispersant_screener/lib/python3.7/site-packages/GPy/kern/src/stationary.py:138: RuntimeWarning:invalid value encountered in add
+ /home/kjablonk/anaconda3/envs/dispersant_screener/lib/python3.7/site-packages/GPy/kern/src/stationary.py:565: RuntimeWarning:invalid value encountered in multiply
+ /home/kjablonk/anaconda3/envs/dispersant_screener/lib/python3.7/site-packages/GPy/kern/src/stationary.py:568: RuntimeWarning:invalid value encountered in subtract
+ /home/kjablonk/anaconda3/envs/dispersant_screener/lib/python3.7/site-packages/GPy/kern/src/stationary.py:243: RuntimeWarning:invalid value encountered in true_divide
+ /home/kjablonk/anaconda3/envs/dispersant_screener/lib/python3.7/site-packages/GPy/kern/src/stationary.py:138: RuntimeWarning:overflow encountered in multiply
+ /home/kjablonk/anaconda3/envs/dispersant_screener/lib/python3.7/site-packages/GPy/kern/src/stationary.py:138: RuntimeWarning:overflow encountered in add
+ /home/kjablonk/anaconda3/envs/dispersant_screener/lib/python3.7/site-packages/GPy/kern/src/stationary.py:565: RuntimeWarning:overflow encountered in multiply
+ /home/kjablonk/anaconda3/envs/dispersant_screener/lib/python3.7/site-packages/GPy/kern/src/stationary.py:568: RuntimeWarning:overflow encountered in multiply
+ /home/kjablonk/anaconda3/envs/dispersant_screener/lib/python3.7/site-packages/GPy/kern/src/stationary.py:568: RuntimeWarning:invalid value encountered in multiply
+ /home/kjablonk/anaconda3/envs/dispersant_screener/lib/python3.7/site-packages/numpy/core/_asarray.py:136: VisibleDeprecationWarning:Creating an ndarray from ragged nested sequences (which is a list-or-tuple of lists-or-tuples-or ndarrays with different lengths or shapes) is deprecated. If you meant to do this, you must specify 'dtype=object' when creating the ndarray
+Maximum hypervolume 1536.0438526567837
+STARTING PAL
+Optimization restart 1/20, f = -229.0447853840197
+Optimization restart 2/20, f = -229.72666762883586
+Optimization restart 3/20, f = -229.53481309449737
+Optimization restart 4/20, f = -211.82380101007092
+Optimization restart 5/20, f = -230.02856995469986
+Optimization restart 6/20, f = -229.73338195127627
+Optimization restart 7/20, f = -211.47281522393092
+Optimization restart 8/20, f = -218.4460910463863
+Optimization restart 9/20, f = -229.86470267548177
+Optimization restart 10/20, f = -229.8735808501904
+Optimization restart 11/20, f = -229.7633973124727
+Optimization restart 12/20, f = -219.63876987347592
+Optimization restart 13/20, f = -229.8498583832436
+Optimization restart 14/20, f = -229.3252382884119
+Optimization restart 15/20, f = -205.68103710349425
+Optimization restart 16/20, f = -229.73371888746937
+Optimization restart 17/20, f = -229.84991728904092
+Optimization restart 18/20, f = -229.7556549758414
+Optimization restart 19/20, f = -229.88110740546716
+Optimization restart 20/20, f = -229.74969949998234
+pypal at iteration 1.         4 Pareto optimal points,         176 discarded points,         2945 unclassified points.
+Hypervolume 767.3372264108434
+pypal at iteration 2.         5 Pareto optimal points,         271 discarded points,         2849 unclassified points.
+Hypervolume 1274.2770761010888
+pypal at iteration 3.         5 Pareto optimal points,         271 discarded points,         2849 unclassified points.
+Hypervolume 1274.2770761010888
+pypal at iteration 4.         6 Pareto optimal points,         272 discarded points,         2847 unclassified points.
+Hypervolume 1419.5303149706501
+pypal at iteration 5.         6 Pareto optimal points,         273 discarded points,         2846 unclassified points.
+Hypervolume 1419.5303149706501
+pypal at iteration 6.         6 Pareto optimal points,         274 discarded points,         2845 unclassified points.
+Hypervolume 1419.5303149706501
+pypal at iteration 7.         6 Pareto optimal points,         275 discarded points,         2844 unclassified points.
+Hypervolume 1419.5303149706501
+pypal at iteration 8.         6 Pareto optimal points,         276 discarded points,         2843 unclassified points.
+Hypervolume 1419.5303149706501
+pypal at iteration 9.         6 Pareto optimal points,         277 discarded points,         2842 unclassified points.
+Hypervolume 1419.5303149706501
+pypal at iteration 10.         6 Pareto optimal points,         278 discarded points,         2841 unclassified points.
+Hypervolume 1419.5303149706501
+Optimization restart 1/20, f = -337.3270221921501
+Optimization restart 2/20, f = -332.5807444344015
+Optimization restart 3/20, f = -338.3800052267331
+Optimization restart 4/20, f = -337.8867852309674
+Optimization restart 5/20, f = -335.30228356467
+Optimization restart 6/20, f = -338.6952972632859
+Optimization restart 7/20, f = -332.599337369632
+Optimization restart 8/20, f = -338.74035799921245
+Optimization restart 9/20, f = -338.15672369175684
+Optimization restart 10/20, f = -322.0110778874947
+Optimization restart 11/20, f = -337.2936181739382
+Optimization restart 12/20, f = -338.07593746579687
+Optimization restart 13/20, f = -336.0639272884061
+Optimization restart 14/20, f = -338.59379213542866
+Optimization restart 15/20, f = -338.6079706307676
+Optimization restart 16/20, f = -338.7764889071444
+Optimization restart 17/20, f = -333.6878091310143
+Optimization restart 18/20, f = -338.6269204948359
+Optimization restart 19/20, f = -337.8895359797567
+Optimization restart 20/20, f = -337.7123818144672
+pypal at iteration 11.         7 Pareto optimal points,         452 discarded points,         2666 unclassified points.
+Hypervolume 1422.7896492028513
+pypal at iteration 12.         7 Pareto optimal points,         584 discarded points,         2534 unclassified points.
+Hypervolume 1422.7896492028513
+pypal at iteration 13.         7 Pareto optimal points,         592 discarded points,         2526 unclassified points.
+Hypervolume 1422.7896492028513
+pypal at iteration 14.         7 Pareto optimal points,         593 discarded points,         2525 unclassified points.
+Hypervolume 1422.7896492028513
+pypal at iteration 15.         7 Pareto optimal points,         619 discarded points,         2499 unclassified points.
+Hypervolume 1422.7896492028513
+pypal at iteration 16.         7 Pareto optimal points,         731 discarded points,         2387 unclassified points.
+Hypervolume 1422.7896492028513
+pypal at iteration 17.         7 Pareto optimal points,         812 discarded points,         2306 unclassified points.
+Hypervolume 1422.7896492028513
+pypal at iteration 18.         7 Pareto optimal points,         813 discarded points,         2305 unclassified points.
+Hypervolume 1422.7896492028513
+pypal at iteration 19.         7 Pareto optimal points,         814 discarded points,         2304 unclassified points.
+Hypervolume 1422.7896492028513
+pypal at iteration 20.         7 Pareto optimal points,         815 discarded points,         2303 unclassified points.
+Hypervolume 1422.7896492028513
+Optimization restart 1/20, f = -426.9990181814698
+Optimization restart 2/20, f = -425.4615119872775
+Optimization restart 3/20, f = -427.2568075070723
+Optimization restart 4/20, f = -425.46712058998185
+Optimization restart 5/20, f = -423.50409818103475
+Optimization restart 6/20, f = -421.0540960409494
+Optimization restart 7/20, f = -423.8405741834093
+Optimization restart 8/20, f = -419.85391083021733
+Optimization restart 9/20, f = -427.06885397296
+Optimization restart 10/20, f = -426.5782893589775
+Optimization restart 11/20, f = -398.1741123356403
+Optimization restart 12/20, f = -425.90224173836606
+Optimization restart 13/20, f = -427.36710510347984
+Optimization restart 14/20, f = -425.07986882409244
+Optimization restart 15/20, f = -418.09884677398236
+Optimization restart 16/20, f = -425.06111074703676
+Optimization restart 17/20, f = -425.0734633840617
+Optimization restart 18/20, f = -425.6580833457177
+Optimization restart 19/20, f = -410.94229240562123
+Optimization restart 20/20, f = -424.74692435222096
+pypal at iteration 21.         7 Pareto optimal points,         1148 discarded points,         1970 unclassified points.
+Hypervolume 1422.7896492028513
+pypal at iteration 22.         7 Pareto optimal points,         1152 discarded points,         1966 unclassified points.
+Hypervolume 1422.7896492028513
+pypal at iteration 23.         7 Pareto optimal points,         1152 discarded points,         1966 unclassified points.
+Hypervolume 1422.7896492028513
+pypal at iteration 24.         7 Pareto optimal points,         1153 discarded points,         1965 unclassified points.
+Hypervolume 1422.7896492028513
+pypal at iteration 25.         7 Pareto optimal points,         1154 discarded points,         1964 unclassified points.
+Hypervolume 1422.7896492028513
+pypal at iteration 26.         7 Pareto optimal points,         1155 discarded points,         1963 unclassified points.
+Hypervolume 1422.7896492028513
+pypal at iteration 27.         7 Pareto optimal points,         1155 discarded points,         1963 unclassified points.
+Hypervolume 1422.7896492028513
+pypal at iteration 28.         7 Pareto optimal points,         1155 discarded points,         1963 unclassified points.
+Hypervolume 1422.7896492028513
+pypal at iteration 29.         7 Pareto optimal points,         1156 discarded points,         1962 unclassified points.
+Hypervolume 1422.7896492028513
+pypal at iteration 30.         7 Pareto optimal points,         1156 discarded points,         1962 unclassified points.
+Hypervolume 1422.7896492028513
+Optimization restart 1/20, f = -506.37039225102825
+Optimization restart 2/20, f = -504.3701094347297
+Optimization restart 3/20, f = -500.86978663562564
+Optimization restart 4/20, f = -416.07534753189634
+Optimization restart 5/20, f = -504.0902011629262
+Optimization restart 6/20, f = -503.3242224674074
+Optimization restart 7/20, f = -501.2632511689623
+Optimization restart 8/20, f = -504.0980865541481
+Optimization restart 9/20, f = -503.3310549367342
+Optimization restart 10/20, f = -497.82284600443313
+Optimization restart 11/20, f = -396.35610440178925
+Optimization restart 12/20, f = -503.7212809235499
+Optimization restart 13/20, f = -505.93531906892997
+Optimization restart 14/20, f = -503.3740473077336
+Optimization restart 15/20, f = -503.10943189314605
+Optimization restart 16/20, f = -503.42648937882745
+Optimization restart 17/20, f = -503.4668689112557
+Optimization restart 18/20, f = -502.3042628737883
+Optimization restart 19/20, f = -496.19300333737675
+Optimization restart 20/20, f = -503.4172271778992
+pypal at iteration 31.         7 Pareto optimal points,         1175 discarded points,         1943 unclassified points.
+Hypervolume 1422.7896492028513
+pypal at iteration 32.         7 Pareto optimal points,         1177 discarded points,         1941 unclassified points.
+Hypervolume 1422.7896492028513
+pypal at iteration 33.         7 Pareto optimal points,         1178 discarded points,         1940 unclassified points.
+Hypervolume 1422.7896492028513
+pypal at iteration 34.         7 Pareto optimal points,         1179 discarded points,         1939 unclassified points.
+Hypervolume 1422.7896492028513
+pypal at iteration 35.         7 Pareto optimal points,         1182 discarded points,         1936 unclassified points.
+Hypervolume 1422.7896492028513
+pypal at iteration 36.         7 Pareto optimal points,         1186 discarded points,         1932 unclassified points.
+Hypervolume 1422.7896492028513
+pypal at iteration 37.         7 Pareto optimal points,         1191 discarded points,         1927 unclassified points.
+Hypervolume 1422.7896492028513
+pypal at iteration 38.         8 Pareto optimal points,         1191 discarded points,         1926 unclassified points.
+Hypervolume 1423.5090577562942
+pypal at iteration 39.         11 Pareto optimal points,         1191 discarded points,         1923 unclassified points.
+Hypervolume 1424.3028621049484
+pypal at iteration 40.         11 Pareto optimal points,         1192 discarded points,         1922 unclassified points.
+Hypervolume 1424.3028621049484
+Optimization restart 1/20, f = -578.7844010262771
+Optimization restart 2/20, f = -573.6598188859997
+Optimization restart 3/20, f = -576.5199416183308
+Optimization restart 4/20, f = -578.1501234734594
+Optimization restart 5/20, f = -576.4804549989514
+Optimization restart 6/20, f = -571.2738967669452
+Optimization restart 7/20, f = -577.1718776022058
+Optimization restart 8/20, f = -572.7667980545107
+Optimization restart 9/20, f = -576.2517350550331
+Optimization restart 10/20, f = -577.3632922396629
+Optimization restart 11/20, f = -575.8295082649304
+Optimization restart 12/20, f = -576.92209959488
+Optimization restart 13/20, f = -576.2789691542979
+Optimization restart 14/20, f = -576.189454647606
+Optimization restart 15/20, f = -574.8201191359051
+Optimization restart 16/20, f = -549.761793264277
+Optimization restart 17/20, f = -569.223174083493
+Optimization restart 18/20, f = -575.5494860148508
+Optimization restart 19/20, f = -574.8424617158382
+Optimization restart 20/20, f = -577.1621787061007
+pypal at iteration 41.         11 Pareto optimal points,         1207 discarded points,         1907 unclassified points.
+Hypervolume 1424.3028621049484
+pypal at iteration 42.         11 Pareto optimal points,         1208 discarded points,         1906 unclassified points.
+Hypervolume 1424.3028621049484
+pypal at iteration 43.         11 Pareto optimal points,         1209 discarded points,         1905 unclassified points.
+Hypervolume 1424.3028621049484
+pypal at iteration 44.         11 Pareto optimal points,         1210 discarded points,         1904 unclassified points.
+Hypervolume 1424.3028621049484
+pypal at iteration 45.         11 Pareto optimal points,         1211 discarded points,         1903 unclassified points.
+Hypervolume 1424.3028621049484
+pypal at iteration 46.         11 Pareto optimal points,         1212 discarded points,         1902 unclassified points.
+Hypervolume 1424.3028621049484
+pypal at iteration 47.         11 Pareto optimal points,         1213 discarded points,         1901 unclassified points.
+Hypervolume 1424.3028621049484
+pypal at iteration 48.         12 Pareto optimal points,         1213 discarded points,         1900 unclassified points.
+Hypervolume 1427.0464092222899
+pypal at iteration 49.         12 Pareto optimal points,         1214 discarded points,         1899 unclassified points.
+Hypervolume 1427.0464092222899
+pypal at iteration 50.         12 Pareto optimal points,         1215 discarded points,         1898 unclassified points.
+Hypervolume 1427.0464092222899
+Optimization restart 1/20, f = -652.7616300745932
+Optimization restart 2/20, f = -644.8766246015435
+Optimization restart 3/20, f = -646.5444442792443
+Optimization restart 4/20, f = -648.8921644986663
+Optimization restart 5/20, f = -648.2578178623064
+Optimization restart 6/20, f = -651.1620521759216
+Optimization restart 7/20, f = -651.1761044591906
+Optimization restart 8/20, f = -623.9203142995636
+Optimization restart 9/20, f = -647.8621298724447
+Optimization restart 10/20, f = -649.6426026844526
+Optimization restart 11/20, f = -651.0241962462194
+Optimization restart 12/20, f = -649.0440830115651
+Optimization restart 13/20, f = -644.0175341860663
+Optimization restart 14/20, f = -650.5170746570872
+Optimization restart 15/20, f = -650.7587826679506
+Optimization restart 16/20, f = -560.8432660515848
+Optimization restart 17/20, f = -650.23272335129
+Optimization restart 18/20, f = -645.9400941327322
+Optimization restart 19/20, f = -650.2267092291075
+Optimization restart 20/20, f = -648.1180810628719
+pypal at iteration 51.         13 Pareto optimal points,         1277 discarded points,         1835 unclassified points.
+Hypervolume 1427.8181455278154
+pypal at iteration 52.         13 Pareto optimal points,         1285 discarded points,         1827 unclassified points.
+Hypervolume 1427.8181455278154
+pypal at iteration 53.         13 Pareto optimal points,         1286 discarded points,         1826 unclassified points.
+Hypervolume 1427.8181455278154
+pypal at iteration 54.         13 Pareto optimal points,         1286 discarded points,         1826 unclassified points.
+Hypervolume 1427.8181455278154
+pypal at iteration 55.         13 Pareto optimal points,         1287 discarded points,         1825 unclassified points.
+Hypervolume 1427.8181455278154
+pypal at iteration 56.         13 Pareto optimal points,         1296 discarded points,         1816 unclassified points.
+Hypervolume 1427.8181455278154
+pypal at iteration 57.         13 Pareto optimal points,         1297 discarded points,         1815 unclassified points.
+Hypervolume 1427.8181455278154
+pypal at iteration 58.         13 Pareto optimal points,         1298 discarded points,         1814 unclassified points.
+Hypervolume 1427.8181455278154
+pypal at iteration 59.         13 Pareto optimal points,         1304 discarded points,         1808 unclassified points.
+Hypervolume 1427.8181455278154
+pypal at iteration 60.         13 Pareto optimal points,         1305 discarded points,         1807 unclassified points.
+Hypervolume 1427.8181455278154
+Optimization restart 1/20, f = -722.0107803898043
+Optimization restart 2/20, f = -718.8414859621333
+Optimization restart 3/20, f = -715.1588182770561
+Optimization restart 4/20, f = -719.0333635380457
+Optimization restart 5/20, f = -706.9376290326334
+Optimization restart 6/20, f = -719.6035999167443
+Optimization restart 7/20, f = -615.1947513459852
+Optimization restart 8/20, f = -719.1972253574305
+Optimization restart 9/20, f = -718.689419569956
+Optimization restart 10/20, f = -718.2005818570003
+Optimization restart 11/20, f = -709.564966202397
+Optimization restart 12/20, f = -708.6189400465237
+Optimization restart 13/20, f = -720.9806854834085
+Optimization restart 14/20, f = -719.5920274531036
+Optimization restart 15/20, f = -719.8608660416144
+Optimization restart 16/20, f = -720.4132075724087
+Optimization restart 17/20, f = -719.2939245344895
+Optimization restart 18/20, f = -702.2963089095726
+Optimization restart 19/20, f = -712.0657775501247
+Optimization restart 20/20, f = -719.1868897302403
+pypal at iteration 61.         13 Pareto optimal points,         1311 discarded points,         1801 unclassified points.
+Hypervolume 1427.8181455278154
+pypal at iteration 62.         13 Pareto optimal points,         1311 discarded points,         1801 unclassified points.
+Hypervolume 1427.8181455278154
+pypal at iteration 63.         14 Pareto optimal points,         1311 discarded points,         1800 unclassified points.
+Hypervolume 1428.5233599436026
+pypal at iteration 64.         14 Pareto optimal points,         1311 discarded points,         1800 unclassified points.
+Hypervolume 1428.5233599436026
+pypal at iteration 65.         14 Pareto optimal points,         1633 discarded points,         1478 unclassified points.
+Hypervolume 1428.5233599436026
+pypal at iteration 66.         14 Pareto optimal points,         1633 discarded points,         1478 unclassified points.
+Hypervolume 1428.5233599436026
+pypal at iteration 67.         15 Pareto optimal points,         1649 discarded points,         1461 unclassified points.
+Hypervolume 1449.8464710790447
+pypal at iteration 68.         15 Pareto optimal points,         1650 discarded points,         1460 unclassified points.
+Hypervolume 1449.8464710790447
+pypal at iteration 69.         15 Pareto optimal points,         1651 discarded points,         1459 unclassified points.
+Hypervolume 1449.8464710790447
+pypal at iteration 70.         15 Pareto optimal points,         1652 discarded points,         1458 unclassified points.
+Hypervolume 1449.8464710790447
+Optimization restart 1/20, f = -783.2830941078222
+Optimization restart 2/20, f = -776.4293265269363
+Optimization restart 3/20, f = -768.5420224547008
+Optimization restart 4/20, f = -781.1769374842038
+Optimization restart 5/20, f = -767.4672124472295
+Optimization restart 6/20, f = -778.6290896337052
+Optimization restart 7/20, f = -771.886764515737
+Optimization restart 8/20, f = -780.0005449666422
+Optimization restart 9/20, f = -782.3971134696249
+Optimization restart 10/20, f = -766.2507818041629
+Optimization restart 11/20, f = -780.4324548433766
+Optimization restart 12/20, f = -780.5419355588637
+Optimization restart 13/20, f = -766.3343300187631
+Optimization restart 14/20, f = -780.774422854963
+Optimization restart 15/20, f = -782.3085791840231
+Optimization restart 16/20, f = -778.4274535517729
+Optimization restart 17/20, f = -778.9536882473387
+Optimization restart 18/20, f = -762.5168898218066
+Optimization restart 19/20, f = -650.5299930282429
+Optimization restart 20/20, f = -781.8879446645232
+pypal at iteration 71.         15 Pareto optimal points,         1678 discarded points,         1432 unclassified points.
+Hypervolume 1449.8464710790447
+pypal at iteration 72.         16 Pareto optimal points,         1679 discarded points,         1430 unclassified points.
+Hypervolume 1449.9071488102738
+pypal at iteration 73.         17 Pareto optimal points,         1681 discarded points,         1427 unclassified points.
+Hypervolume 1451.7131008363108
+pypal at iteration 74.         17 Pareto optimal points,         1681 discarded points,         1427 unclassified points.
+Hypervolume 1451.7131008363108
+pypal at iteration 75.         17 Pareto optimal points,         1681 discarded points,         1427 unclassified points.
+Hypervolume 1451.7131008363108
+pypal at iteration 76.         17 Pareto optimal points,         1682 discarded points,         1426 unclassified points.
+Hypervolume 1451.7131008363108
+pypal at iteration 77.         17 Pareto optimal points,         1698 discarded points,         1410 unclassified points.
+Hypervolume 1451.7131008363108
+pypal at iteration 78.         17 Pareto optimal points,         1698 discarded points,         1410 unclassified points.
+Hypervolume 1451.7131008363108
+pypal at iteration 79.         17 Pareto optimal points,         1699 discarded points,         1409 unclassified points.
+Hypervolume 1451.7131008363108
+pypal at iteration 80.         17 Pareto optimal points,         1700 discarded points,         1408 unclassified points.
+Hypervolume 1451.7131008363108
+Optimization restart 1/20, f = -845.350227982592
+Optimization restart 2/20, f = -835.2066091505999
+Optimization restart 3/20, f = -823.5213901367574
+Optimization restart 4/20, f = -831.2212606072322
+Optimization restart 5/20, f = -829.8416346780582
+Optimization restart 6/20, f = -842.3702028634392
+Optimization restart 7/20, f = -799.9007534756611
+Optimization restart 8/20, f = -832.2634352517705
+Optimization restart 9/20, f = -839.2984989193346
+Optimization restart 10/20, f = -706.114845041162
+Optimization restart 11/20, f = -841.5835567949175
+Optimization restart 12/20, f = -842.9371710199589
+Optimization restart 13/20, f = -837.4212305912905
+Optimization restart 14/20, f = -840.5338240470408
+Optimization restart 15/20, f = -843.1811515812269
+Optimization restart 16/20, f = -839.9592249676872
+Optimization restart 17/20, f = -831.5455019415559
+Optimization restart 18/20, f = -843.0798126084044
+Optimization restart 19/20, f = -840.3524793440131
+Optimization restart 20/20, f = -834.5362280260481
+pypal at iteration 81.         17 Pareto optimal points,         1701 discarded points,         1407 unclassified points.
+Hypervolume 1451.7131008363108
+pypal at iteration 82.         17 Pareto optimal points,         1702 discarded points,         1406 unclassified points.
+Hypervolume 1451.7131008363108
+pypal at iteration 83.         17 Pareto optimal points,         1703 discarded points,         1405 unclassified points.
+Hypervolume 1451.7131008363108
+pypal at iteration 84.         17 Pareto optimal points,         1704 discarded points,         1404 unclassified points.
+Hypervolume 1451.7131008363108
+pypal at iteration 85.         17 Pareto optimal points,         1704 discarded points,         1404 unclassified points.
+Hypervolume 1451.7131008363108
+pypal at iteration 86.         17 Pareto optimal points,         1705 discarded points,         1403 unclassified points.
+Hypervolume 1451.7131008363108
+pypal at iteration 87.         17 Pareto optimal points,         1709 discarded points,         1399 unclassified points.
+Hypervolume 1451.7131008363108
+pypal at iteration 88.         17 Pareto optimal points,         1783 discarded points,         1325 unclassified points.
+Hypervolume 1451.7131008363108
+pypal at iteration 89.         17 Pareto optimal points,         1784 discarded points,         1324 unclassified points.
+Hypervolume 1451.7131008363108
+pypal at iteration 90.         17 Pareto optimal points,         1859 discarded points,         1249 unclassified points.
+Hypervolume 1451.7131008363108
+Optimization restart 1/20, f = -901.4504955762723
+Optimization restart 2/20, f = -884.8845312613173
+Optimization restart 3/20, f = -889.295161092635
+Optimization restart 4/20, f = -898.859697303196
+Optimization restart 5/20, f = -877.4569373953514
+Optimization restart 6/20, f = -765.5586270703601
+Optimization restart 7/20, f = -899.1805842399896
+Optimization restart 8/20, f = -894.5357934160597
+Optimization restart 9/20, f = -899.0285732293064
+Optimization restart 10/20, f = -897.3191639694485
+Optimization restart 11/20, f = -899.5405293347229
+Optimization restart 12/20, f = -884.0135134157207
+Optimization restart 13/20, f = -426.1700260726475
+Optimization restart 14/20, f = -898.5182265919029
+Optimization restart 15/20, f = -900.6708704406985
+Optimization restart 16/20, f = -898.2787417921322
+Optimization restart 17/20, f = -899.1301213989957
+Optimization restart 18/20, f = -891.0071786161288
+Optimization restart 19/20, f = -896.6100046780073
+Optimization restart 20/20, f = -887.7101669571098
+pypal at iteration 91.         17 Pareto optimal points,         1860 discarded points,         1248 unclassified points.
+Hypervolume 1451.7131008363108
+pypal at iteration 92.         17 Pareto optimal points,         1861 discarded points,         1247 unclassified points.
+Hypervolume 1451.7131008363108
+pypal at iteration 93.         17 Pareto optimal points,         1862 discarded points,         1246 unclassified points.
+Hypervolume 1451.7131008363108
+pypal at iteration 94.         17 Pareto optimal points,         1862 discarded points,         1246 unclassified points.
+Hypervolume 1451.7131008363108
+pypal at iteration 95.         17 Pareto optimal points,         1863 discarded points,         1245 unclassified points.
+Hypervolume 1451.7131008363108
+pypal at iteration 96.         17 Pareto optimal points,         1864 discarded points,         1244 unclassified points.
+Hypervolume 1451.7131008363108
+pypal at iteration 97.         17 Pareto optimal points,         1865 discarded points,         1243 unclassified points.
+Hypervolume 1451.7131008363108
+pypal at iteration 98.         18 Pareto optimal points,         1866 discarded points,         1241 unclassified points.
+Hypervolume 1451.744268133767
+pypal at iteration 99.         18 Pareto optimal points,         1867 discarded points,         1240 unclassified points.
+Hypervolume 1451.744268133767
+pypal at iteration 100.         18 Pareto optimal points,         1868 discarded points,         1239 unclassified points.
+Hypervolume 1451.744268133767
+Optimization restart 1/20, f = -964.2186788193194
+Optimization restart 2/20, f = -961.2785244503708
+Optimization restart 3/20, f = -957.1662559176111
+Optimization restart 4/20, f = -960.9139825459854
+Optimization restart 5/20, f = -958.7093863030756
+Optimization restart 6/20, f = -960.6642124034786
+Optimization restart 7/20, f = -804.3208337758908
+Optimization restart 8/20, f = -940.8608676908852
+Optimization restart 9/20, f = -947.7903765814136
+Optimization restart 10/20, f = -961.7949511973912
+Optimization restart 11/20, f = -961.5001123259957
+Optimization restart 12/20, f = -951.9764057565534
+Optimization restart 13/20, f = -393.62384085110034
+Optimization restart 14/20, f = -961.0061283529119
+Optimization restart 15/20, f = -951.0878924259542
+Optimization restart 16/20, f = -959.6224090384255
+Optimization restart 17/20, f = -948.5209441429248
+Optimization restart 18/20, f = -963.2875322766796
+Optimization restart 19/20, f = -960.7760253833194
+Optimization restart 20/20, f = -945.3178163557841
+pypal at iteration 101.         18 Pareto optimal points,         1872 discarded points,         1235 unclassified points.
+Hypervolume 1451.744268133767
+pypal at iteration 102.         18 Pareto optimal points,         1873 discarded points,         1234 unclassified points.
+Hypervolume 1451.744268133767
+pypal at iteration 103.         18 Pareto optimal points,         1874 discarded points,         1233 unclassified points.
+Hypervolume 1451.744268133767
+pypal at iteration 104.         18 Pareto optimal points,         1875 discarded points,         1232 unclassified points.
+Hypervolume 1451.744268133767
+pypal at iteration 105.         18 Pareto optimal points,         1876 discarded points,         1231 unclassified points.
+Hypervolume 1451.744268133767
+pypal at iteration 106.         18 Pareto optimal points,         1878 discarded points,         1229 unclassified points.
+Hypervolume 1451.744268133767
+pypal at iteration 107.         18 Pareto optimal points,         1879 discarded points,         1228 unclassified points.
+Hypervolume 1451.744268133767
+pypal at iteration 108.         18 Pareto optimal points,         1880 discarded points,         1227 unclassified points.
+Hypervolume 1451.744268133767
+pypal at iteration 109.         18 Pareto optimal points,         1881 discarded points,         1226 unclassified points.
+Hypervolume 1451.744268133767
+pypal at iteration 110.         18 Pareto optimal points,         1882 discarded points,         1225 unclassified points.
+Hypervolume 1451.744268133767
+Optimization restart 1/20, f = -1025.1937060015098
+Optimization restart 2/20, f = -1005.5049528391918
+Optimization restart 3/20, f = -1013.6538424454832
+Optimization restart 4/20, f = -1016.1961216029433
+Optimization restart 5/20, f = -1022.5282432572985
+Optimization restart 6/20, f = -1018.7638907047772
+Optimization restart 7/20, f = -1019.5746517374143
+Optimization restart 8/20, f = -1022.5432982283389
+Optimization restart 9/20, f = -1024.7815835068059
+Optimization restart 10/20, f = -1023.146660054625
+Optimization restart 11/20, f = -1015.3553973937137
+Optimization restart 12/20, f = -1020.5627587872482
+Optimization restart 13/20, f = -1012.6392788932974
+Optimization restart 14/20, f = -1018.470960959476
+Optimization restart 15/20, f = -1015.068747534311
+Optimization restart 16/20, f = -891.0932149280536
+Optimization restart 17/20, f = -1015.8289307778142
+Optimization restart 18/20, f = -1019.2650198881113
+Optimization restart 19/20, f = -1022.4226862072787
+Optimization restart 20/20, f = -1021.1146778455434
+pypal at iteration 111.         18 Pareto optimal points,         1883 discarded points,         1224 unclassified points.
+Hypervolume 1451.744268133767
+pypal at iteration 112.         19 Pareto optimal points,         1883 discarded points,         1223 unclassified points.
+Hypervolume 1451.755498668741
+pypal at iteration 113.         19 Pareto optimal points,         1884 discarded points,         1222 unclassified points.
+Hypervolume 1451.755498668741
+pypal at iteration 114.         19 Pareto optimal points,         1885 discarded points,         1221 unclassified points.
+Hypervolume 1451.755498668741
+pypal at iteration 115.         19 Pareto optimal points,         1887 discarded points,         1219 unclassified points.
+Hypervolume 1451.755498668741
+pypal at iteration 116.         19 Pareto optimal points,         1939 discarded points,         1167 unclassified points.
+Hypervolume 1451.755498668741
+pypal at iteration 117.         19 Pareto optimal points,         1940 discarded points,         1166 unclassified points.
+Hypervolume 1451.755498668741
+pypal at iteration 118.         19 Pareto optimal points,         1944 discarded points,         1162 unclassified points.
+Hypervolume 1451.755498668741
+pypal at iteration 119.         19 Pareto optimal points,         1945 discarded points,         1161 unclassified points.
+Hypervolume 1451.755498668741
+pypal at iteration 120.         19 Pareto optimal points,         1946 discarded points,         1160 unclassified points.
+Hypervolume 1451.755498668741
+Optimization restart 1/20, f = -1081.277260195779
+Optimization restart 2/20, f = -1078.9188267534737
+Optimization restart 3/20, f = -1078.438109689458
+Optimization restart 4/20, f = -1078.5525913534202
+Optimization restart 5/20, f = -1075.3198782469508
+Optimization restart 6/20, f = -1079.0585929591105
+Optimization restart 7/20, f = -1067.6832024328423
+Optimization restart 8/20, f = -1061.5042832197669
+Optimization restart 9/20, f = -1074.4744583328506
+Optimization restart 10/20, f = -1079.2965244926106
+Optimization restart 11/20, f = -1079.2472833805268
+Optimization restart 12/20, f = -1044.0192629793758
+Optimization restart 13/20, f = -1069.801315092186
+Optimization restart 14/20, f = -1062.1428817005694
+Optimization restart 15/20, f = -1078.2245265057736
+Optimization restart 16/20, f = -1079.5964331968619
+Optimization restart 17/20, f = -1079.183888553497
+Optimization restart 18/20, f = -1077.0681021704158
+Optimization restart 19/20, f = -1066.2673609600374
+Optimization restart 20/20, f = -1078.9889114016783
+pypal at iteration 121.         21 Pareto optimal points,         1946 discarded points,         1158 unclassified points.
+Hypervolume 1453.5681873579063
+pypal at iteration 122.         21 Pareto optimal points,         1947 discarded points,         1157 unclassified points.
+Hypervolume 1453.5681873579063
+pypal at iteration 123.         21 Pareto optimal points,         1976 discarded points,         1128 unclassified points.
+Hypervolume 1453.5681873579063
+pypal at iteration 124.         21 Pareto optimal points,         1977 discarded points,         1127 unclassified points.
+Hypervolume 1453.5681873579063
+pypal at iteration 125.         21 Pareto optimal points,         1978 discarded points,         1126 unclassified points.
+Hypervolume 1453.5681873579063
+pypal at iteration 126.         22 Pareto optimal points,         2111 discarded points,         992 unclassified points.
+Hypervolume 1471.815639258029
+pypal at iteration 127.         22 Pareto optimal points,         2112 discarded points,         991 unclassified points.
+Hypervolume 1471.815639258029
+pypal at iteration 128.         22 Pareto optimal points,         2113 discarded points,         990 unclassified points.
+Hypervolume 1471.815639258029
+pypal at iteration 129.         22 Pareto optimal points,         2114 discarded points,         989 unclassified points.
+Hypervolume 1471.815639258029
+pypal at iteration 130.         22 Pareto optimal points,         2115 discarded points,         988 unclassified points.
+Hypervolume 1471.815639258029
+Optimization restart 1/20, f = -1135.6499568664788
+Optimization restart 2/20, f = -1131.7982054553813
+Optimization restart 3/20, f = -1131.1109142594394
+Optimization restart 4/20, f = -1131.8100365127316
+Optimization restart 5/20, f = -1108.6406902464119
+Optimization restart 6/20, f = -1122.587950852685
+Optimization restart 7/20, f = -1132.0100276502485
+Optimization restart 8/20, f = -1119.5761158466933
+Optimization restart 9/20, f = -1133.795231797886
+Optimization restart 10/20, f = -1133.5676862586017
+Optimization restart 11/20, f = -1131.667733107573
+Optimization restart 12/20, f = -1133.2473176113335
+Optimization restart 13/20, f = -1133.315266666772
+Optimization restart 14/20, f = -1115.441001994902
+Optimization restart 15/20, f = -1116.9599770773862
+Optimization restart 16/20, f = -1128.0887751473178
+Optimization restart 17/20, f = -1132.733051041251
+Optimization restart 18/20, f = -1120.2793111362816
+Optimization restart 19/20, f = -1108.5059630996298
+Optimization restart 20/20, f = -1127.8671235084994
+pypal at iteration 131.         22 Pareto optimal points,         2116 discarded points,         987 unclassified points.
+Hypervolume 1471.815639258029
+pypal at iteration 132.         22 Pareto optimal points,         2117 discarded points,         986 unclassified points.
+Hypervolume 1471.815639258029
+pypal at iteration 133.         22 Pareto optimal points,         2118 discarded points,         985 unclassified points.
+Hypervolume 1471.815639258029
+pypal at iteration 134.         23 Pareto optimal points,         2283 discarded points,         819 unclassified points.
+Hypervolume 1474.160148584258
+pypal at iteration 135.         23 Pareto optimal points,         2284 discarded points,         818 unclassified points.
+Hypervolume 1474.160148584258
+pypal at iteration 136.         23 Pareto optimal points,         2285 discarded points,         817 unclassified points.
+Hypervolume 1474.160148584258
+pypal at iteration 137.         23 Pareto optimal points,         2286 discarded points,         816 unclassified points.
+Hypervolume 1474.160148584258
+pypal at iteration 138.         23 Pareto optimal points,         2289 discarded points,         813 unclassified points.
+Hypervolume 1474.160148584258
+pypal at iteration 139.         23 Pareto optimal points,         2290 discarded points,         812 unclassified points.
+Hypervolume 1474.160148584258
+pypal at iteration 140.         23 Pareto optimal points,         2291 discarded points,         811 unclassified points.
+Hypervolume 1474.160148584258
+Optimization restart 1/20, f = -1190.5969996917008
+Optimization restart 2/20, f = -1188.1369904786275
+Optimization restart 3/20, f = -1143.366735165408
+Optimization restart 4/20, f = -1188.4330538797942
+Optimization restart 5/20, f = -1187.022352297924
+Optimization restart 6/20, f = -1188.653489304134
+Optimization restart 7/20, f = -1188.7203992350665
+Optimization restart 8/20, f = -1186.6953148923192
+Optimization restart 9/20, f = -1187.6918258686514
+Optimization restart 10/20, f = -1183.8812203812313
+Optimization restart 11/20, f = -1185.30625002937
+Optimization restart 12/20, f = -1187.4057781160268
+Optimization restart 13/20, f = -1184.9444226602168
+Optimization restart 14/20, f = -1185.5480622660039
+Optimization restart 15/20, f = -1183.3682338026872
+Optimization restart 16/20, f = -1179.0470268083643
+Optimization restart 17/20, f = -1182.7432919937169
+Optimization restart 18/20, f = -1183.568727935668
+Optimization restart 19/20, f = -1178.405104884359
+Optimization restart 20/20, f = -1183.077261427702
+pypal at iteration 141.         23 Pareto optimal points,         2292 discarded points,         810 unclassified points.
+Hypervolume 1474.160148584258
+pypal at iteration 142.         24 Pareto optimal points,         2321 discarded points,         780 unclassified points.
+Hypervolume 1477.1434857936647
+pypal at iteration 143.         24 Pareto optimal points,         2322 discarded points,         779 unclassified points.
+Hypervolume 1477.1434857936647
+pypal at iteration 144.         24 Pareto optimal points,         2323 discarded points,         778 unclassified points.
+Hypervolume 1477.1434857936647
+pypal at iteration 145.         24 Pareto optimal points,         2324 discarded points,         777 unclassified points.
+Hypervolume 1477.1434857936647
+pypal at iteration 146.         24 Pareto optimal points,         2325 discarded points,         776 unclassified points.
+Hypervolume 1477.1434857936647
+pypal at iteration 147.         24 Pareto optimal points,         2334 discarded points,         767 unclassified points.
+Hypervolume 1477.1434857936647
+pypal at iteration 148.         24 Pareto optimal points,         2335 discarded points,         766 unclassified points.
+Hypervolume 1477.1434857936647
+pypal at iteration 149.         24 Pareto optimal points,         2336 discarded points,         765 unclassified points.
+Hypervolume 1477.1434857936647
+pypal at iteration 150.         24 Pareto optimal points,         2337 discarded points,         764 unclassified points.
+Hypervolume 1477.1434857936647
+Optimization restart 1/20, f = -1253.7818804165406
+Optimization restart 2/20, f = -1250.3904969862413
+Optimization restart 3/20, f = -1252.8292148437167
+Optimization restart 4/20, f = -1251.8189867381384
+Optimization restart 5/20, f = -1251.6656102625277
+Optimization restart 6/20, f = -1237.6985175169207
+Optimization restart 7/20, f = -1244.5574260861385
+Optimization restart 8/20, f = -1235.1882580943293
+Optimization restart 9/20, f = -1247.2043695093987
+Optimization restart 10/20, f = -1246.2680229070625
+Optimization restart 11/20, f = -1252.1674452870627
+Optimization restart 12/20, f = -1032.6509422714296
+Optimization restart 13/20, f = -1252.1051803324078
+Optimization restart 14/20, f = -1250.131085422068
+Optimization restart 15/20, f = -1250.0837115583408
+Optimization restart 16/20, f = -1227.2425565716112
+Optimization restart 17/20, f = -1251.965627134705
+Optimization restart 18/20, f = -1236.2442068330542
+Optimization restart 19/20, f = -1248.6377049157597
+Optimization restart 20/20, f = -1252.002311201933
+pypal at iteration 151.         25 Pareto optimal points,         2343 discarded points,         757 unclassified points.
+Hypervolume 1478.5675878723155
+pypal at iteration 152.         25 Pareto optimal points,         2344 discarded points,         756 unclassified points.
+Hypervolume 1478.5675878723155
+pypal at iteration 153.         25 Pareto optimal points,         2344 discarded points,         756 unclassified points.
+Hypervolume 1478.5675878723155
+pypal at iteration 154.         26 Pareto optimal points,         2344 discarded points,         755 unclassified points.
+Hypervolume 1478.5836696212937
+pypal at iteration 155.         27 Pareto optimal points,         2624 discarded points,         474 unclassified points.
+Hypervolume 1485.962067015246
+pypal at iteration 156.         27 Pareto optimal points,         2625 discarded points,         473 unclassified points.
+Hypervolume 1485.962067015246
+pypal at iteration 157.         27 Pareto optimal points,         2626 discarded points,         472 unclassified points.
+Hypervolume 1485.962067015246
+pypal at iteration 158.         27 Pareto optimal points,         2627 discarded points,         471 unclassified points.
+Hypervolume 1485.962067015246
+pypal at iteration 159.         29 Pareto optimal points,         2627 discarded points,         469 unclassified points.
+Hypervolume 1486.0087008270184
+pypal at iteration 160.         29 Pareto optimal points,         2628 discarded points,         468 unclassified points.
+Hypervolume 1486.0087008270184
+Optimization restart 1/20, f = -1310.142677040426
+Optimization restart 2/20, f = -1290.224877199595
+Optimization restart 3/20, f = -1305.8214703242036
+Optimization restart 4/20, f = -1103.7278955091774
+Optimization restart 5/20, f = -1297.079088118775
+Optimization restart 6/20, f = -1303.9756244707933
+Optimization restart 7/20, f = -1295.283100314126
+Optimization restart 8/20, f = -1300.1053141667326
+Optimization restart 9/20, f = -1303.0146787681579
+Optimization restart 10/20, f = -1307.781492478031
+Optimization restart 11/20, f = -1027.9172239158854
+Optimization restart 12/20, f = -1306.151046728933
+Optimization restart 13/20, f = -1308.6680313999511
+Optimization restart 14/20, f = -1295.803034464402
+Optimization restart 15/20, f = -1297.7146089228777
+Optimization restart 16/20, f = -1308.1602846262579
+Optimization restart 17/20, f = -1299.651458181402
+Optimization restart 18/20, f = -1305.4831812016869
+Optimization restart 19/20, f = -1302.2731067046157
+Optimization restart 20/20, f = -1303.88163491576
+pypal at iteration 161.         30 Pareto optimal points,         2688 discarded points,         407 unclassified points.
+Hypervolume 1486.7693284536008
+pypal at iteration 162.         30 Pareto optimal points,         2689 discarded points,         406 unclassified points.
+Hypervolume 1486.7693284536008
+pypal at iteration 163.         31 Pareto optimal points,         2692 discarded points,         402 unclassified points.
+Hypervolume 1487.3856434153874
+pypal at iteration 164.         31 Pareto optimal points,         2693 discarded points,         401 unclassified points.
+Hypervolume 1487.3856434153874
+pypal at iteration 165.         31 Pareto optimal points,         2694 discarded points,         400 unclassified points.
+Hypervolume 1487.3856434153874
+pypal at iteration 166.         32 Pareto optimal points,         2694 discarded points,         399 unclassified points.
+Hypervolume 1487.4282245192971
+pypal at iteration 167.         32 Pareto optimal points,         2695 discarded points,         398 unclassified points.
+Hypervolume 1487.4282245192971
+pypal at iteration 168.         32 Pareto optimal points,         2696 discarded points,         397 unclassified points.
+Hypervolume 1487.4282245192971
+pypal at iteration 169.         32 Pareto optimal points,         2697 discarded points,         396 unclassified points.
+Hypervolume 1487.4282245192971
+pypal at iteration 170.         32 Pareto optimal points,         2698 discarded points,         395 unclassified points.
+Hypervolume 1487.4282245192971
+Optimization restart 1/20, f = -1369.6036013957544
+Optimization restart 2/20, f = -1364.1808420828281
+Optimization restart 3/20, f = -1356.5026321327125
+Optimization restart 4/20, f = -1359.7156830816848
+Optimization restart 5/20, f = -1352.7703611825964
+Optimization restart 6/20, f = -1368.3696214464876
+Optimization restart 7/20, f = -1360.4162588471218
+Optimization restart 8/20, f = -1355.794696414714
+Optimization restart 9/20, f = -1365.8156919263947
+Optimization restart 10/20, f = -1349.6820749829478
+Optimization restart 11/20, f = -1367.5657731122546
+Optimization restart 12/20, f = -1365.8185738391965
+Optimization restart 13/20, f = -1345.385120810436
+Optimization restart 14/20, f = -1356.8394964480476
+Optimization restart 15/20, f = -1361.030956556026
+Optimization restart 16/20, f = -1348.1514367401314
+Optimization restart 17/20, f = -1364.3926153540538
+Optimization restart 18/20, f = -1364.966367109275
+Optimization restart 19/20, f = -1366.6047006448705
+Optimization restart 20/20, f = -1337.3217207192567
+pypal at iteration 171.         32 Pareto optimal points,         2699 discarded points,         394 unclassified points.
+Hypervolume 1487.4282245192971
+pypal at iteration 172.         32 Pareto optimal points,         2700 discarded points,         393 unclassified points.
+Hypervolume 1487.4282245192971
+pypal at iteration 173.         32 Pareto optimal points,         2701 discarded points,         392 unclassified points.
+Hypervolume 1487.4282245192971
+pypal at iteration 174.         33 Pareto optimal points,         2701 discarded points,         391 unclassified points.
+Hypervolume 1491.080613785637
+pypal at iteration 175.         33 Pareto optimal points,         2702 discarded points,         390 unclassified points.
+Hypervolume 1491.080613785637
+pypal at iteration 176.         33 Pareto optimal points,         2703 discarded points,         389 unclassified points.
+Hypervolume 1491.080613785637
+pypal at iteration 177.         33 Pareto optimal points,         2704 discarded points,         388 unclassified points.
+Hypervolume 1491.080613785637
+pypal at iteration 178.         34 Pareto optimal points,         2720 discarded points,         371 unclassified points.
+Hypervolume 1491.1975595189313
+pypal at iteration 179.         34 Pareto optimal points,         2721 discarded points,         370 unclassified points.
+Hypervolume 1491.1975595189313
+pypal at iteration 180.         34 Pareto optimal points,         2722 discarded points,         369 unclassified points.
+Hypervolume 1491.1975595189313
+Optimization restart 1/20, f = -1426.3883338450626
+Optimization restart 2/20, f = -1406.525967577361
+Optimization restart 3/20, f = -1405.4813091926435
+Optimization restart 4/20, f = -1280.4222626669655
+Optimization restart 5/20, f = -1423.9979087083545
+Optimization restart 6/20, f = -1408.0464747673095
+Optimization restart 7/20, f = -1418.5022084908692
+Optimization restart 8/20, f = -1422.830714881774
+Optimization restart 9/20, f = -1409.1005145734077
+Optimization restart 10/20, f = -1422.4140926186146
+Optimization restart 11/20, f = -1379.1337690649957
+Optimization restart 12/20, f = -1418.6708332273702
+Optimization restart 13/20, f = -1423.5670981495628
+Optimization restart 14/20, f = -1407.4769946374242
+Optimization restart 15/20, f = -1422.480501822682
+Optimization restart 16/20, f = -1425.1529482912997
+Optimization restart 17/20, f = -1404.0374740149034
+Optimization restart 18/20, f = -1416.9692602264183
+Optimization restart 19/20, f = -1254.499439959765
+Optimization restart 20/20, f = -1424.3037814621543
+pypal at iteration 181.         34 Pareto optimal points,         2723 discarded points,         368 unclassified points.
+Hypervolume 1491.1975595189313
+pypal at iteration 182.         34 Pareto optimal points,         2724 discarded points,         367 unclassified points.
+Hypervolume 1491.1975595189313
+pypal at iteration 183.         34 Pareto optimal points,         2725 discarded points,         366 unclassified points.
+Hypervolume 1491.1975595189313
+pypal at iteration 184.         35 Pareto optimal points,         2733 discarded points,         357 unclassified points.
+Hypervolume 1493.6423044208705
+pypal at iteration 185.         35 Pareto optimal points,         2734 discarded points,         356 unclassified points.
+Hypervolume 1493.6423044208705
+pypal at iteration 186.         36 Pareto optimal points,         2753 discarded points,         336 unclassified points.
+Hypervolume 1497.2251366663568
+pypal at iteration 187.         36 Pareto optimal points,         2754 discarded points,         335 unclassified points.
+Hypervolume 1497.2251366663568
+pypal at iteration 188.         36 Pareto optimal points,         2755 discarded points,         334 unclassified points.
+Hypervolume 1497.2251366663568
+pypal at iteration 189.         36 Pareto optimal points,         2758 discarded points,         331 unclassified points.
+Hypervolume 1497.2251366663568
+pypal at iteration 190.         36 Pareto optimal points,         2759 discarded points,         330 unclassified points.
+Hypervolume 1497.2251366663568
+Optimization restart 1/20, f = -1478.4877006845102
+Optimization restart 2/20, f = -1316.4414588692487
+Optimization restart 3/20, f = -1465.360211696545
+Optimization restart 4/20, f = -1474.6523443256979
+Optimization restart 5/20, f = -1468.08230684504
+Optimization restart 6/20, f = -1476.827546841552
+Optimization restart 7/20, f = -1470.8175600748384
+Optimization restart 8/20, f = -1473.5547679092947
+Optimization restart 9/20, f = -1463.540249428132
+Optimization restart 10/20, f = -1470.6494414406689
+Optimization restart 11/20, f = -1474.6006287975024
+Optimization restart 12/20, f = -1458.9111385179222
+Optimization restart 13/20, f = -799.3068722047283
+Optimization restart 14/20, f = -1477.4404940471472
+Optimization restart 15/20, f = -1473.6353523055895
+Optimization restart 16/20, f = -1474.0803577871964
+Optimization restart 17/20, f = -1474.6730893039835
+Optimization restart 18/20, f = -1467.8898635542494
+Optimization restart 19/20, f = -1443.5422464634728
+Optimization restart 20/20, f = -1469.9342697070672
+pypal at iteration 191.         38 Pareto optimal points,         2805 discarded points,         282 unclassified points.
+Hypervolume 1498.1611163712892
+pypal at iteration 192.         38 Pareto optimal points,         2806 discarded points,         281 unclassified points.
+Hypervolume 1498.1611163712892
+pypal at iteration 193.         39 Pareto optimal points,         2806 discarded points,         280 unclassified points.
+Hypervolume 1498.1789143736546
+pypal at iteration 194.         39 Pareto optimal points,         2807 discarded points,         279 unclassified points.
+Hypervolume 1498.1789143736546
+pypal at iteration 195.         40 Pareto optimal points,         2807 discarded points,         278 unclassified points.
+Hypervolume 1498.9265504030393
+pypal at iteration 196.         40 Pareto optimal points,         2808 discarded points,         277 unclassified points.
+Hypervolume 1498.9265504030393
+pypal at iteration 197.         40 Pareto optimal points,         2809 discarded points,         276 unclassified points.
+Hypervolume 1498.9265504030393
+pypal at iteration 198.         40 Pareto optimal points,         2810 discarded points,         275 unclassified points.
+Hypervolume 1498.9265504030393
+pypal at iteration 199.         40 Pareto optimal points,         2811 discarded points,         274 unclassified points.
+Hypervolume 1498.9265504030393
+pypal at iteration 200.         41 Pareto optimal points,         2811 discarded points,         273 unclassified points.
+Hypervolume 1498.9607501831929
+Optimization restart 1/20, f = -1531.3789181295783
+Optimization restart 2/20, f = -1396.5267936677033
+Optimization restart 3/20, f = -1515.7782422258497
+Optimization restart 4/20, f = -1520.9005488175148
+Optimization restart 5/20, f = -1493.7324501488338
+Optimization restart 6/20, f = -1518.4222971253103
+Optimization restart 7/20, f = -1529.5394784896803
+Optimization restart 8/20, f = -1529.5616546925519
+Optimization restart 9/20, f = -1528.1161424867519
+Optimization restart 10/20, f = -1526.7177522525944
+Optimization restart 11/20, f = -1522.5627759754213
+Optimization restart 12/20, f = -1528.8798652184703
+Optimization restart 13/20, f = -1524.8560667054753
+Optimization restart 14/20, f = -1528.6039846760925
+Optimization restart 15/20, f = -1522.285168173562
+Optimization restart 16/20, f = -1523.4272277699247
+Optimization restart 17/20, f = -1527.7495332305703
+Optimization restart 18/20, f = -1525.7977404189005
+Optimization restart 19/20, f = -1516.5449165221808
+Optimization restart 20/20, f = -1515.0073779156041
+pypal at iteration 201.         42 Pareto optimal points,         2855 discarded points,         228 unclassified points.
+Hypervolume 1502.5396462776914
+pypal at iteration 202.         42 Pareto optimal points,         2856 discarded points,         227 unclassified points.
+Hypervolume 1502.5396462776914
+pypal at iteration 203.         43 Pareto optimal points,         2859 discarded points,         223 unclassified points.
+Hypervolume 1502.6848510209124
+pypal at iteration 204.         43 Pareto optimal points,         2860 discarded points,         222 unclassified points.
+Hypervolume 1502.6848510209124
+pypal at iteration 205.         43 Pareto optimal points,         2872 discarded points,         210 unclassified points.
+Hypervolume 1502.6848510209124
+pypal at iteration 206.         43 Pareto optimal points,         2873 discarded points,         209 unclassified points.
+Hypervolume 1502.6848510209124
+pypal at iteration 207.         43 Pareto optimal points,         2874 discarded points,         208 unclassified points.
+Hypervolume 1502.6848510209124
+pypal at iteration 208.         43 Pareto optimal points,         2875 discarded points,         207 unclassified points.
+Hypervolume 1502.6848510209124
+pypal at iteration 209.         43 Pareto optimal points,         2876 discarded points,         206 unclassified points.
+Hypervolume 1502.6848510209124
+pypal at iteration 210.         43 Pareto optimal points,         2877 discarded points,         205 unclassified points.
+Hypervolume 1502.6848510209124
+Optimization restart 1/20, f = -1582.4773280708366
+Optimization restart 2/20, f = -1572.0294017603865
+Optimization restart 3/20, f = -1576.9258547953634
+Optimization restart 4/20, f = -1571.6781780137799
+Optimization restart 5/20, f = -1579.0180976280162
+Optimization restart 6/20, f = -1577.3235357649405
+Optimization restart 7/20, f = -1570.2475258817308
+Optimization restart 8/20, f = -1568.924071415352
+Optimization restart 9/20, f = -1575.4622087832709
+Optimization restart 10/20, f = -1567.4965983313464
+Optimization restart 11/20, f = -1555.5730731459048
+Optimization restart 12/20, f = -1571.9374178951625
+Optimization restart 13/20, f = -1576.6550995313305
+Optimization restart 14/20, f = -1580.258610562018
+Optimization restart 15/20, f = -1565.5594499408905
+Optimization restart 16/20, f = -1575.1617670632754
+Optimization restart 17/20, f = -1578.8589346346398
+Optimization restart 18/20, f = -1539.6342960746947
+Optimization restart 19/20, f = -1578.239979852467
+Optimization restart 20/20, f = -1579.375450475139
+pypal at iteration 211.         44 Pareto optimal points,         2878 discarded points,         203 unclassified points.
+Hypervolume 1502.8866699232738
+pypal at iteration 212.         44 Pareto optimal points,         2879 discarded points,         202 unclassified points.
+Hypervolume 1502.8866699232738
+pypal at iteration 213.         44 Pareto optimal points,         2880 discarded points,         201 unclassified points.
+Hypervolume 1502.8866699232738
+pypal at iteration 214.         44 Pareto optimal points,         2881 discarded points,         200 unclassified points.
+Hypervolume 1502.8866699232738
+pypal at iteration 215.         44 Pareto optimal points,         2882 discarded points,         199 unclassified points.
+Hypervolume 1502.8866699232738
+pypal at iteration 216.         44 Pareto optimal points,         2883 discarded points,         198 unclassified points.
+Hypervolume 1502.8866699232738
+pypal at iteration 217.         44 Pareto optimal points,         2884 discarded points,         197 unclassified points.
+Hypervolume 1502.8866699232738
+pypal at iteration 218.         44 Pareto optimal points,         2885 discarded points,         196 unclassified points.
+Hypervolume 1502.8866699232738
+pypal at iteration 219.         44 Pareto optimal points,         2886 discarded points,         195 unclassified points.
+Hypervolume 1502.8866699232738
+pypal at iteration 220.         45 Pareto optimal points,         2897 discarded points,         183 unclassified points.
+Hypervolume 1502.8927712799468
+Optimization restart 1/20, f = -1629.6124664699662
+Optimization restart 2/20, f = -1617.8470814132643
+Optimization restart 3/20, f = -1625.8656039166228
+Optimization restart 4/20, f = -1619.6513395853708
+Optimization restart 5/20, f = -1616.988485794684
+Optimization restart 6/20, f = -1614.6105181975518
+Optimization restart 7/20, f = -1625.6972908760845
+Optimization restart 8/20, f = -1585.0847037033068
+Optimization restart 9/20, f = -1614.4207178888448
+Optimization restart 10/20, f = -1622.974912684668
+Optimization restart 11/20, f = -1195.3976827166348
+Optimization restart 12/20, f = -1613.9361192922502
+Optimization restart 13/20, f = -1609.1513612327599
+Optimization restart 14/20, f = -1626.8708062507394
+Optimization restart 15/20, f = -1625.7745810018525
+Optimization restart 16/20, f = -1626.6021336486292
+Optimization restart 17/20, f = -1590.8601253122606
+Optimization restart 18/20, f = -1618.2290578549696
+Optimization restart 19/20, f = -1626.721840472887
+Optimization restart 20/20, f = -1618.126406544695
+pypal at iteration 221.         45 Pareto optimal points,         2898 discarded points,         182 unclassified points.
+Hypervolume 1502.8927712799468
+pypal at iteration 222.         45 Pareto optimal points,         2899 discarded points,         181 unclassified points.
+Hypervolume 1502.8927712799468
+pypal at iteration 223.         45 Pareto optimal points,         2900 discarded points,         180 unclassified points.
+Hypervolume 1502.8927712799468
+pypal at iteration 224.         46 Pareto optimal points,         2904 discarded points,         175 unclassified points.
+Hypervolume 1504.9354778560187
+pypal at iteration 225.         48 Pareto optimal points,         2911 discarded points,         166 unclassified points.
+Hypervolume 1505.4550208028859
+pypal at iteration 226.         48 Pareto optimal points,         2914 discarded points,         163 unclassified points.
+Hypervolume 1505.4550208028859
+pypal at iteration 227.         48 Pareto optimal points,         2915 discarded points,         162 unclassified points.
+Hypervolume 1505.4550208028859
+pypal at iteration 228.         48 Pareto optimal points,         2915 discarded points,         162 unclassified points.
+Hypervolume 1505.4550208028859
+pypal at iteration 229.         48 Pareto optimal points,         2916 discarded points,         161 unclassified points.
+Hypervolume 1505.4550208028859
+pypal at iteration 230.         48 Pareto optimal points,         2917 discarded points,         160 unclassified points.
+Hypervolume 1505.4550208028859
+Optimization restart 1/20, f = -1679.4899272056155
+Optimization restart 2/20, f = -1667.9450766601408
+Optimization restart 3/20, f = -1675.3706591318091
+Optimization restart 4/20, f = -1677.173980486075
+Optimization restart 5/20, f = -1657.117269516567
+Optimization restart 6/20, f = -1675.457430052164
+Optimization restart 7/20, f = -1635.3273271918838
+Optimization restart 8/20, f = -1666.9420138249207
+Optimization restart 9/20, f = -1645.6149811429425
+Optimization restart 10/20, f = -1664.315895273662
+Optimization restart 11/20, f = -1656.4613953955982
+Optimization restart 12/20, f = -1676.3041634388287
+Optimization restart 13/20, f = -1672.9992769506907
+Optimization restart 14/20, f = -1675.6294134195255
+Optimization restart 15/20, f = -1668.1877431294436
+Optimization restart 16/20, f = -1674.7416844936545
+Optimization restart 17/20, f = -1663.6778250318032
+Optimization restart 18/20, f = -1672.9829316927276
+Optimization restart 19/20, f = -1672.1183547324792
+Optimization restart 20/20, f = -1675.1185104466158
+pypal at iteration 231.         48 Pareto optimal points,         2917 discarded points,         160 unclassified points.
+Hypervolume 1505.4550208028859
+pypal at iteration 232.         48 Pareto optimal points,         2918 discarded points,         159 unclassified points.
+Hypervolume 1505.4550208028859
+pypal at iteration 233.         48 Pareto optimal points,         2919 discarded points,         158 unclassified points.
+Hypervolume 1505.4550208028859
+pypal at iteration 234.         48 Pareto optimal points,         2920 discarded points,         157 unclassified points.
+Hypervolume 1505.4550208028859
+pypal at iteration 235.         48 Pareto optimal points,         2921 discarded points,         156 unclassified points.
+Hypervolume 1505.4550208028859
+pypal at iteration 236.         48 Pareto optimal points,         2922 discarded points,         155 unclassified points.
+Hypervolume 1505.4550208028859
+pypal at iteration 237.         48 Pareto optimal points,         2922 discarded points,         155 unclassified points.
+Hypervolume 1505.4550208028859
+pypal at iteration 238.         48 Pareto optimal points,         2923 discarded points,         154 unclassified points.
+Hypervolume 1505.4550208028859
+pypal at iteration 239.         48 Pareto optimal points,         2924 discarded points,         153 unclassified points.
+Hypervolume 1505.4550208028859
+pypal at iteration 240.         49 Pareto optimal points,         3044 discarded points,         32 unclassified points.
+Hypervolume 1516.2673216351482
+Optimization restart 1/20, f = -1732.3202802243109
+Optimization restart 2/20, f = -1720.1345551863756
+Optimization restart 3/20, f = -1720.878524125312
+Optimization restart 4/20, f = -1592.3071124519547
+Optimization restart 5/20, f = -1589.4317220677683
+Optimization restart 6/20, f = -1716.4742350900283
+Optimization restart 7/20, f = -1724.7433902963057
+Optimization restart 8/20, f = -1728.7210769595129
+Optimization restart 9/20, f = -1721.594722174161
+Optimization restart 10/20, f = -1728.979286575384
+Optimization restart 11/20, f = -1691.0676559505628
+Optimization restart 12/20, f = -1727.0836972408765
+Optimization restart 13/20, f = -1728.0311843631243
+Optimization restart 14/20, f = -1726.2353452314633
+Optimization restart 15/20, f = -1729.0288557164727
+Optimization restart 16/20, f = -1718.5157950104037
+Optimization restart 17/20, f = -1729.169132078211
+Optimization restart 18/20, f = -1711.8734843756072
+Optimization restart 19/20, f = -1728.1705250450113
+Optimization restart 20/20, f = -1727.4498752064476
+pypal at iteration 241.         49 Pareto optimal points,         3045 discarded points,         31 unclassified points.
+Hypervolume 1516.2673216351482
+pypal at iteration 242.         49 Pareto optimal points,         3046 discarded points,         30 unclassified points.
+Hypervolume 1516.2673216351482
+pypal at iteration 243.         50 Pareto optimal points,         3049 discarded points,         26 unclassified points.
+Hypervolume 1517.142215068739
+pypal at iteration 244.         50 Pareto optimal points,         3050 discarded points,         25 unclassified points.
+Hypervolume 1517.142215068739
+pypal at iteration 245.         50 Pareto optimal points,         3051 discarded points,         24 unclassified points.
+Hypervolume 1517.142215068739
+pypal at iteration 246.         50 Pareto optimal points,         3052 discarded points,         23 unclassified points.
+Hypervolume 1517.142215068739
+pypal at iteration 247.         50 Pareto optimal points,         3054 discarded points,         21 unclassified points.
+Hypervolume 1517.142215068739
+pypal at iteration 248.         50 Pareto optimal points,         3056 discarded points,         19 unclassified points.
+Hypervolume 1517.142215068739
+pypal at iteration 249.         50 Pareto optimal points,         3057 discarded points,         18 unclassified points.
+Hypervolume 1517.142215068739
+pypal at iteration 250.         50 Pareto optimal points,         3058 discarded points,         17 unclassified points.
+Hypervolume 1517.142215068739
+Optimization restart 1/20, f = -1786.6332561901397
+Optimization restart 2/20, f = -1774.7427154582354
+Optimization restart 3/20, f = -1773.6229106633937
+Optimization restart 4/20, f = -1779.1786832809569
+Optimization restart 5/20, f = -1772.7821783622605
+Optimization restart 6/20, f = -1780.7052755722375
+Optimization restart 7/20, f = -1780.9091038610143
+Optimization restart 8/20, f = -1767.6232764709212
+Optimization restart 9/20, f = -1781.7867166427095
+Optimization restart 10/20, f = -1772.9108232427523
+Optimization restart 11/20, f = -1780.9598828079252
+Optimization restart 12/20, f = -1783.1359691402208
+Optimization restart 13/20, f = -1762.972235191777
+Optimization restart 14/20, f = -1618.124990063373
+Optimization restart 15/20, f = -1771.1201950259726
+Optimization restart 16/20, f = -1766.962132289762
+Optimization restart 17/20, f = -1781.4517991582773
+Optimization restart 18/20, f = -1773.3499474929417
+Optimization restart 19/20, f = -1779.7590210391193
+Optimization restart 20/20, f = -1780.900930885671
+pypal at iteration 251.         50 Pareto optimal points,         3059 discarded points,         16 unclassified points.
+Hypervolume 1517.142215068739
+pypal at iteration 252.         50 Pareto optimal points,         3060 discarded points,         15 unclassified points.
+Hypervolume 1517.142215068739
+pypal at iteration 253.         50 Pareto optimal points,         3061 discarded points,         14 unclassified points.
+Hypervolume 1517.142215068739
+pypal at iteration 254.         50 Pareto optimal points,         3062 discarded points,         13 unclassified points.
+Hypervolume 1517.142215068739
+pypal at iteration 255.         50 Pareto optimal points,         3063 discarded points,         12 unclassified points.
+Hypervolume 1517.142215068739
+pypal at iteration 256.         50 Pareto optimal points,         3064 discarded points,         11 unclassified points.
+Hypervolume 1517.142215068739
+pypal at iteration 257.         51 Pareto optimal points,         3066 discarded points,         8 unclassified points.
+Hypervolume 1517.2092557898677
+pypal at iteration 258.         51 Pareto optimal points,         3067 discarded points,         7 unclassified points.
+Hypervolume 1517.2092557898677
+pypal at iteration 259.         51 Pareto optimal points,         3068 discarded points,         6 unclassified points.
+Hypervolume 1517.2092557898677
+pypal at iteration 260.         51 Pareto optimal points,         3069 discarded points,         5 unclassified points.
+Hypervolume 1517.2092557898677
+Optimization restart 1/20, f = -1835.346509879016
+Optimization restart 2/20, f = -1825.5176361621398
+Optimization restart 3/20, f = -1823.6713300065765
+Optimization restart 4/20, f = -1828.019239141403
+Optimization restart 5/20, f = -1829.5331907834818
+Optimization restart 6/20, f = -1831.0086294103382
+Optimization restart 7/20, f = -1831.6924900073632
+Optimization restart 8/20, f = -1824.1291211452199
+Optimization restart 9/20, f = -1824.5611698314278
+Optimization restart 10/20, f = -1824.2659920886613
+Optimization restart 11/20, f = -1812.032555488925
+Optimization restart 12/20, f = -1828.3246189831173
+Optimization restart 13/20, f = -1831.1878155684997
+Optimization restart 14/20, f = -1825.891362462782
+Optimization restart 15/20, f = -1831.2144594255399
+Optimization restart 16/20, f = -1530.5907796906017
+Optimization restart 17/20, f = -1820.0955913027883
+Optimization restart 18/20, f = -1821.8303780334127
+Optimization restart 19/20, f = -1818.485528889086
+Optimization restart 20/20, f = -1829.7784098947188
+pypal at iteration 261.         51 Pareto optimal points,         3070 discarded points,         4 unclassified points.
+Hypervolume 1517.2092557898677
+pypal at iteration 262.         51 Pareto optimal points,         3071 discarded points,         3 unclassified points.
+Hypervolume 1517.2092557898677
+pypal at iteration 263.         51 Pareto optimal points,         3072 discarded points,         2 unclassified points.
+Hypervolume 1517.2092557898677
+pypal at iteration 264.         51 Pareto optimal points,         3073 discarded points,         1 unclassified points.
+Hypervolume 1517.2092557898677
+Done. No unclassified point left
+pypal at iteration 264.         51 Pareto optimal points,         3074 discarded points,         0 unclassified points.
+Hypervolume 1517.2092557898677
