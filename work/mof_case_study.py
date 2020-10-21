@@ -111,8 +111,8 @@ summed_functionalgroup_descriptors = [  # pylint:disable=invalid-name
 @click.argument('outdir', type=click.Path(), default='.', required=False)
 def main(epsilon, delta, beta_scale, outdir):
 
-    pmof_test = pd.read_csv('data/PMOF20K_traindata_7000_test.csv')  # pylint:disable=invalid-name
-    pmof_train = pd.read_csv('data/PMOF20K_traindata_7000_train.csv')  # pylint:disable=invalid-name
+    pmof_test = pd.read_csv('../data/PMOF20K_traindata_7000_test.csv')  # pylint:disable=invalid-name
+    pmof_train = pd.read_csv('../data/PMOF20K_traindata_7000_train.csv')  # pylint:disable=invalid-name
     pmof = pd.concat([pmof_test, pmof_train])  # pylint:disable=invalid-name
     pmof['CO2_DC'] = pmof['pure_uptake_CO2_298.00_1600000'] - pmof['pure_uptake_CO2_298.00_15000']
     y = pmof[['CO2_DC', 'CH4DC']].values  # pylint:disable=invalid-name
@@ -138,7 +138,7 @@ def main(epsilon, delta, beta_scale, outdir):
     X_test = np.delete(X, indices, 0)  # pylint:disable=invalid-name
     y_test = np.delete(y, indices, 0)  # pylint:disable=invalid-name
 
-    models = [build_coregionalized_model(X_train, y_train, kernel=GPy.kern.Matern52(X_train.shape[1], ARD=False))]  # pylint:disable=invalid-name
+    models = [build_coregionalized_model(X_train, y_train, kernel=GPy.kern.Matern32(X_train.shape[1], ARD=False))]  # pylint:disable=invalid-name
 
     X = np.vstack([X_train, X_test])
     y = np.vstack([y_train, y_test])
