@@ -14,6 +14,8 @@ Jablonka, K. M.; Giriprasad, M. J.; Wang, S.; Smit, B.; Yoo, B. De Novo Polymer 
 
 The code for the polymer featurization can be found in the `featurizer` module of the `dispersant_screener` package.
 
+The `create_new_features.ipynb` illustrates the basic usage, i.e., how a dataframe with polymer SMILES can be featurized.
+
 ### Genetic algorithm and inversion of SMILES
 
 The genetic algorithm is defined in the `ga` module of the `dispersant_screener` package. The inversion code is part of the `smiles2feat` module.
@@ -27,6 +29,13 @@ conda env conda env create --file=environment_mac.yml
 ```
 
 ### Dispersants (Main text)
+
+To reproduce the results, make sure that `data/new_features_full_random.csv`, `data/b1-b21_random_virial_large_new.csv`, and `data/rg_results.csv` are in your working directory. Those relative paths are hardcoded in the command line interface.
+Then use
+
+```bash
+python run_pal_on_dispersant_repeats_cli.py <epsilon> <delta> <beta_scale> <repeats> <outdir> <n_samples>
+```
 
 ### Missing data (Supplementary Information)
 
