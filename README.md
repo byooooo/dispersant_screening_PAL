@@ -2,6 +2,23 @@
 
 ![Python package](https://github.com/byooooo/dispersant_screening_PAL/workflows/Python%20package/badge.svg)
 
+## Scripts for reproducing the results discussed in the paper
+
+### Dispersants (Main text)
+
+### Missing data (Supplementary Information)
+
+### MOF case study (Supplementary Information)
+
+Make sure that `PMOF20K_traindata_7000_test.csv` and `PMOF20K_traindata_7000_train.csv` are in your working directory. Then use
+
+```bash
+python mof_case_study.py <epsilon> <delta> <beta_scale> <outdir>
+```
+
+If you do not specify any arguments, it uses the parameters used to produce the figure in the SI. We didn't tune the parameters extensively
+and you can likely find better performance.
+
 ## Data
 
 In folder `data`.

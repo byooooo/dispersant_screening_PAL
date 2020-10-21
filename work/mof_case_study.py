@@ -107,7 +107,7 @@ summed_functionalgroup_descriptors = [  # pylint:disable=invalid-name
 @click.command('cli')
 @click.argument('epsilon', type=float, default=0.05, required=False)
 @click.argument('delta', type=float, default=0.05, required=False)
-@click.argument('beta_scale', type=float, default=1 / 16, required=False)
+@click.argument('beta_scale', type=float, default=1 / 20, required=False)
 @click.argument('outdir', type=click.Path(), default='.', required=False)
 def main(epsilon, delta, beta_scale, outdir):
 
@@ -138,7 +138,7 @@ def main(epsilon, delta, beta_scale, outdir):
     X_test = np.delete(X, indices, 0)  # pylint:disable=invalid-name
     y_test = np.delete(y, indices, 0)  # pylint:disable=invalid-name
 
-    models = [build_coregionalized_model(X_train, y_train, kernel=GPy.kern.RatQuad(X_train.shape[1], ARD=False))]  # pylint:disable=invalid-name
+    models = [build_coregionalized_model(X_train, y_train, kernel=GPy.kern.Matern52(X_train.shape[1], ARD=False))]  # pylint:disable=invalid-name
 
     X = np.vstack([X_train, X_test])
     y = np.vstack([y_train, y_test])
