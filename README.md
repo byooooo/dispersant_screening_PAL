@@ -4,7 +4,7 @@
 
 ## Scripts for reproducing the results discussed in the paper
 
-We recommend that you create a conda environment, based on the `.yml` files.
+We recommend that you [create a conda environment, based on the appropriate `.yml` file](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html).
 
 ```bash
 conda env conda env create --file=environment_mac.yml
@@ -24,7 +24,7 @@ python missing_data_test.py <epsilon> <delta> <beta_scale> <outdir>
 
 ### MOF case study (Supplementary Information)
 
-Make sure that `data/PMOF20K_traindata_7000_test.csv` and `data/PMOF20K_traindata_7000_train.csv` are in your working directory, those relative paths are hardcoded in the command line interface. Then use
+Make sure that `data/PMOF20K_traindata_7000_test.csv` and `data/PMOF20K_testdata_7000_train.csv` are in your working directory, those relative paths are hardcoded in the command line interface. Then use
 
 ```bash
 python mof_case_study.py <epsilon> <delta> <beta_scale> <outdir>
@@ -50,3 +50,8 @@ In folder `data`.
 - `X_full_random.csv` - Feature data for full factorial DOE random copolymers
 
 ### Data for the MOF case study
+
+Reeused from [Moosavi, S. M.; Nandy, A.; Jablonka, K. M.; Ongari, D.; Janet, J. P.; Boyd, P. G.; Lee, Y.; Smit, B.; Kulik, H. J. Understanding the Diversity of the Metal-Organic Framework Ecosystem. Nature Communications 2020, 11 (1), 4068.](https://doi.org/10.1038/s41467-020-17755-8)
+
+- `PMOF20K_traindata_7000_train.csv`
+- `PMOF20K_testdata_7000_train.csv`
