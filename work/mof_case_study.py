@@ -111,8 +111,8 @@ summed_functionalgroup_descriptors = [  # pylint:disable=invalid-name
 @click.argument('outdir', type=click.Path(), default='.', required=False)
 def main(epsilon, delta, beta_scale, outdir):
 
-    pmof_test = pd.read_csv('PMOF20K_traindata_7000_test.csv')  # pylint:disable=invalid-name
-    pmof_train = pd.read_csv('PMOF20K_traindata_7000_train.csv')  # pylint:disable=invalid-name
+    pmof_test = pd.read_csv('data/PMOF20K_traindata_7000_test.csv')  # pylint:disable=invalid-name
+    pmof_train = pd.read_csv('data/PMOF20K_traindata_7000_train.csv')  # pylint:disable=invalid-name
     pmof = pd.concat([pmof_test, pmof_train])  # pylint:disable=invalid-name
     pmof['CO2_DC'] = pmof['pure_uptake_CO2_298.00_1600000'] - pmof['pure_uptake_CO2_298.00_15000']
     y = pmof[['CO2_DC', 'CH4DC']].values  # pylint:disable=invalid-name

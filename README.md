@@ -4,13 +4,27 @@
 
 ## Scripts for reproducing the results discussed in the paper
 
+We recommend that you create a conda environment, based on the `.yml` files.
+
+```bash
+conda env conda env create --file=environment_mac.yml
+```
+
 ### Dispersants (Main text)
 
 ### Missing data (Supplementary Information)
 
+All `PyPAL` classes support missing data. For this work, we used coregionalized models that leverage correlations
+between the different objectives. To reproduce the results, make sure that `data/new_features_full_random.csv`, `data/b1-b21_random_virial_large_new.csv`, and `data/rg_results.csv` are in your working directory. Those relative paths are hardcoded in the command line interface.
+Then use
+
+```bash
+python missing_data_test.py <epsilon> <delta> <beta_scale> <outdir>
+```
+
 ### MOF case study (Supplementary Information)
 
-Make sure that `PMOF20K_traindata_7000_test.csv` and `PMOF20K_traindata_7000_train.csv` are in your working directory. Then use
+Make sure that `data/PMOF20K_traindata_7000_test.csv` and `data/PMOF20K_traindata_7000_train.csv` are in your working directory, those relative paths are hardcoded in the command line interface. Then use
 
 ```bash
 python mof_case_study.py <epsilon> <delta> <beta_scale> <outdir>
