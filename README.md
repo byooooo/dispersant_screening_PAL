@@ -2,7 +2,15 @@
 
 ![Python package](https://github.com/byooooo/dispersant_screening_PAL/workflows/Python%20package/badge.svg)
 
-## Scripts for reproducing the results discussed in the paper
+## Featurization
+
+The code for the polymer featurization can be found in the `featurizer` module of the `dispersant_screener` package.
+
+## Genetic algorithm and inversion of SMILES
+
+The genetic algorithm is defined in the `ga` module of the `dispersant_screener` package. The inversion code is part of the `smiles2feat` module.
+
+## Scripts for reproducing the main results discussed in the paper
 
 We recommend that you [create a conda environment, based on the appropriate `.yml` file](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html).
 
