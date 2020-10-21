@@ -2,15 +2,23 @@
 
 ![Python package](https://github.com/byooooo/dispersant_screening_PAL/workflows/Python%20package/badge.svg)
 
-## Featurization
+This repository contains code that was used to generate the results discussed in
+
+Jablonka, K. M.; Giriprasad, M. J.; Wang, S.; Smit, B.; Yoo, B. De Novo Polymer Design with Multi Objective Active Learning and Molecular Simulations. 2020.
+
+[The active learning code, PyPAL, is maintained in its own repository.](https://github.com/kjappelbaum/pypal)
+
+## `dispersant_screener` package
+
+### Featurization
 
 The code for the polymer featurization can be found in the `featurizer` module of the `dispersant_screener` package.
 
-## Genetic algorithm and inversion of SMILES
+### Genetic algorithm and inversion of SMILES
 
 The genetic algorithm is defined in the `ga` module of the `dispersant_screener` package. The inversion code is part of the `smiles2feat` module.
 
-## Scripts for reproducing the main results discussed in the paper
+### Scripts for reproducing the main results discussed in the paper
 
 We recommend that you [create a conda environment, based on the appropriate `.yml` file](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html).
 
