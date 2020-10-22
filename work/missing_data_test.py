@@ -85,7 +85,6 @@ def main(  # pylint:disable=invalid-name, too-many-arguments, too-many-locals
             hypervolumess.append(hv)
             print(palinstance)
             print(f'Hypervolume {hv}')
-            print(f'Sampled {idx}')
             if idx is not None:
                 palinstance.update_train_set(np.array([idx]), y[idx])
             else:
