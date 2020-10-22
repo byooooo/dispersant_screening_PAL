@@ -8,7 +8,7 @@ import pandas as pd
 
 N_SAMPLES = [60, 100]
 EPSILON = [0.01, 0.05, 0.1]
-BETA_SCALE = [1 / 9]
+BETA_SCALE = [1 / 9, 1 / 20]
 DELTA = [0.05]
 
 SLURM_TEMPLATE = '''#!/bin/bash -l

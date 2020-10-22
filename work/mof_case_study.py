@@ -138,7 +138,7 @@ def main(epsilon, delta, beta_scale, outdir):
     X_test = np.delete(X, indices, 0)  # pylint:disable=invalid-name
     y_test = np.delete(y, indices, 0)  # pylint:disable=invalid-name
 
-    models = [build_coregionalized_model(X_train, y_train, kernel=GPy.kern.Matern32(X_train.shape[1], ARD=False))]  # pylint:disable=invalid-name
+    models = [build_coregionalized_model(X_train, y_train, kernel=GPy.kern.Matern52(X_train.shape[1], ARD=False))]  # pylint:disable=invalid-name
 
     X = np.vstack([X_train, X_test])
     y = np.vstack([y_train, y_test])
@@ -175,6 +175,8 @@ def main(epsilon, delta, beta_scale, outdir):
     beta_scale = str(beta_scale)
     np.save(os.path.join(outdir, TIMESTR + '{}_{}_{}_{}-greedy_indices'.format(epsilon, delta, beta_scale, N_SAMPLES)),
             indices)
+    np.save(os.path.join(outdir, TIMESTR + '{}_{}_{}_{}-7s'.format(epsilon, delta, beta_scale, N_SAMPLES)),
+            y)
     np.save(
         os.path.join(outdir,
                      TIMESTR + '{}_{}_{}_{}-pareto_optimal_indices'.format(epsilon, delta, beta_scale, N_SAMPLES)),

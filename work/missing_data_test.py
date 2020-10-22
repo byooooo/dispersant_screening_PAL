@@ -50,7 +50,7 @@ def load_data(n_samples, label_scaling: bool = False):
 @click.command('cli')
 @click.argument('epsilon', type=float, default=0.05, required=False)
 @click.argument('delta', type=float, default=0.05, required=False)
-@click.argument('beta_scale', type=float, default=1 / 20, required=False)
+@click.argument('beta_scale', type=float, default=1 / 9, required=False)
 @click.argument('repeats', type=int, default=1, required=False)
 @click.argument('outdir', type=click.Path(), default='.', required=False)
 @click.argument('n_samples', type=int, default=60, required=False)
@@ -85,15 +85,19 @@ def main(  # pylint:disable=invalid-name, too-many-arguments, too-many-locals
             hypervolumess.append(hv)
             print(palinstance)
             print(f'Hypervolume {hv}')
+            print(f'Sampled {idx}')
             if idx is not None:
                 palinstance.update_train_set(np.array([idx]), y[idx])
-
+            else:
+                break
     if not os.path.exists(outdir):
         os.mkdir(outdir)
 
     epsilon = str(epsilon)
     delta = str(delta)
     beta_scale = str(beta_scale)
+    np.save(os.path.join(outdir, TIMESTR + '{}_{}_{}_{}-y'.format(epsilon, delta, beta_scale, n_samples)),
+            y)
     np.save(os.path.join(outdir, TIMESTR + '{}_{}_{}_{}-greedy_indices'.format(epsilon, delta, beta_scale, n_samples)),
             greedy_indices)
     np.save(

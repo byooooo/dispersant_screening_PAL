@@ -50,7 +50,7 @@ def load_data(n_samples, label_scaling: bool = False):
 @click.command('cli')
 @click.argument('epsilon', type=float, default=0.05, required=False)
 @click.argument('delta', type=float, default=0.05, required=False)
-@click.argument('beta_scale', type=float, default=1 / 12, required=False)
+@click.argument('beta_scale', type=float, default=1 / 20, required=False)
 @click.argument('repeats', type=int, default=1, required=False)
 @click.argument('outdir', type=click.Path(), default='.', required=False)
 @click.argument('n_samples', type=int, default=40, required=False)
@@ -69,7 +69,7 @@ def main(  # pylint:disable=invalid-name, too-many-arguments, too-many-locals
         max_hypervolume = get_hypervolume(y, [5, 5, 5])
         print(f'Maximum hypervolume {max_hypervolume}')
         m = [
-            build_coregionalized_model(X, y, kernel=GPy.kern.Matern52(X.shape[1], ARD=True)),
+            build_coregionalized_model(X, y, kernel=GPy.kern.Matern52(X.shape[1], ARD=False)),
         ]
 
         palinstance = PALCoregionalized(X, m, 3, epsilon=np.array([epsilon] * 3), beta_scale=beta_scale, delta=delta)
