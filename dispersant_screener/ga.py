@@ -27,13 +27,13 @@ from .utils import np_cache
 
 DEFAULT_GA_PARAM = {
     'max_num_iteration': 3000,
-    'elit_ratio': 0.05,
-    'population_size': 200,
+    'elit_ratio': 0.02,
+    'population_size': 300,
     'mutation_probability': 0.1,
     'crossover_probability': 0.8,
     'parents_portion': 0.1,
     'crossover_type': 'uniform',
-    'max_iteration_without_improv': None
+    'max_iteration_without_improv': 500
 }
 
 FEATURES = ['max_[Ta]', 'max_[W]', 'max_[R]', 'max_[Tr]', '[W]', '[Tr]', '[Ta]', '[R]', 'length']
@@ -203,7 +203,7 @@ def objective(x: np.array, predict, novelty_regularizer, y_mean, novelty_pentaly
     # else:
     prediction_loss = -y / y_mean
 
-    return prediction_loss + novelty_pentaly_ratio * regularize_novelty + regularize_validity + regularize_cluster
+    return 10 * prediction_loss + novelty_pentaly_ratio * regularize_novelty + regularize_validity + regularize_cluster
 
 
 def run_ga(  # pylint:disable=dangerous-default-value

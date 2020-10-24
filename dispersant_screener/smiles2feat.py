@@ -339,7 +339,7 @@ def check_validity(smiles: str, feat_dict: dict) -> bool:
     return True
 
 
-def get_smiles(feat_dict, max_smiles: int = 5, max_trials: int = 100) -> list:
+def get_smiles(feat_dict, max_smiles: int = 5, max_trials: int = 500) -> list:
 
     solutions = []
     trials = 0

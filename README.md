@@ -37,7 +37,7 @@ Then use
 python run_pal_on_dispersant_repeats_cli.py <epsilon> <delta> <beta_scale> <repeats> <outdir> <n_samples>
 ```
 
-### Missing data (Supplementary Information)
+### Missing data 
 
 All [`PyPAL`](https://github.com/kjappelbaum/pypal) classes support missing data. For this work, we used coregionalized models that leverage correlations
 between the different objectives. To reproduce the results, make sure that `../data/new_features_full_random.csv`, `../data/b1-b21_random_virial_large_new.csv`, and `../data/rg_results.csv` are in your working directory. Those relative paths are hardcoded in the command line interface.
@@ -47,16 +47,14 @@ Then use
 python missing_data_test.py <epsilon> <delta> <beta_scale> <outdir>
 ```
 
-### MOF case study (Supplementary Information)
-
-Make sure that `../data/PMOF20K_traindata_7000_test.csv` and `../data/PMOF20K_traindata_7000_test.csv` are in your working directory, those relative paths are hardcoded in the command line interface. Then use
+### Genetic algorithm 
+ To reproduce the results, make sure that `X_train_GBDT.npy` and `y_train_GBDT.npy` are in your working directory. Those relative paths are hardcoded in the command line interface.
+Then use
 
 ```bash
-python mof_case_study.py <epsilon> <delta> <beta_scale> <outdir>
+python run_ga_on_gbdt_gpr_surrogate.py
 ```
 
-If you do not specify any arguments, it uses the parameters used to produce the figure in the SI. We didn't tune the parameters extensively
-and you can likely find better performance.
 
 ## Data
 
