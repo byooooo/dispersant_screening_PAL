@@ -12,8 +12,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-
 """Dispersant Screener"""
 from __future__ import absolute_import
 
@@ -30,8 +28,8 @@ setup(
     cmdclass=versioneer.get_cmdclass(),
     packages=find_packages(),
     url='',
-    license='MIT',
-    python_requires='<3.8>=3.7',
+    license='Apache 2.0',
+    python_requires='>3.6',
     install_requires=requirements,
     extras_require={
         'testing': ['pytest', 'pytest-cov<2.11'],
@@ -42,13 +40,14 @@ setup(
     author_email='kevin.jablonka@epfl.ch, brian.yoo@basf.com',
     classifiers=[
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.7',
-        'Development Status :: 1 - Beta',
+        'Development Status :: 4 - Beta',
         'Intended Audience :: Science/Research',
-        'License :: OSI Approved :: MIT License',
+        'License :: OSI Approved :: Apache Software License',
         'Operating System :: OS Independent',
+        'Topic :: Scientific/Engineering',
         'Topic :: Scientific/Engineering :: Physics',
         'Topic :: Scientific/Engineering :: Chemistry',
         'Topic :: Software Development :: Libraries :: Python Modules',
+        'Topic :: Scientific/Engineering :: Artificial Intelligence',
     ],
 )
