@@ -1,4 +1,17 @@
 # -*- coding: utf-8 -*-
+# Copyright 2020 PyPAL authors
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 # pylint:disable=invalid-name
 """Functions that can be handy when using epsilon-PAL"""
 
@@ -99,11 +112,17 @@ def poprow(my_array, pr):
     return [new_array, pop]
 
 
-def get_random_exploration_bl(y, reference_vector=[5, 5, 5]):  # pylint:disable=dangerous-default-value
+def get_random_exploration_bl(y, reference_vector=[5, 5, 5], init_points=None):  # pylint:disable=dangerous-default-value
     """Get a baseline for random exploration of the design space"""
     hv_random = []
     chosen_points = []
     y_ = y.copy()
+
+    if init_points is not None:
+        for init_point in init_points:
+            _, pop = poprow(y_, init_point)
+
+            chosen_points.append(pop)
 
     for _ in range(len(y)):
         index = np.random.randint(0, len(y_))
@@ -469,6 +488,20 @@ def dominance_check_jitted_2(array, point):
     for i in range(len(arr_sorted)):  # pylint:disable=consider-using-enumerate
         if dominance_check(arr_sorted[i], point):
             return True
+    return False
+
+
+@jit(nopython=True)
+def dominance_check_jitted_3(array: np.array, point: np.array, ignore_me: int) -> bool:
+    """Check if any point in array dominates point. ignore_me
+    since numba does not understand masked arrays"""
+    sorted_idx = array[:, 0].argsort()[::-1]
+    ignore_idx = np.where(sorted_idx == ignore_me)[0][0]
+    arr_sorted = array[sorted_idx]
+    for i in range(len(arr_sorted)):  # pylint:disable=consider-using-enumerate
+        if i != ignore_idx:
+            if dominance_check(arr_sorted[i], point):
+                return True
     return False
 
 

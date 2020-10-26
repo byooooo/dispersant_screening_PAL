@@ -1,4 +1,17 @@
 # -*- coding: utf-8 -*-
+# Copyright 2020 PyPAL authors
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 """This module provides code to attempt to convert features to polymer SMILES
 The code is not very fancy and uses several heuristics so it might not be able to find
 a solution even though there is one.
@@ -326,7 +339,7 @@ def check_validity(smiles: str, feat_dict: dict) -> bool:
     return True
 
 
-def get_smiles(feat_dict, max_smiles: int = 5, max_trials: int = 100) -> list:
+def get_smiles(feat_dict, max_smiles: int = 5, max_trials: int = 500) -> list:
 
     solutions = []
     trials = 0
