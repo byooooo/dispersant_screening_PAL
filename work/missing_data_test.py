@@ -6,17 +6,17 @@ import pickle
 import time
 
 import click
+import GPy
 import numpy as np
 import pandas as pd
+from pypal import PALCoregionalized, PALGPy
+from pypal.models.gpr import build_coregionalized_model
+from pypal.pal.utils import get_hypervolume, get_maxmin_samples
 from sklearn.feature_selection import VarianceThreshold
 from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing.data import MinMaxScaler
 
-import GPy
 from dispersant_screener.definitions import FEATURES
-from pypal import PALCoregionalized, PALGPy
-from pypal.models.gpr import build_coregionalized_model
-from pypal.pal.utils import get_hypervolume, get_maxmin_samples
 
 TIMESTR = time.strftime('%Y%m%d-%H%M%S') + '_missing_data_'
 

@@ -23,8 +23,9 @@ import numpy as np
 from lightgbm import LGBMRegressor
 from sklearn.model_selection import train_test_split
 
-from dispersant_screener.ga import (FEATURES, _get_average_dist, predict_gbdt, regularizer_novelty, run_ga,
-                                    DEFAULT_GA_PARAM)
+from dispersant_screener.ga import (DEFAULT_GA_PARAM, FEATURES,
+                                    _get_average_dist, predict_gbdt,
+                                    regularizer_novelty, run_ga)
 
 TIMESTR = time.strftime('%Y%m%d-%H%M%S')
 DATADIR = '../data'

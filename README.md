@@ -37,7 +37,7 @@ Then use
 python run_pal_on_dispersant_repeats_cli.py <epsilon> <delta> <beta_scale> <repeats> <outdir> <n_samples>
 ```
 
-### Missing data 
+### Missing data
 
 All [`PyPAL`](https://github.com/kjappelbaum/pypal) classes support missing data. For this work, we used coregionalized models that leverage correlations
 between the different objectives. To reproduce the results, make sure that `../data/new_features_full_random.csv`, `../data/b1-b21_random_virial_large_new.csv`, and `../data/rg_results.csv` are in your working directory. Those relative paths are hardcoded in the command line interface.
@@ -47,7 +47,7 @@ Then use
 python missing_data_test.py <epsilon> <delta> <beta_scale> <outdir>
 ```
 
-### Genetic algorithm 
+### Genetic algorithm
  To reproduce the results, make sure that `X_train_GBDT.npy` and `y_train_GBDT.npy` are in your working directory. Those relative paths are hardcoded in the command line interface.
 Then use
 

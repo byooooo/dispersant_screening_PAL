@@ -17,11 +17,10 @@ from functools import partial
 from typing import Tuple
 
 import numpy as np
+from geneticalgorithm import GeneticAlgorithm as ga  # using my fork
+from pypal.models.gpr import predict_coregionalized
 from scipy.spatial.distance import cdist
 
-from geneticalgorithm import GeneticAlgorithm as ga  # using my fork
-
-from pypal.models.gpr import predict_coregionalized
 from .smiles2feat import get_smiles
 from .utils import np_cache
 
