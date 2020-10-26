@@ -1,10 +1,10 @@
-# De novo polymer design with multi objective active learning and molecular simulations
+# Bias free multiobjective active learning for materials design and discovery
 
 ![Python package](https://github.com/byooooo/dispersant_screening_PAL/workflows/Python%20package/badge.svg)
 
 This repository contains code that was used to generate the results discussed in
 
-Jablonka, K. M.; Giriprasad, M. J.; Wang, S.; Smit, B.; Yoo, B. De Novo Polymer Design with Multi Objective Active Learning and Molecular Simulations. 2020.
+Jablonka, K. M.; Giriprasad, M. J.; Wang, S.; Smit, B.; Yoo, B. Bias free multiobjective active learning for materials design and discovery. 2020.
 
 [The active learning code, PyPAL, is maintained in its own repository.](https://github.com/kjappelbaum/pypal)
 
@@ -37,7 +37,7 @@ Then use
 python run_pal_on_dispersant_repeats_cli.py <epsilon> <delta> <beta_scale> <repeats> <outdir> <n_samples>
 ```
 
-### Missing data 
+### Missing data
 
 All [`PyPAL`](https://github.com/kjappelbaum/pypal) classes support missing data. For this work, we used coregionalized models that leverage correlations
 between the different objectives. To reproduce the results, make sure that `../data/new_features_full_random.csv`, `../data/b1-b21_random_virial_large_new.csv`, and `../data/rg_results.csv` are in your working directory. Those relative paths are hardcoded in the command line interface.
@@ -47,14 +47,14 @@ Then use
 python missing_data_test.py <epsilon> <delta> <beta_scale> <outdir>
 ```
 
-### Genetic algorithm 
- To reproduce the results, make sure that `X_train_GBDT.npy` and `y_train_GBDT.npy` are in your working directory. Those relative paths are hardcoded in the command line interface.
+### Genetic algorithm
+
+To reproduce the results, make sure that `X_train_GBDT.npy` and `y_train_GBDT.npy` are in your working directory. Those relative paths are hardcoded in the command line interface.
 Then use
 
 ```bash
 python run_ga_on_gbdt_gpr_surrogate.py
 ```
-
 
 ## Data
 
