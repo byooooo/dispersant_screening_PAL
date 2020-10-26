@@ -1,26 +1,66 @@
-# dispersant_screening_PAL
+# De novo polymer design with multi objective active learning and molecular simulations
 
 ![Python package](https://github.com/byooooo/dispersant_screening_PAL/workflows/Python%20package/badge.svg)
 
-## ToDos:
+This repository contains code that was used to generate the results discussed in
 
-- [ ] better stratification
+Jablonka, K. M.; Giriprasad, M. J.; Wang, S.; Smit, B.; Yoo, B. De Novo Polymer Design with Multi Objective Active Learning and Molecular Simulations. 2020.
 
-- [ ] feature dictionary
+[The active learning code, PyPAL, is maintained in its own repository.](https://github.com/kjappelbaum/pypal)
 
-- [ ] feature engineering? We could potentially also directly train something like an RNN on the SMILES sequence
+## `dispersant_screener` package
 
-- [ ] drop the constant feature
+### Featurization
 
-- [ ] feature importance
+The code for the polymer featurization can be found in the `featurizer` module of the `dispersant_screener` package.
 
-- [ ] Maybe move logging to Eliot
+The `create_new_features.ipynb` illustrates the basic usage, i.e., how a dataframe with polymer SMILES can be featurized.
+
+### Genetic algorithm and inversion of SMILES
+
+The genetic algorithm is defined in the `ga` module of the `dispersant_screener` package. The inversion code is part of the `smiles2feat` module.
+
+### Scripts for reproducing the main results discussed in the paper
+
+We recommend that you [create a conda environment, based on the appropriate `.yml` file](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html).
+
+```bash
+conda env conda env create --file=environment_mac.yml
+```
+
+### Dispersants (Main text)
+
+To reproduce the results, make sure that `../data/new_features_full_random.csv`, `../data/b1-b21_random_virial_large_new.csv`, and `../data/rg_results.csv` are in your working directory. Those relative paths are hardcoded in the command line interface.
+Then use
+
+```bash
+python run_pal_on_dispersant_repeats_cli.py <epsilon> <delta> <beta_scale> <repeats> <outdir> <n_samples>
+```
+
+### Missing data 
+
+All [`PyPAL`](https://github.com/kjappelbaum/pypal) classes support missing data. For this work, we used coregionalized models that leverage correlations
+between the different objectives. To reproduce the results, make sure that `../data/new_features_full_random.csv`, `../data/b1-b21_random_virial_large_new.csv`, and `../data/rg_results.csv` are in your working directory. Those relative paths are hardcoded in the command line interface.
+Then use
+
+```bash
+python missing_data_test.py <epsilon> <delta> <beta_scale> <outdir>
+```
+
+### Genetic algorithm 
+ To reproduce the results, make sure that `X_train_GBDT.npy` and `y_train_GBDT.npy` are in your working directory. Those relative paths are hardcoded in the command line interface.
+Then use
+
+```bash
+python run_ga_on_gbdt_gpr_surrogate.py
+```
+
 
 ## Data
 
 In folder `data`.
 
-### Calculated Results
+### Calculated Results based on the molecular simulations
 
 - `b0_random_deltaG.csv` - data containing adsorption free energy (deltaGmin) for fractional factorial DOE random copolymers
 - `b0_random_virial.csv` - data containing second virial coefficient (A2_normalized) for fractional factorial DOE random copolymers
@@ -32,207 +72,9 @@ In folder `data`.
 - `X_frac_random.csv` - Feature data for fractional factorial DOE random copolymers
 - `X_full_random.csv` - Feature data for full factorial DOE random copolymers
 
-## Theory
+### Data for the MOF case study
 
-The adsorption free energies are estimated by taking the different in the minimum potential of mean force (W) from its bulk value.
-In the NVT ensemble the PMF is equal to the Helmholtz free energy, which we then use to approximate the Gibbs free energy (assuming incompressibility).
+Reeused from [Moosavi, S. M.; Nandy, A.; Jablonka, K. M.; Ongari, D.; Janet, J. P.; Boyd, P. G.; Lee, Y.; Smit, B.; Kulik, H. J. Understanding the Diversity of the Metal-Organic Framework Ecosystem. Nature Communications 2020, 11 (1), 4068.](https://doi.org/10.1038/s41467-020-17755-8)
 
-<p align="center">
-<img src="https://render.githubusercontent.com/render/math?math={\Delta G_{ads} \approx W(z)_{min}-W(z)_{bulk}}">
-</p>
-
-The second virial coefficient is calculated using the following equation:
-
-<p align="center">
-<img src="https://render.githubusercontent.com/render/math?math={A_2 = \dfrac{2\pi}{N^2} \int_0^\infty r^2[1-exp(-\beta W(r))]dr}">
-</p>
-
-where W(r) is the polymer-polymer potential of mean force in the radial direction and N is the number of beads in the polymer.
-
-## fractional factorial
-
-### adsorption free energies
-
-<div>
-  <img width = "600" src="./figures/batch0_ads_PMF.png">
-</div>
-
-### second virials coefficients
-
-<div>
-  <img width = "600" src="./figures/batch0_vir_PMF.png">
-</div>
-
-### full factorial
-
-#### adsorption free energies
-
-<div>
-  <img width = "1000" src="./figures/batch1_ads_PMF.png">
-</div>
-
-<div>
-  <img width = "1000" src="./figures/batch2_ads_PMF.png">
-</div>
-
-<div>
-  <img width = "1000" src="./figures/batch3_ads_PMF.png">
-</div>
-
-<div>
-  <img width = "1000" src="./figures/batch4_ads_PMF.png">
-</div>
-
-<div>
-  <img width = "1000" src="./figures/batch5_ads_PMF.png">
-</div>
-
-<div>
-  <img width = "1000" src="./figures/batch6_ads_PMF.png">
-</div>
-
-<div>
-  <img width = "1000" src="./figures/batch7_ads_PMF.png">
-</div>
-
-<div>
-  <img width = "1000" src="./figures/batch8_ads_PMF.png">
-</div>
-
-<div>
-  <img width = "1000" src="./figures/batch9_ads_PMF.png">
-</div>
-
-<div>
-  <img width = "1000" src="./figures/batch10_ads_PMF.png">
-</div>
-
-<div>
-  <img width = "1000" src="./figures/batch11_ads_PMF.png">
-</div>
-
-<div>
-  <img width = "1000" src="./figures/batch12_ads_PMF.png">
-</div>
-
-<div>
-  <img width = "1000" src="./figures/batch13_ads_PMF.png">
-</div>
-
-<div>
-  <img width = "1000" src="./figures/batch14_ads_PMF.png">
-</div>
-
-<div>
-  <img width = "1000" src="./figures/batch15_ads_PMF.png">
-</div>
-
-<div>
-  <img width = "1000" src="./figures/batch16_ads_PMF.png">
-</div>
-
-<div>
-  <img width = "1000" src="./figures/batch17_ads_PMF.png">
-</div>
-
-<div>
-  <img width = "1000" src="./figures/batch18_ads_PMF.png">
-</div>
-
-<div>
-  <img width = "1000" src="./figures/batch19_ads_PMF.png">
-</div>
-
-<div>
-  <img width = "1000" src="./figures/batch20_ads_PMF.png">
-</div>
-
-<div>
-  <img width = "1000" src="./figures/batch21_ads_PMF.png">
-</div>
-
-#### second virial coefficients
-
-<div>
-  <img width = "1000" src="./figures/batch1_vir_PMF.png">
-</div>
-
-<div>
-  <img width = "1000" src="./figures/batch2_vir_PMF.png">
-</div>
-
-<div>
-  <img width = "1000" src="./figures/batch3_vir_PMF.png">
-</div>
-
-<div>
-  <img width = "1000" src="./figures/batch4_vir_PMF.png">
-</div>
-
-<div>
-  <img width = "1000" src="./figures/batch5_vir_PMF.png">
-</div>
-
-<div>
-  <img width = "1000" src="./figures/batch6_vir_PMF.png">
-</div>
-
-<div>
-  <img width = "1000" src="./figures/batch7_vir_PMF.png">
-</div>
-
-<div>
-  <img width = "1000" src="./figures/batch8_vir_PMF.png">
-</div>
-
-<div>
-  <img width = "1000" src="./figures/batch9_vir_PMF.png">
-</div>
-
-<div>
-  <img width = "1000" src="./figures/batch10_vir_PMF.png">
-</div>
-
-<div>
-  <img width = "1000" src="./figures/batch11_vir_PMF.png">
-</div>
-
-<div>
-  <img width = "1000" src="./figures/batch12_vir_PMF.png">
-</div>
-
-<div>
-  <img width = "1000" src="./figures/batch13_vir_PMF.png">
-</div>
-
-<div>
-  <img width = "1000" src="./figures/batch14_vir_PMF.png">
-</div>
-
-<div>
-  <img width = "1000" src="./figures/batch15_vir_PMF.png">
-</div>
-
-<div>
-  <img width = "1000" src="./figures/batch16_vir_PMF.png">
-</div>
-
-<div>
-  <img width = "1000" src="./figures/batch17_vir_PMF.png">
-</div>
-
-<div>
-  <img width = "1000" src="./figures/batch18_vir_PMF.png">
-</div>
-
-<div>
-  <img width = "1000" src="./figures/batch19_vir_PMF.png">
-</div>
-
-<div>
-  <img width = "1000" src="./figures/batch20_vir_PMF.png">
-</div>
-
-<div>
-  <img width = "1000" src="./figures/batch21_vir_PMF.png">
-</div>
+- `PMOF20K_traindata_7000_train.csv`
+- `PMOF20K_traindata_7000_test.csv`
