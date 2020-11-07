@@ -19,7 +19,7 @@ click==7.1.2
 cloudpickle==1.4.1
 configparser==5.0.0
 confuse==1.1.0
-cryptography==2.5
+cryptography==3.2
 cycler==0.10.0
 cytoolz==0.10.1
 dask==2.19.0
