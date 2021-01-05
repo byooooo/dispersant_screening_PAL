@@ -26,17 +26,23 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing.data import MinMaxScaler
 
 import GPy
-from dispersant_screener.definitions import FEATURES
-from pypal import PALCoregionalized
-from pypal.models.gpr import build_coregionalized_model
-from pypal.pal.utils import get_hypervolume, get_maxmin_samples
+TARGETS = ['deltaGmin', 'A2_normalized']
 
-TIMESTR = time.strftime('%Y%m%d-%H%M%S') + '_dispersant_'
+FEATURES = [
+    'num_[W]', 'max_[W]', 'num_[Tr]', 'max_[Tr]', 'num_[Ta]', 'max_[Ta]', 'num_[R]', 'max_[R]', '[W]', '[Tr]', '[Ta]',
+    '[R]', 'rel_shannon', 'length'
+]
+
+from pyepal import PALCoregionalized
+from pyepal.models.gpr import build_coregionalized_model
+from pyepal.pal.utils import get_hypervolume, get_maxmin_samples, get_kmeans_samples
+
+TIMESTR = time.strftime('%Y%m%d-%H%M%S') + '-dispersant-'
 
 DATADIR = '../data'
 
 
-def load_data(n_samples, label_scaling: bool = False):
+def load_data(n_samples, label_scaling: bool = False, method: str = 'maxmin'):
     """Take in Brian's data and spit out some numpy arrays for the PAL"""
     df_full_factorial_feat = pd.read_csv(os.path.join(DATADIR, 'new_features_full_random.csv'))[FEATURES].values
     a2 = pd.read_csv(os.path.join(DATADIR, 'b1-b21_random_virial_large_new.csv'))['A2_normalized'].values
@@ -55,7 +61,11 @@ def load_data(n_samples, label_scaling: bool = False):
         label_scaler = MinMaxScaler()
         y = label_scaler.fit_transform(y)
 
-    greedy_indices = get_maxmin_samples(X, n_samples)
+    if method == 'maxmin':
+        greedy_indices = get_maxmin_samples(X, n_samples)
+
+    elif method == 'kmeans':
+        greedy_indices = get_kmeans_samples(X, n_samples)
 
     return X, y, greedy_indices
 
@@ -67,8 +77,12 @@ def load_data(n_samples, label_scaling: bool = False):
 @click.argument('repeats', type=int, default=1, required=False)
 @click.argument('outdir', type=click.Path(), default='.', required=False)
 @click.argument('n_samples', type=int, default=60, required=False)
+@click.argument('pooling', type=str, default='fro', required=False)
+@click.argument('w_rank', type=int, default=1, required=False)
+@click.argument('sampling_method', type=str, default='maxmin', required=False)
+@click.option('--sample_discarded', is_flag=True)
 def main(  # pylint:disable=invalid-name, too-many-arguments, too-many-locals
-        epsilon, delta, beta_scale, repeats, outdir, n_samples):
+        epsilon, delta, beta_scale, repeats, outdir, n_samples, pooling, w_rank, sampling_method, sample_discarded):
     """Main CLI"""
     pareto_optimals = []
     hypervolumess = []
@@ -77,19 +91,19 @@ def main(  # pylint:disable=invalid-name, too-many-arguments, too-many-locals
     unclassifieds = []
     print('START ePAL')
     for _ in range(repeats):
-        X, y, greedy_indices = load_data(n_samples)
+        X, y, greedy_indices = load_data(n_samples, method=sampling_method)
 
         max_hypervolume = get_hypervolume(y, [5, 5, 5])
         print(f'Maximum hypervolume {max_hypervolume}')
         m = [
-            build_coregionalized_model(X, y, kernel=GPy.kern.Matern52(X.shape[1], ARD=False)),
+            build_coregionalized_model(X, y, kernel=GPy.kern.Matern52(X.shape[1], ARD=False), w_rank=w_rank),
         ]
 
         palinstance = PALCoregionalized(X, m, 3, epsilon=np.array([epsilon] * 3), beta_scale=beta_scale, delta=delta)
         palinstance.update_train_set(greedy_indices, y[greedy_indices])
         print('STARTING PAL')
         while sum(palinstance.unclassified):
-            idx = palinstance.run_one_step()
+            idx = palinstance.run_one_step(pooling_method=pooling, sample_discarded=sample_discarded)
             pareto_optimals.append(palinstance.pareto_optimal_indices)
             selecteds.append(palinstance.sampled_indices)
             unclassifieds.append(palinstance.unclassified_indices)
@@ -107,23 +121,42 @@ def main(  # pylint:disable=invalid-name, too-many-arguments, too-many-locals
     epsilon = str(epsilon)
     delta = str(delta)
     beta_scale = str(beta_scale)
-    np.save(os.path.join(outdir, TIMESTR + '{}_{}_{}_{}-greedy_indices'.format(epsilon, delta, beta_scale, n_samples)),
-            greedy_indices)
     np.save(
-        os.path.join(outdir,
-                     TIMESTR + '{}_{}_{}_{}-pareto_optimal_indices'.format(epsilon, delta, beta_scale, n_samples)),
-        pareto_optimals)
-    np.save(os.path.join(outdir, TIMESTR + '{}_{}_{}_{}-hypervolumes'.format(epsilon, delta, beta_scale, n_samples)),
-            hypervolumess)
-    np.save(os.path.join(outdir, TIMESTR + '{}_{}_{}_{}-selected'.format(epsilon, delta, beta_scale, n_samples)),
-            selecteds)
-    np.save(os.path.join(outdir, TIMESTR + '{}_{}_{}_{}-discarded'.format(epsilon, delta, beta_scale, n_samples)),
-            discardeds)
-    np.save(os.path.join(outdir, TIMESTR + '{}_{}_{}_{}-unclassified'.format(epsilon, delta, beta_scale, n_samples)),
-            unclassifieds)
+        os.path.join(
+            outdir, TIMESTR +
+            f'{epsilon}_{delta}_{beta_scale}_{n_samples}_{sample_discarded}_{pooling}_{w_rank}_{sampling_method}-greedy_indices'
+        ), greedy_indices)
+    np.save(
+        os.path.join(
+            outdir, TIMESTR +
+            f'{epsilon}_{delta}_{beta_scale}_{n_samples}_{sample_discarded}_{pooling}_{w_rank}_{sampling_method}-pareto_optimal_indices'
+        ), pareto_optimals)
+    np.save(
+        os.path.join(
+            outdir, TIMESTR +
+            f'{epsilon}_{delta}_{beta_scale}_{n_samples}_{sample_discarded}_{pooling}_{w_rank}_{sampling_method}-hypervolumes'
+        ), hypervolumess)
+    np.save(
+        os.path.join(
+            outdir, TIMESTR +
+            f'{epsilon}_{delta}_{beta_scale}_{n_samples}_{sample_discarded}_{pooling}_{w_rank}_{sampling_method}-selected'
+        ), selecteds)
+    np.save(
+        os.path.join(
+            outdir, TIMESTR +
+            f'{epsilon}_{delta}_{beta_scale}_{n_samples}_{sample_discarded}_{pooling}_{w_rank}_{sampling_method}-discarded'
+        ), discardeds)
+    np.save(
+        os.path.join(
+            outdir, TIMESTR +
+            f'{epsilon}_{delta}_{beta_scale}_{n_samples}_{sample_discarded}_{pooling}_{w_rank}_{sampling_method}-unclassified'
+        ), unclassifieds)
 
-    with open(os.path.join(outdir, TIMESTR + '{}_{}_{}_{}-models.pkl'.format(epsilon, delta, beta_scale, n_samples)),
-              'wb') as fh:
+    with open(
+            os.path.join(
+                outdir, TIMESTR +
+                f'{epsilon}_{delta}_{beta_scale}_{n_samples}_{sample_discarded}_{pooling}_{w_rank}_{sampling_method}-models.pkl'
+            ), 'wb') as fh:
         pickle.dump(palinstance.models, fh)
 
 

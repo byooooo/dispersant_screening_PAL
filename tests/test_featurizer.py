@@ -6,7 +6,8 @@ from dispersant_screener.featurizer import LinearPolymerSmilesFeaturizer
 
 def test_head_tail():
     pmsf = LinearPolymerSmilesFeaturizer('[W][W][W][W][Ta][Ta][Ta][Ta][W][W][W]')
-    head_tail = LinearPolymerSmilesFeaturizer.get_head_tail_features('[W][W][W][W][Ta][Ta][Ta][Ta][W][W][W]', pmsf.characters)
+    head_tail = LinearPolymerSmilesFeaturizer.get_head_tail_features('[W][W][W][W][Ta][Ta][Ta][Ta][W][W][W]',
+                                                                     pmsf.characters)
     assert head_tail == {'head_tail_[W]': 2, 'head_tail_[Tr]': 0, 'head_tail_[Ta]': 0, 'head_tail_[R]': 0}
 
 
