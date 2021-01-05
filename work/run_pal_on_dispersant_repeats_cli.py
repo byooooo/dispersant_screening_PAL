@@ -19,13 +19,13 @@ import pickle
 import time
 
 import click
+import GPy
 import numpy as np
 import pandas as pd
 from sklearn.feature_selection import VarianceThreshold
 from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing.data import MinMaxScaler
 
-import GPy
 TARGETS = ['deltaGmin', 'A2_normalized']
 
 FEATURES = [
@@ -35,7 +35,8 @@ FEATURES = [
 
 from pyepal import PALCoregionalized
 from pyepal.models.gpr import build_coregionalized_model
-from pyepal.pal.utils import get_hypervolume, get_maxmin_samples, get_kmeans_samples
+from pyepal.pal.utils import (get_hypervolume, get_kmeans_samples,
+                              get_maxmin_samples)
 
 TIMESTR = time.strftime('%Y%m%d-%H%M%S') + '-dispersant-'
 

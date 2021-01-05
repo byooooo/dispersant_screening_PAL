@@ -1,7 +1,9 @@
-import click
+# -*- coding: utf-8 -*-
 import os
 import subprocess
 import time
+
+import click
 
 SLURM_TEMPLATE = '''#!/bin/bash -l
 #SBATCH --chdir ./

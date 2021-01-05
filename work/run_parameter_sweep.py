@@ -40,7 +40,7 @@ SLURM_TEMPLATE = '''#!/bin/bash -l
 source /home/kjablonk/anaconda3/bin/activate
 conda activate pypal
 
-python run_pal_on_dispersant_repeats_cli.py {epsilon} {delta} {beta_scale} 1 . {n_samples} {pooling} {w_rank} {sampling_method} 
+python run_pal_on_dispersant_repeats_cli.py {epsilon} {delta} {beta_scale} 1 . {n_samples} {pooling} {w_rank} {sampling_method}
 '''
 
 SLURM_TEMPLATE_B = '''#!/bin/bash -l
@@ -63,7 +63,7 @@ THIS_DIR = os.path.dirname(__file__)
 
 def write_submission_script(counter, experiment):
     name = 'ePALdispersant_{}'.format(counter)
-    experiment["name"] = name
+    experiment['name'] = name
 
     if experiment['sample_discarded']:
         script = SLURM_TEMPLATE_B.format(**experiment)
@@ -95,10 +95,10 @@ def main(submit):
                                         'epsilon': epsilon,
                                         'beta_scale': beta_scale,
                                         'delta': delta,
-                                        "sampling_method": sampling_method,
-                                        "w_rank": w_rank,
-                                        "pooling": pooling,
-                                        "sample_discarded": sample_discarded
+                                        'sampling_method': sampling_method,
+                                        'w_rank': w_rank,
+                                        'pooling': pooling,
+                                        'sample_discarded': sample_discarded
                                     }
 
                                     experiments.append(experiment)

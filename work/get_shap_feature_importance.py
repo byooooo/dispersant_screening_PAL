@@ -1,18 +1,22 @@
+# -*- coding: utf-8 -*-
 """
-RUN SHAP feature importance analysis 
+RUN SHAP feature importance analysis
 """
-import shap
-import numpy as np
-from sklearn.preprocessing import StandardScaler
 import os
-import click
 import pickle
 from functools import partial
-from shap import KernelExplainer
+
+import click
+import numpy as np
 import pandas as pd
+import shap
+from shap import KernelExplainer
+from sklearn.preprocessing import StandardScaler
+
 DATADIR = '../data'
-from dispersant_screener.definitions import FEATURES
 from pypal.models.gpr import predict_coregionalized
+
+from dispersant_screener.definitions import FEATURES
 
 
 def load_data():
