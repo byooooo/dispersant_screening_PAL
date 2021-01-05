@@ -1,6 +1,7 @@
 # Bias free multiobjective active learning for materials design and discovery
 
 ![Python package](https://github.com/byooooo/dispersant_screening_PAL/workflows/Python%20package/badge.svg)
+[![DOI](https://zenodo.org/badge/252852504.svg)](https://zenodo.org/badge/latestdoi/252852504)
 
 This repository contains code that was used to generate the results discussed in
 
