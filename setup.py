@@ -32,7 +32,7 @@ setup(
     python_requires='>3.6',
     install_requires=requirements,
     extras_require={
-        'testing': ['pytest', 'pytest-cov<2.11'],
+        'testing': ['pytest', 'pytest-cov<2.12'],
         'docs': ['guzzle_sphinx_theme'],
         'pre-commit': ['pre-commit', 'yapf', 'prospector', 'pylint', 'versioneer', 'isort'],
     },
