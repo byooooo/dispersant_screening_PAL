@@ -97,7 +97,7 @@ pep8-naming==0.4.1
 pexpect==4.8.0
 phik==0.9.11
 pickleshare==0.7.5
-pillow==7.1.2
+pillow==8.1.1
 pip==20.1
 pluggy==0.13.1
 pre-commit==2.5.1
