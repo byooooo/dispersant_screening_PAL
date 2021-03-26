@@ -128,7 +128,7 @@ python-dateutil==2.8.1
 pytz==2020.1
 pyviz-comms==0.7.4
 pywavelets==1.1.1
-pyyaml==5.3.1
+pyyaml==5.4
 pyzmq==19.0.1
 requests==2.23.0
 requirements-detector==0.7
