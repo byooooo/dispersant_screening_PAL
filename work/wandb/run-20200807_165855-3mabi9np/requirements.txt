@@ -113,7 +113,7 @@ pycparser==2.20
 pyct==0.4.6
 pydocstyle==5.0.2
 pyflakes==2.1.1
-pygments==2.6.1
+pygments==2.7.4
 pylint-celery==0.3
 pylint-django==2.0.12
 pylint-flask==0.6
