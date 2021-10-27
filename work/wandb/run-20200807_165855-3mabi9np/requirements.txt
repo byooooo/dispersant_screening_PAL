@@ -22,7 +22,7 @@ confuse==1.1.0
 cryptography==3.2
 cycler==0.10.0
 cytoolz==0.10.1
-dask==2.19.0
+dask==2021.10.0
 decorator==4.4.2
 defusedxml==0.6.0
 dispersant-screener==0+untagged.83.gfec3425.dirty
