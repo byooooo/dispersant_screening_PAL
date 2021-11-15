@@ -98,7 +98,7 @@ pexpect==4.8.0
 phik==0.9.11
 pickleshare==0.7.5
 pillow==7.1.2
-pip==20.1
+pip==21.1
 pluggy==0.13.1
 pre-commit==2.5.1
 prometheus-client==0.7.1
