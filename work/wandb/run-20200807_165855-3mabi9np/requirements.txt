@@ -50,7 +50,7 @@ importlib-metadata==1.6.0
 ipykernel==5.2.1
 ipyparallel==6.3.0
 ipython-genutils==0.2.0
-ipython==7.14.0
+ipython==7.16.3
 ipywidgets==7.5.1
 isort==4.3.21
 iterative-stratification==0.1.6
