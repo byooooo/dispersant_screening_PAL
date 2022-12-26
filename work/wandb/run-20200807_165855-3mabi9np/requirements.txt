@@ -174,7 +174,7 @@ wandb==0.9.4
 watchdog==0.10.3
 wcwidth==0.1.9
 webencodings==0.5.1
-wheel==0.34.2
+wheel==0.38.1
 widgetsnbextension==3.5.1
 wrapt==1.11.2
 xgboost==1.0.0
